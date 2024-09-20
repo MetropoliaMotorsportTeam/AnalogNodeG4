@@ -60,8 +60,8 @@ all: main-build
 main-build: AnalogNodeG4.elf secondary-outputs
 
 # Tool invocations
-AnalogNodeG4.elf AnalogNodeG4.map: $(OBJS) $(USER_OBJS) C:\Users\dovla.DESKTOP-S1IGPJL\STM32CubeIDE\workspace_1.16.0\AnalogNodeG4\STM32G431RBTX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-gcc -o "AnalogNodeG4.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"C:\Users\dovla.DESKTOP-S1IGPJL\STM32CubeIDE\workspace_1.16.0\AnalogNodeG4\STM32G431RBTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="AnalogNodeG4.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+AnalogNodeG4.elf AnalogNodeG4.map: $(OBJS) $(USER_OBJS) C:\Users\asiav\Documents\AnalogNodeG4\STM32G431RBTX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-gcc -o "AnalogNodeG4.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"C:\Users\asiav\Documents\AnalogNodeG4\STM32G431RBTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="AnalogNodeG4.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
 

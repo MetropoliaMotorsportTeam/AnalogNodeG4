@@ -234,6 +234,10 @@ void FDCAN1_IT0_IRQHandler(void)
 void TIM3_IRQHandler(void)
 {
   /* USER CODE BEGIN TIM3_IRQn 0 */
+		millis++;
+		if(millis == 1000){
+			CAN_enable = 1;
+		}
 
   /* USER CODE END TIM3_IRQn 0 */
   HAL_TIM_IRQHandler(&htim3);
