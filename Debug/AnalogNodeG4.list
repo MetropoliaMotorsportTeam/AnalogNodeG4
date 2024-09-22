@@ -35,17 +35,17 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   CONTENTS, READONLY, DEBUGGING, OCTETS
  15 .debug_rnglists 00000fbb  00000000  00000000  0001f870  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 16 .debug_macro  000207b3  00000000  00000000  0002082b  2**0
+ 16 .debug_macro  0002082b  00000000  00000000  0002082b  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 17 .debug_line   000156e8  00000000  00000000  00040fde  2**0
+ 17 .debug_line   000156e8  00000000  00000000  00041056  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 18 .debug_str    000da4cd  00000000  00000000  000566c6  2**0
+ 18 .debug_str    000da695  00000000  00000000  0005673e  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 19 .comment      00000043  00000000  00000000  00130b93  2**0
+ 19 .comment      00000043  00000000  00000000  00130dd3  2**0
                   CONTENTS, READONLY
- 20 .debug_frame  00005850  00000000  00000000  00130bd8  2**2
+ 20 .debug_frame  00005850  00000000  00000000  00130e18  2**2
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 21 .debug_line_str 00000054  00000000  00000000  00136428  2**0
+ 21 .debug_line_str 00000078  00000000  00000000  00136668  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
 
 Disassembly of section .text:
@@ -1932,7 +1932,7 @@ void HAL_ADC_MspInit(ADC_HandleTypeDef* hadc)
     PB0     ------> ADC1_IN15
     PB1     ------> ADC1_IN12
     */
-    GPIO_InitStruct.Pin = GPIO_PIN_0|GPIO_PIN_1|GPIO_PIN_2|GPIO_PIN_3;
+    GPIO_InitStruct.Pin = ADC12_Pin|ADC11_Pin|ADC10_Pin|ADC9_Pin;
  8000dd6:	230f      	movs	r3, #15
  8000dd8:	65fb      	str	r3, [r7, #92]	@ 0x5c
     GPIO_InitStruct.Mode = GPIO_MODE_ANALOG;
@@ -1947,7 +1947,7 @@ void HAL_ADC_MspInit(ADC_HandleTypeDef* hadc)
  8000de8:	4826      	ldr	r0, [pc, #152]	@ (8000e84 <HAL_ADC_MspInit+0x160>)
  8000dea:	f002 fecb 	bl	8003b84 <HAL_GPIO_Init>
 
-    GPIO_InitStruct.Pin = GPIO_PIN_0|GPIO_PIN_1|GPIO_PIN_2|GPIO_PIN_3;
+    GPIO_InitStruct.Pin = ADC0_Pin|ADC1_Pin|ADC2_Pin|ADC3_Pin;
  8000dee:	230f      	movs	r3, #15
  8000df0:	65fb      	str	r3, [r7, #92]	@ 0x5c
     GPIO_InitStruct.Mode = GPIO_MODE_ANALOG;
@@ -1962,7 +1962,7 @@ void HAL_ADC_MspInit(ADC_HandleTypeDef* hadc)
  8000e00:	f04f 4090 	mov.w	r0, #1207959552	@ 0x48000000
  8000e04:	f002 febe 	bl	8003b84 <HAL_GPIO_Init>
 
-    GPIO_InitStruct.Pin = GPIO_PIN_0|GPIO_PIN_1;
+    GPIO_InitStruct.Pin = ADC14_Pin|ADC13_Pin;
  8000e08:	2303      	movs	r3, #3
  8000e0a:	65fb      	str	r3, [r7, #92]	@ 0x5c
     GPIO_InitStruct.Mode = GPIO_MODE_ANALOG;
