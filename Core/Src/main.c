@@ -54,8 +54,8 @@ TIM_HandleTypeDef htim3;
 /* USER CODE BEGIN PV */
 Sensor sensors[16];
 
-uint16_t ADC1Data[16];
-uint16_t ADC2Data[16];
+uint16_t ADC1Data[8];
+uint16_t ADC2Data[8];
 uint16_t all_raw_data[16][ROLLING_AVE];
 
 uint8_t AVE_POS = 0;
@@ -215,7 +215,7 @@ static void MX_ADC1_Init(void)
   /** Common config
   */
   hadc1.Instance = ADC1;
-  hadc1.Init.ClockPrescaler = ADC_CLOCK_SYNC_PCLK_DIV2;
+  hadc1.Init.ClockPrescaler = ADC_CLOCK_ASYNC_DIV32;
   hadc1.Init.Resolution = ADC_RESOLUTION_12B;
   hadc1.Init.DataAlign = ADC_DATAALIGN_RIGHT;
   hadc1.Init.GainCompensation = 0;
@@ -345,7 +345,7 @@ static void MX_ADC2_Init(void)
   /** Common config
   */
   hadc2.Instance = ADC2;
-  hadc2.Init.ClockPrescaler = ADC_CLOCK_SYNC_PCLK_DIV2;
+  hadc2.Init.ClockPrescaler = ADC_CLOCK_ASYNC_DIV32;
   hadc2.Init.Resolution = ADC_RESOLUTION_12B;
   hadc2.Init.DataAlign = ADC_DATAALIGN_RIGHT;
   hadc2.Init.GainCompensation = 0;
@@ -626,7 +626,7 @@ void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc) {
 			}
 			else{
 				AVE_POS = 0;
-				for(int i = 0; i < hadc->Init.NbrOfConversion;i++){
+				for(int i = 8; i < hadc->Init.NbrOfConversion + 8;i++){
 					for(int z = 0; z < ROLLING_AVE;z++){
 						if(z == 0){
 							//averages[i] = all_raw_data[i][0];
@@ -638,7 +638,7 @@ void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc) {
 					}
 				}
 			}
-			for(int j = 0; j < hadc->Init.NbrOfConversion;j++){
+			for(int j = 8; j < hadc->Init.NbrOfConversion + 8;j++){
 				all_raw_data[j][AVE_POS-1] = ADC1Data[j];
 			}
 		}
