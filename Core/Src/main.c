@@ -52,7 +52,7 @@ FDCAN_HandleTypeDef hfdcan1;
 TIM_HandleTypeDef htim3;
 
 /* USER CODE BEGIN PV */
-Sensor sensors[16];
+Sensor sensors[12];
 
 uint16_t ADC1Data[6];
 uint16_t ADC2Data[6];
@@ -129,6 +129,8 @@ int main(void)
     if(HAL_FDCAN_ActivateNotification(&hfdcan1, FDCAN_IT_RX_FIFO0_NEW_MESSAGE,0) != HAL_OK) { Error_Handler(); }
 
     uint8_t counter = 0;
+
+
   /* USER CODE END 2 */
 
   /* Infinite loop */

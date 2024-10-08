@@ -1,3 +1,4 @@
-../Core/Src/config.c:6:6:Config_Setup	1
-../Core/Src/config.c:16:6:Config_1	2
-../Core/Src/config.c:52:6:Config_2	2
+../Core/Src/config.c:8:6:Config_Setup	1
+../Core/Src/config.c:19:7:ADC_Update	1
+../Core/Src/config.c:45:6:Config_1	2
+../Core/Src/config.c:81:6:Config_2	2

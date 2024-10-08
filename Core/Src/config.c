@@ -1,5 +1,7 @@
 #include "config.h"
 
+#define FLASH_ADDRESS 0x0801F800
+
 #define ID 1
 
 
@@ -11,6 +13,34 @@ void Config_Setup(void) {
 #elif ID == 3
     Config_3();
 #endif
+}
+
+
+void  ADC_Update(){
+	FLASH_EraseInitTypeDef FlashErase;
+	uint32_t PageError = 0;
+
+	HAL_FLASH_Unlock();
+
+	FlashErase.TypeErase = FLASH_TYPEERASE_PAGES;
+	FlashErase.Page = FLASH_ADDRESS;
+	FlashErase.NbPages = 1;
+
+	for(int i = 0; i < 12; i++){
+		 // Perform the erase operation
+		if (HAL_FLASHEx_Erase(&FlashErase, &PageError) != HAL_OK) {
+				// Handle error if the erase operation fails
+				// Use PageError to check which page caused the issue
+		}
+
+		uint16_t data_to_write = (uint32_t(sensors[i].high_adc) << 16) | sensors[i].low_adc;
+
+		if (HAL_FLASH_Program(FLASH_TYPEPROGRAM_FAST, FLASH_ADDRESS, data_to_write) != HAL_OK) {
+			// Handle error
+		}
+	}
+	    // Lock the Flash memory after operation
+	 HAL_FLASH_Lock();
 }
 
 void Config_1(void) {
