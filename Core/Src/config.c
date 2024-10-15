@@ -22,11 +22,12 @@ void  ADC_Update(){
 
 	HAL_FLASH_Unlock();
 
-	FlashErase.TypeErase = FLASH_TYPEERASE_PAGES;
-	FlashErase.Page = FLASH_ADDRESS;
-	FlashErase.NbPages = 1;
-
 	for(int i = 0; i < 12; i++){
+
+		FlashErase.TypeErase = FLASH_TYPEERASE_PAGES;
+		FlashErase.Page = FLASH_ADDRESS + i * 4; //4 is the length of 1 word
+		FlashErase.NbPages = 1;
+
 		 // Perform the erase operation
 		if (HAL_FLASHEx_Erase(&FlashErase, &PageError) != HAL_OK) {
 				// Handle error if the erase operation fails
@@ -35,13 +36,28 @@ void  ADC_Update(){
 
 		uint16_t data_to_write = (uint32_t(sensors[i].high_adc) << 16) | sensors[i].low_adc;
 
-		if (HAL_FLASH_Program(FLASH_TYPEPROGRAM_FAST, FLASH_ADDRESS, data_to_write) != HAL_OK) {
+		if (HAL_FLASH_Program(FLASH_TYPEPROGRAM_FAST, FLASH_ADDRESS + i * 4, data_to_write) != HAL_OK) {
 			// Handle error
 		}
+		//TODO add check up that data is saved correctly
 	}
 	    // Lock the Flash memory after operation
 	 HAL_FLASH_Lock();
+
+
 }
+
+void read_all_calib_values(){
+
+	for(int i = 0; i < 12; i++){
+
+		uint32_t value = *(__IO uint32_t*)FLASH_ADDRESS + i * 4;
+
+		sensors[i].low_adc = value;
+		sensors[i].high_adc = value >> 16;
+	}
+}
+
 
 void Config_1(void) {
 

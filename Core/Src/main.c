@@ -123,10 +123,10 @@ int main(void)
   MX_ADC2_Init();
   /* USER CODE BEGIN 2 */
   if(HAL_TIM_Base_Start_IT(&htim3) != HAL_OK){ Error_Handler(); };
-    if(HAL_ADC_Start_DMA(&hadc1, (uint32_t *)ADC1Data, hadc1.Init.NbrOfConversion) != HAL_OK){ Error_Handler(); }
-    if(HAL_ADC_Start_DMA(&hadc2, (uint32_t *)ADC2Data, hadc2.Init.NbrOfConversion) != HAL_OK){ Error_Handler(); }
-    if(HAL_FDCAN_Start(&hfdcan1)!= HAL_OK){ Error_Handler(); }else{ HAL_GPIO_WritePin(LED1_GPIO_Port,LED1_Pin, SET); CAN_enable = 1;}
-    if(HAL_FDCAN_ActivateNotification(&hfdcan1, FDCAN_IT_RX_FIFO0_NEW_MESSAGE,0) != HAL_OK) { Error_Handler(); }
+  if(HAL_ADC_Start_DMA(&hadc1, (uint32_t *)ADC1Data, hadc1.Init.NbrOfConversion) != HAL_OK){ Error_Handler(); }
+  if(HAL_ADC_Start_DMA(&hadc2, (uint32_t *)ADC2Data, hadc2.Init.NbrOfConversion) != HAL_OK){ Error_Handler(); }
+  if(HAL_FDCAN_Start(&hfdcan1)!= HAL_OK){ Error_Handler(); }else{ HAL_GPIO_WritePin(LED1_GPIO_Port,LED1_Pin, SET); CAN_enable = 1;}
+  if(HAL_FDCAN_ActivateNotification(&hfdcan1, FDCAN_IT_RX_FIFO0_NEW_MESSAGE,0) != HAL_OK) { Error_Handler(); }
 
     uint8_t counter = 0;
 
