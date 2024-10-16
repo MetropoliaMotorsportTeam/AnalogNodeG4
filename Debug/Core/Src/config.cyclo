@@ -1,4 +1,6 @@
 ../Core/Src/config.c:8:6:Config_Setup	1
-../Core/Src/config.c:19:7:ADC_Update	1
-../Core/Src/config.c:45:6:Config_1	2
-../Core/Src/config.c:81:6:Config_2	2
+../Core/Src/config.c:22:7:ADC_Update	2
+../Core/Src/config.c:53:6:check_calib_status	3
+../Core/Src/config.c:66:6:read_all_calib_values	2
+../Core/Src/config.c:79:6:Config_1	2
+../Core/Src/config.c:115:6:Config_2	2

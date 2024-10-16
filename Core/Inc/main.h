@@ -100,7 +100,7 @@ extern uint16_t ADC2Data[6];
 extern uint8_t AVE_POS;
 extern uint16_t CAN_interval;
 extern uint16_t CAN_ID[16];
-extern uint16_t millis;
+extern uint32_t millis;
 extern uint8_t CAN_enable;
 extern uint8_t CAL_counter;
 extern uint8_t CAL_ON;

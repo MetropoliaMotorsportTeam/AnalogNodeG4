@@ -22,6 +22,7 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "config.h"
+#include "functions.h"
 #include <stdio.h>
 #include <string.h>
 /* USER CODE END Includes */
@@ -62,7 +63,7 @@ uint8_t AVE_POS = 0;
 uint16_t CAN_interval = 0;
 uint16_t init_can_id = 1;
 uint16_t CAN_ID[16];
-uint16_t millis;
+uint32_t millis;
 uint8_t CAN_enable = 0;
 
 FDCAN_TxHeaderTypeDef TxHeader;
@@ -140,6 +141,7 @@ int main(void)
 	  if(CAN_enable == 1){
 		  if(millis % CAN_interval == 0){
 			  print(counter);
+			  calibration();
 			  counter++;
 			  if(counter == 16){
 				  HAL_GPIO_TogglePin(LED2_GPIO_Port,LED2_Pin);

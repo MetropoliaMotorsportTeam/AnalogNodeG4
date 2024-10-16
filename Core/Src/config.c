@@ -6,6 +6,9 @@
 
 
 void Config_Setup(void) {
+
+	read_all_calib_values();
+
 #if ID == 1
     Config_1();
 #elif ID == 2
@@ -22,7 +25,7 @@ void  ADC_Update(){
 
 	HAL_FLASH_Unlock();
 
-	for(int i = 0; i < 12; i++){
+	for(int i = 0; i < SENSOR_NUM; i++){
 
 		FlashErase.TypeErase = FLASH_TYPEERASE_PAGES;
 		FlashErase.Page = FLASH_ADDRESS + i * 4; //4 is the length of 1 word
@@ -34,7 +37,7 @@ void  ADC_Update(){
 				// Use PageError to check which page caused the issue
 		}
 
-		uint16_t data_to_write = (uint32_t(sensors[i].high_adc) << 16) | sensors[i].low_adc;
+		uint32_t data_to_write = (sensors[i].high_adc << 16) | sensors[i].low_adc;
 
 		if (HAL_FLASH_Program(FLASH_TYPEPROGRAM_FAST, FLASH_ADDRESS + i * 4, data_to_write) != HAL_OK) {
 			// Handle error
@@ -47,14 +50,28 @@ void  ADC_Update(){
 
 }
 
+void check_calib_status(Sensor *sensor){
+
+	uint16_t default_values = 0xFFFF;
+	int8_t code = 3;
+	if(sensor->low_adc == default_values )
+		code -= 1;
+	if(sensor->high_adc == default_values )
+		code -= 2;
+
+	sensor->calib_code = code;
+
+}
+
 void read_all_calib_values(){
 
-	for(int i = 0; i < 12; i++){
+	for(int i = 0; i < SENSOR_NUM; i++){
 
 		uint32_t value = *(__IO uint32_t*)FLASH_ADDRESS + i * 4;
 
 		sensors[i].low_adc = value;
 		sensors[i].high_adc = value >> 16;
+		check_calib_status(&sensors[i]);
 	}
 }
 
@@ -62,7 +79,7 @@ void read_all_calib_values(){
 void Config_1(void) {
 
 	//initialize the sensors
-	for (int i = 0; i < 16; i++) {
+	for (int i = 0; i < SENSOR_NUM; i++) {
 		sensors[i].transfer_function = TF_3V3;
 		sensors[i].CAN_ID = 0;
 		sensors[i].CAN_interval = 20;
@@ -97,7 +114,7 @@ void Config_1(void) {
 
 void Config_2(void){
 	//initialize the sensors
-		for (int i = 0; i < 16; i++) {
+		for (int i = 0; i < SENSOR_NUM; i++) {
 			sensors[i].transfer_function = TF_3V3;
 			sensors[i].CAN_ID = 0;
 			sensors[i].CAN_interval = 100;
