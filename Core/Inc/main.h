@@ -92,11 +92,11 @@ extern FDCAN_RxHeaderTypeDef RxHeader;
 
 extern FDCAN_HandleTypeDef hfdcan1;
 
-extern uint32_t averages[16];
+
 extern uint16_t transfer_functions[16];
-extern uint16_t all_raw_data[16][ROLLING_AVE];
-extern uint16_t ADC1Data[8];
-extern uint16_t ADC2Data[8];
+extern uint16_t all_raw_data[12][ROLLING_AVE];
+extern uint16_t ADC1Data[6];
+extern uint16_t ADC2Data[6];
 extern uint8_t AVE_POS;
 extern uint16_t CAN_interval;
 extern uint16_t CAN_ID[16];

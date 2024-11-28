@@ -52,7 +52,7 @@ FDCAN_HandleTypeDef hfdcan1;
 TIM_HandleTypeDef htim3;
 
 /* USER CODE BEGIN PV */
-Sensor sensors[16];
+Sensor sensors[12];
 
 uint16_t ADC1Data[6];
 uint16_t ADC2Data[6];
@@ -63,7 +63,7 @@ uint16_t CAN_interval = 0;
 uint16_t init_can_id = 1;
 uint16_t CAN_ID[16];
 uint16_t millis;
-uint8_t CAN_enable = 0;
+uint8_t CAN_enable = 1;
 
 FDCAN_TxHeaderTypeDef TxHeader;
 FDCAN_RxHeaderTypeDef RxHeader;
@@ -122,9 +122,9 @@ int main(void)
   MX_TIM3_Init();
   MX_ADC2_Init();
   /* USER CODE BEGIN 2 */
-  if(HAL_TIM_Base_Start_IT(&htim3) != HAL_OK){ Error_Handler(); };
-    if(HAL_ADC_Start_DMA(&hadc1, (uint32_t *)ADC1Data, hadc1.Init.NbrOfConversion) != HAL_OK){ Error_Handler(); }
-    if(HAL_ADC_Start_DMA(&hadc2, (uint32_t *)ADC2Data, hadc2.Init.NbrOfConversion) != HAL_OK){ Error_Handler(); }
+    //if(HAL_TIM_Base_Start_IT(&htim3) != HAL_OK){ Error_Handler(); };
+  //  if(HAL_ADC_Start_DMA(&hadc1, (uint32_t *)ADC1Data, hadc1.Init.NbrOfConversion) != HAL_OK){ Error_Handler(); }
+  //  if(HAL_ADC_Start_DMA(&hadc2, (uint32_t *)ADC2Data, hadc2.Init.NbrOfConversion) != HAL_OK){ Error_Handler(); }
     if(HAL_FDCAN_Start(&hfdcan1)!= HAL_OK){ Error_Handler(); }else{ HAL_GPIO_WritePin(LED1_GPIO_Port,LED1_Pin, SET); CAN_enable = 1;}
     if(HAL_FDCAN_ActivateNotification(&hfdcan1, FDCAN_IT_RX_FIFO0_NEW_MESSAGE,0) != HAL_OK) { Error_Handler(); }
 
@@ -135,6 +135,14 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
+    //send can message
+    uint8_t TxData[8] = {0x01,0x02,0x03,0x04,0x05,0x06,0x07,0x08};
+    TxHeader.Identifier = 0x01;
+    TxHeader.DataLength = 8;
+
+    CanSend(TxData);
+    HAL_Delay(1000);
+    /*
 	  if(CAN_enable == 1){
 		  if(millis % CAN_interval == 0){
 			  print(counter);
@@ -146,6 +154,7 @@ int main(void)
 		  }
 		 // TxHeader.Identifier = 17;
 	  }
+    */
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -570,10 +579,8 @@ void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc) {
 			for(int i = 0; i < hadc->Init.NbrOfConversion;i++){
 				for(int z = 0; z < ROLLING_AVE;z++){
 					if(z == 0){
-						//averages[i] = all_raw_data[i][0];
             sensors[i].averages = all_raw_data[i][0];
 					}else{
-						//averages[i]=(averages[i] + all_raw_data[i][z])/2;
             sensors[i].averages = (sensors[i].averages + all_raw_data[i][z])/2;
 					}
 				}
@@ -590,20 +597,18 @@ void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc) {
 			}
 			else{
 				AVE_POS = 0;
-				for(int i = 8; i < hadc->Init.NbrOfConversion + 8;i++){
+				for(int i = 6; i < hadc->Init.NbrOfConversion + 6;i++){
 					for(int z = 0; z < ROLLING_AVE;z++){
 						if(z == 0){
-							//averages[i] = all_raw_data[i][0];
 	            sensors[i].averages = all_raw_data[i][0];
 						}else{
-							//averages[i]=(averages[i] + all_raw_data[i][z])/2;
 	            sensors[i].averages = (sensors[i].averages + all_raw_data[i][z])/2;
 						}
 					}
 				}
 			}
-			for(int j = 8; j < hadc->Init.NbrOfConversion + 8;j++){
-				all_raw_data[j][AVE_POS-1] = ADC1Data[j];
+			for(int j = 6; j < hadc->Init.NbrOfConversion + 6;j++){
+				all_raw_data[j][AVE_POS-1] = ADC2Data[j - 6];
 			}
 		}
 }

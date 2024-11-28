@@ -49,7 +49,8 @@ void HAL_FDCAN_RxFifo0Callback(FDCAN_HandleTypeDef *hfdcan, uint32_t RxFifo0ITs)
 
 
 void print(uint16_t select){
-		//uint16_t Data = TF_Select(1,averages[select],transfer_functions[select]);
+
+		/*
 		sensors[select].data = sensors[select].transfer_function(1,sensors[select].averages);
 		TxMessage.Bytes[0] = sensors[select].data;
 		TxMessage.Bytes[1] = sensors[select].data >> 8;
@@ -57,6 +58,24 @@ void print(uint16_t select){
 
 		if(sensors[select].CAN_ID)
 			CanSend(TxMessage.Bytes);
+		*/
+
+	CAN_Message Tx;
+	Tx.DLC = 8;
+	Tx.Bytes[0] = 0x01;
+	Tx.Bytes[1] = 0x02;
+	Tx.Bytes[2] = 0x03;
+	Tx.Bytes[3] = 0x04;
+	Tx.Bytes[4] = 0x05;
+	Tx.Bytes[5] = 0x06;
+	Tx.Bytes[6] = 0x07;
+	Tx.Bytes[7] = 0x08;
+
+	TxHeader.Identifier = 0x123;
+
+	CanSend(Tx.Bytes);
+
+			
 }
 
 void decode(){
