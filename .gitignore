@@ -54,3 +54,5 @@ dkms.conf
 /.settings
 /.settings
 /Debug
+/.settings
+AnalogNodeG4 Debug.launch

@@ -62,7 +62,6 @@ uint16_t all_raw_data[12][ROLLING_AVE];
 uint8_t AVE_POS = 0;
 uint16_t CAN_interval = 0;
 uint16_t init_can_id = 1;
-uint16_t CAN_ID[16];
 uint32_t millis;
 uint8_t CAN_enable = 0;
 
@@ -129,8 +128,7 @@ int main(void)
   if(HAL_FDCAN_Start(&hfdcan1)!= HAL_OK){ Error_Handler(); }else{ HAL_GPIO_WritePin(LED1_GPIO_Port,LED1_Pin, SET); CAN_enable = 1;}
   if(HAL_FDCAN_ActivateNotification(&hfdcan1, FDCAN_IT_RX_FIFO0_NEW_MESSAGE,0) != HAL_OK) { Error_Handler(); }
 
-    uint8_t counter = 0;
-
+  uint8_t counter = 0;
 
   /* USER CODE END 2 */
 

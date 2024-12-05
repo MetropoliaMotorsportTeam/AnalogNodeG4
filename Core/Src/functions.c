@@ -53,6 +53,9 @@ void HAL_FDCAN_RxFifo0Callback(FDCAN_HandleTypeDef *hfdcan, uint32_t RxFifo0ITs)
 
 void print(uint16_t select){
 		//uint16_t Data = TF_Select(1,averages[select],transfer_functions[select]);
+
+
+
 		sensors[select].data = sensors[select].transfer_function(1,sensors[select].averages, &sensors[select]);
 		TxMessage.Bytes[0] = sensors[select].data;
 		TxMessage.Bytes[1] = sensors[select].data >> 8;
@@ -60,6 +63,7 @@ void print(uint16_t select){
 
 		if(sensors[select].CAN_ID)
 			CanSend(TxMessage.Bytes);
+
 }
 
 
@@ -76,15 +80,16 @@ void sent_calib_done(){
 }
 
 uint8_t calibration_counter = 0;
-uint32_t calibration_value = 0;
+uint16_t calibration_value = 0;
 void calibration(){
 
 	if(calib_select == -1){
 		return;
 	}
 	else{
-		calibration_value += sensors[sensor_for_calib].averages;
+
 		calibration_counter++;
+		calibration_value += (sensors[sensor_for_calib].averages - calibration_value) / calibration_counter;
 
 		if(calibration_counter > 3000 / CAN_interval){
 

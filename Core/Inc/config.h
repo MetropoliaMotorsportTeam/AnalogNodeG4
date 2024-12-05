@@ -30,6 +30,8 @@ typedef struct SensorType {
 
 void check_calib_status(Sensor *sensor);
 void read_all_calib_values();
+void ADC_Update();
+
 
 // Ensure external visibility of the variables
 extern Sensor sensors[SENSOR_NUM];
@@ -37,8 +39,8 @@ extern uint16_t CAN_interval;
 
 // Enum for Pins
 enum Pins {
-    V24_in1, V3_in0, V3_in1, V24_in2, V24_in0,
-    V5_in6, V5_in5, V5_in4, V5_in1, V5_in0, V5_in3, V5_in2
+	V3_in0, V3_in1, V5_in0, V5_in1, V24_in2, V24_in1, V5_in4,
+	    V5_in5, V5_in6, V24_in0, V5_in3, V5_in2
 };
 
 #endif /* INC_CONFIG_H_ */

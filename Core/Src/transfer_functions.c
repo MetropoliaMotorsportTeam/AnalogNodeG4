@@ -90,27 +90,28 @@ uint16_t TF_BTN(uint8_t bytes, uint32_t raw, Sensor *sensor){
 }
 
 uint16_t TF_FRONT_HEAVE(uint8_t bytes, uint32_t raw, Sensor *sensor){
+	return 0;
 
 }
 uint16_t TF_REAR_HEAVE(uint8_t bytes, uint32_t raw, Sensor *sensor){
-
+	return 0;
 }
 uint16_t TF_FRONT_ROLL(uint8_t bytes, uint32_t raw, Sensor *sensor){
-
+	return 0;
 }
 uint16_t TF_REAR_ROLL(uint8_t bytes, uint32_t raw, Sensor *sensor){
-
+	return 0;
 }
 uint16_t TF_TYRE_TEMP(uint8_t bytes, uint32_t raw, Sensor *sensor){
-
+	return 0;
 }
 uint16_t TF_ANGLE_GEAR(uint8_t bytes, uint32_t raw, Sensor *sensor){
-
+	return 0;
 }
 uint16_t TF_WATER_LVL(uint8_t bytes, uint32_t raw, Sensor *sensor){
-
+	return 0;
 }
 
 uint16_t TF_BRK_PRES(uint8_t bytes, uint32_t raw, Sensor *sensor){
-
+	return 0;
 }
