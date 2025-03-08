@@ -94,15 +94,16 @@ void calibration(){
 		calibration_counter++;
 		calibration_value += (sensors[sensor_for_calib].averages - calibration_value) / calibration_counter;
 
-		if(calibration_counter > 3000 / CAN_interval){
+		if(calibration_counter > 6000 / CAN_interval){
 
-			calibration_value = calibration_value / calibration_counter;
+			//calibration_value = calibration_value / calibration_counter;
 
 			if(calib_select == 0)
 				sensors[sensor_for_calib].low_adc = calibration_value;
 			if(calib_select == 1)
 				sensors[sensor_for_calib].high_adc = calibration_value;
 
+			sent_calib_done();
 
 			calib_select = -1;
 			calibration_counter = 0;

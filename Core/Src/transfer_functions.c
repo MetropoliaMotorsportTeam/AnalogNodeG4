@@ -65,13 +65,10 @@ uint16_t TF_APPS1(uint8_t bytes, uint32_t raw, Sensor *sensor){
 
 uint16_t TF_APPS2(uint8_t bytes, uint32_t raw, Sensor *sensor){
 	uint16_t max_pos = 100; //in percent
-#if CALIB_WORKING
-	uint16_t min_raw = (sensor->calib_code % 2 == 1) ? 690 : sensor->low_adc;
-	uint16_t max_raw = (sensor->calib_code > 2) ? 2130 : sensor->high_adc;
-#else
-	uint16_t min_raw = 690;
-	uint16_t max_raw = 2130;
-#endif
+
+	uint16_t min_raw = (sensor->calib_code % 2 == 1) ? sensor->low_adc : 690;
+	uint16_t max_raw = (sensor->calib_code >= 2) ? sensor->high_adc : 2830;
+
 
 
 	if(raw > min_raw){
