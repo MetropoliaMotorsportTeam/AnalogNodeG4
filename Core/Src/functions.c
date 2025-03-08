@@ -12,6 +12,10 @@
 #include "main.h"
 #include "functions.h"
 
+extern FDCAN_HandleTypeDef hfdcan1;
+extern FDCAN_TxHeaderTypeDef TxHeader;
+extern FDCAN_RxHeaderTypeDef RxHeader;
+
 CAN_Message RxMessage;
 CAN_Message TxMessage;
 
@@ -52,17 +56,16 @@ void HAL_FDCAN_RxFifo0Callback(FDCAN_HandleTypeDef *hfdcan, uint32_t RxFifo0ITs)
 
 
 void print(uint16_t select){
-		//uint16_t Data = TF_Select(1,averages[select],transfer_functions[select]);
 
+		if(sensors[select].CAN_ID){
 
+			sensors[select].data = sensors[select].transfer_function(1,sensors[select].averages, &sensors[select]);
+			TxMessage.Bytes[0] = sensors[select].data;
+			TxMessage.Bytes[1] = sensors[select].data >> 8;
+			TxHeader.Identifier = sensors[select].CAN_ID;
 
-		sensors[select].data = sensors[select].transfer_function(1,sensors[select].averages, &sensors[select]);
-		TxMessage.Bytes[0] = sensors[select].data;
-		TxMessage.Bytes[1] = sensors[select].data >> 8;
-		TxHeader.Identifier = sensors[select].CAN_ID;
-
-		if(sensors[select].CAN_ID)
 			CanSend(TxMessage.Bytes);
+		}
 
 }
 

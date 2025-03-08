@@ -26,7 +26,4 @@ void print(uint16_t select);
 void decode(CAN_Message msg);
 void calibration();
 
-//extern CAN_Message RxMessage;
-//extern CAN_Message TxMessage;
-
 #endif /* INC_FUNCTIONS_H_ */

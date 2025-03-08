@@ -2,10 +2,25 @@
 
 #define FLASH_ADDRESS 0x0801F800
 
-#define ID 1
+#define ID 3
 
+
+void init_sensors(void){
+	//initialize the sensors
+		for (int i = 0; i < SENSOR_NUM; i++) {
+			sensors[i].transfer_function = TF_3V3;
+			sensors[i].CAN_ID = 0;
+			sensors[i].CAN_interval = 20;
+			sensors[i].averages = 0;
+			sensors[i].pin = i;
+			sensors[i].high_adc = 0xFFFF;
+			sensors[i].low_adc = 0xFFFF;
+		}
+}
 
 void Config_Setup(void) {
+	//initialize the sensors
+	init_sensors();
 
 	read_all_calib_values();
 
@@ -19,7 +34,7 @@ void Config_Setup(void) {
 }
 
 
-void ADC_Update() { //writes all 12 * 2 calibration values into the FLASH memory
+void ADC_Calib_Update() { //writes all 12 * 2 calibration values into the FLASH memory
     static FLASH_EraseInitTypeDef FlashErase;
     uint32_t PageError = 0;
 
@@ -53,13 +68,14 @@ void ADC_Update() { //writes all 12 * 2 calibration values into the FLASH memory
     // Enable interrupts after the operation
     __enable_irq();
 }
+
 void check_calib_status(Sensor *sensor){
 
-	uint16_t default_values = 0xFFFF;
+	uint16_t default_value = 0xFFFF;
 	int8_t code = 3;
-	if(sensor->low_adc == default_values )
+	if(sensor->low_adc == default_value )
 		code -= 1;
-	if(sensor->high_adc == default_values )
+	if(sensor->high_adc == default_value )
 		code -= 2;
 
 	sensor->calib_code = code;
@@ -85,16 +101,7 @@ void read_all_calib_values(){
 
 void Config_1(void) {
 
-	//initialize the sensors
-	for (int i = 0; i < SENSOR_NUM; i++) {
-		sensors[i].transfer_function = TF_3V3;
-		sensors[i].CAN_ID = 0;
-		sensors[i].CAN_interval = 20;
-		sensors[i].averages = 0;
-		sensors[i].pin = i;
-		sensors[i].high_adc = 0xFFFF;
-		sensors[i].low_adc = 0xFFFF;
-	}
+
 
 	// Sensor definitions
 	Sensor BTN1 = {TF_BTN, 12, 100, 0, V5_in0};
@@ -122,16 +129,16 @@ void Config_1(void) {
 }
 
 void Config_2(void){
-	//initialize the sensors
-		for (int i = 0; i < SENSOR_NUM; i++) {
-			sensors[i].transfer_function = TF_3V3;
-			sensors[i].CAN_ID = 0;
-			sensors[i].CAN_interval = 100;
-			sensors[i].averages = 0;
-			sensors[i].pin = i;
-		}
+	
+	CAN_interval = 100;
+}
 
-		// Sensor definitions
 
-	    CAN_interval = 100;
+void Config_3(void){
+
+	Sensor APPS2 = {TF_APPS2, 2, 100, 0, V5_in1};
+	sensors[APPS2.pin] = APPS2;
+
+	CAN_interval = 100;
+
 }

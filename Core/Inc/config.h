@@ -4,7 +4,7 @@
 #include "main.h"
 #include "transfer_functions.h"
 
-#define SENSOR_NUM 12
+#define SENSOR_NUM 12 //MAX number of sensors handled by the board.
 
 // Function Prototypes
 void Config_Setup(void);
@@ -30,7 +30,7 @@ typedef struct SensorType {
 
 void check_calib_status(Sensor *sensor);
 void read_all_calib_values();
-void ADC_Update();
+void ADC_Calib_Update();
 
 
 // Ensure external visibility of the variables

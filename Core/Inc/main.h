@@ -87,11 +87,12 @@ void Error_Handler(void);
 #define LED2_GPIO_Port GPIOC
 
 /* USER CODE BEGIN Private defines */
+/*
 extern FDCAN_TxHeaderTypeDef TxHeader;
 extern FDCAN_RxHeaderTypeDef RxHeader;
 
 extern FDCAN_HandleTypeDef hfdcan1;
-
+*/
 extern uint32_t averages[16];
 extern uint16_t transfer_functions[12];
 extern uint16_t all_raw_data[12][ROLLING_AVE];

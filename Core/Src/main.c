@@ -53,11 +53,11 @@ FDCAN_HandleTypeDef hfdcan1;
 TIM_HandleTypeDef htim3;
 
 /* USER CODE BEGIN PV */
-Sensor sensors[12];
+Sensor sensors[SENSOR_NUM];
 
-uint16_t ADC1Data[6];
-uint16_t ADC2Data[6];
-uint16_t all_raw_data[12][ROLLING_AVE];
+uint16_t ADC1Data[SENSOR_NUM / 2];
+uint16_t ADC2Data[SENSOR_NUM / 2];
+uint16_t all_raw_data[SENSOR_NUM][ROLLING_AVE];
 
 uint8_t AVE_POS = 0;
 uint16_t CAN_interval = 0;
@@ -125,8 +125,6 @@ int main(void)
   if(HAL_TIM_Base_Start_IT(&htim3) != HAL_OK){ Error_Handler(); };
   if(HAL_ADC_Start_DMA(&hadc1, (uint32_t *)ADC1Data, hadc1.Init.NbrOfConversion) != HAL_OK){ Error_Handler(); }
   if(HAL_ADC_Start_DMA(&hadc2, (uint32_t *)ADC2Data, hadc2.Init.NbrOfConversion) != HAL_OK){ Error_Handler(); }
-  if(HAL_FDCAN_Start(&hfdcan1)!= HAL_OK){ Error_Handler(); }else{ HAL_GPIO_WritePin(LED1_GPIO_Port,LED1_Pin, SET); CAN_enable = 1;}
-  if(HAL_FDCAN_ActivateNotification(&hfdcan1, FDCAN_IT_RX_FIFO0_NEW_MESSAGE,0) != HAL_OK) { Error_Handler(); }
 
   uint8_t counter = 0;
 
@@ -138,10 +136,10 @@ int main(void)
   {
 	  if(CAN_enable == 1){
 		  if(millis % CAN_interval == 0){
-			  print(counter);
+			print(counter);
 			  calibration();
 			  counter++;
-			  if(counter == 16){
+			  if(counter == SENSOR_NUM){
 				  HAL_GPIO_TogglePin(LED2_GPIO_Port,LED2_Pin);
 				  counter = 0;
 			  }
@@ -451,6 +449,19 @@ static void MX_FDCAN1_Init(void)
   }
   /* USER CODE BEGIN FDCAN1_Init 2 */
 
+  if(HAL_FDCAN_Start(&hfdcan1)!= HAL_OK){ Error_Handler(); }else{ HAL_GPIO_WritePin(LED1_GPIO_Port,LED1_Pin, SET); CAN_enable = 1;}
+  if(HAL_FDCAN_ActivateNotification(&hfdcan1, FDCAN_IT_RX_FIFO0_NEW_MESSAGE,0) != HAL_OK) { Error_Handler(); }
+
+
+
+  TxHeader.IdType = FDCAN_STANDARD_ID;
+  TxHeader.TxFrameType = FDCAN_DATA_FRAME;
+  TxHeader.DataLength = FDCAN_DLC_BYTES_2;
+  TxHeader.ErrorStateIndicator = FDCAN_ESI_ACTIVE;
+  TxHeader.BitRateSwitch = FDCAN_BRS_OFF;
+  TxHeader.FDFormat = FDCAN_CLASSIC_CAN;
+  TxHeader.TxEventFifoControl = FDCAN_NO_TX_EVENTS;
+  TxHeader.MessageMarker = 0;
   /* USER CODE END FDCAN1_Init 2 */
 
 }
@@ -563,51 +574,44 @@ static void MX_GPIO_Init(void)
 
 /* USER CODE BEGIN 4 */
 void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc) {
-	if(hadc->Instance == ADC1){
-		if(AVE_POS < ROLLING_AVE){
-			AVE_POS++;
-		}
-		else{
-			AVE_POS = 0;
-			for(int i = 0; i < hadc->Init.NbrOfConversion;i++){
-				for(int z = 0; z < ROLLING_AVE;z++){
-					if(z == 0){
-						//averages[i] = all_raw_data[i][0];
-            sensors[i].averages = all_raw_data[i][0];
-					}else{
-						//averages[i]=(averages[i] + all_raw_data[i][z])/2;
-            sensors[i].averages = (sensors[i].averages + all_raw_data[i][z])/2;
-					}
-				}
-			}
-		}
-		for(int j = 0; j < hadc->Init.NbrOfConversion;j++){
-			all_raw_data[j][AVE_POS-1] = ADC1Data[j];
-		}
-	}
+    // Use a static flag to ensure both ADCs have finished a conversion cycle.
+    // Bit 0 for ADC1, Bit 1 for ADC2.
+    static uint8_t adc_done = 0;
 
-	if(hadc->Instance == ADC2){
-			if(AVE_POS < ROLLING_AVE){
-				AVE_POS++;
-			}
-			else{
-				AVE_POS = 0;
-				for(int i = 8; i < hadc->Init.NbrOfConversion + 8;i++){
-					for(int z = 0; z < ROLLING_AVE;z++){
-						if(z == 0){
-							//averages[i] = all_raw_data[i][0];
-	            sensors[i].averages = all_raw_data[i][0];
-						}else{
-							//averages[i]=(averages[i] + all_raw_data[i][z])/2;
-	            sensors[i].averages = (sensors[i].averages + all_raw_data[i][z])/2;
-						}
-					}
-				}
-			}
-			for(int j = 8; j < hadc->Init.NbrOfConversion + 8;j++){
-				all_raw_data[j][AVE_POS-1] = ADC1Data[j];
-			}
-		}
+    if (hadc->Instance == ADC1) {
+        // Store ADC1 conversion results into sensors[0..5]
+        for (int j = 0; j < hadc->Init.NbrOfConversion; j++) {
+            all_raw_data[j][AVE_POS] = ADC1Data[j];
+        }
+        adc_done |= 0x01; // Mark ADC1 as done for this cycle.
+    }
+    else if (hadc->Instance == ADC2) {
+        // Store ADC2 conversion results into sensors[6..11]
+        for (int j = 0; j < hadc->Init.NbrOfConversion; j++) {
+            all_raw_data[j + 6][AVE_POS] = ADC2Data[j];
+        }
+        adc_done |= 0x02; // Mark ADC2 as done for this cycle.
+    }
+
+    // Once both ADC1 and ADC2 have provided data:
+    if (adc_done == 0x03) {
+        adc_done = 0;  // Reset the flag for the next conversion cycle.
+        AVE_POS++;     // Advance the sample index.
+
+        // When we have collected enough samples for a rolling average...
+        if (AVE_POS >= ROLLING_AVE) {
+            // For each sensor (total SENSOR_NUM = 12 sensors)
+            for (int i = 0; i < SENSOR_NUM; i++) {
+                uint32_t sum = 0;
+                for (int z = 0; z < ROLLING_AVE; z++) {
+                    sum += all_raw_data[i][z];
+                }
+                // Store the average in the sensor structure.
+                sensors[i].averages = sum / ROLLING_AVE;
+            }
+            AVE_POS = 0;  // Reset the sample index for the next averaging period.
+        }
+    }
 }
 /* USER CODE END 4 */
 
