@@ -4,6 +4,29 @@
 
 #define ID 3
 
+void init_virtual_sensor(VirtualSensor *v_sensor,const char *name,
+		SensorUpdateFunc func, void *context, uint16_t CAN_ID) {
+	v_sensor->name = name;
+	v_sensor->update_func = func;
+	v_sensor->context = context;
+	v_sensor->CAN_ID = CAN_ID;
+	v_sensor->input_count = 0;
+	//memset(&v_sensor->output, 0, sizeof(SensorData));
+}
+
+void add_input_sensor(VirtualSensor *v_sensor, VirtualSensor *input) {
+	if (v_sensor->input_count < MAX_INPUT_SENSORS) {
+		v_sensor->inputs[v_sensor->input_count++] = input;
+	}
+}
+
+void update_virtual_sensor(VirtualSensor *v_sensor) {
+	if (v_sensor->update_func) {
+		v_sensor->update_func(v_sensor->context);
+	}
+}
+
+
 
 void init_sensors(void){
 	//initialize the sensors
@@ -124,6 +147,12 @@ void Config_1(void) {
 	sensors[F_ROLL.pin] = F_ROLL;
 	sensors[F_HEAVE.pin] = F_HEAVE;
 	
+	VirtualSensor pedalreq;
+	pedalreq.CAN_ID = 17;
+	SensorData data = {0};
+	pedalreq.output = data;
+	pedalreq.inputs[2];
+
 
     CAN_interval = 20;
 }

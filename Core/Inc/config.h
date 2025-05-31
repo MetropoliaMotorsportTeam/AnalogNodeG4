@@ -5,6 +5,27 @@
 #include "transfer_functions.h"
 
 #define SENSOR_NUM 12 //MAX number of sensors handled by the board.
+#define MAX_INPUT_SENSORS 12
+
+
+typedef void (*SensorUpdateFunc)(void *context);
+
+typedef struct {
+	float values[3];
+} SensorData;
+
+typedef struct VirtualSensor {
+	const char *name;
+	SensorData output;
+	uint16_t CAN_ID;
+	void *context;
+	SensorUpdateFunc update_func;
+
+	//fusion
+	struct SensorType
+	*inputs[MAX_INPUT_SENSORS];
+	int input_count;
+} VirtualSensor;
 
 // Function Prototypes
 void Config_Setup(void);

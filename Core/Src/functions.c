@@ -84,6 +84,11 @@ void sent_calib_done(){
 
 uint8_t calibration_counter = 0;
 uint16_t calibration_value = 0;
+
+uint16_t max_value = 0;
+uint16_t min_value = 65535;
+
+
 void calibration(){
 
 	if(calib_select == -1){
@@ -92,21 +97,34 @@ void calibration(){
 	else{
 
 		calibration_counter++;
-		calibration_value += (sensors[sensor_for_calib].averages - calibration_value) / calibration_counter;
+		//calibration_value += (sensors[sensor_for_calib].averages - calibration_value) / calibration_counter;
+
+		if (sensors[sensor_for_calib].high_adc > max_value) {
+					max_value = sensors[sensor_for_calib].high_adc;
+				}
+
+		if (sensors[sensor_for_calib].low_adc < min_value) {
+					min_value = sensors[sensor_for_calib].low_adc;
+				}
 
 		if(calibration_counter > 6000 / CAN_interval){
 
 			//calibration_value = calibration_value / calibration_counter;
 
+
 			if(calib_select == 0)
-				sensors[sensor_for_calib].low_adc = calibration_value;
+				sensors[sensor_for_calib].low_adc = min_value;
 			if(calib_select == 1)
-				sensors[sensor_for_calib].high_adc = calibration_value;
+				sensors[sensor_for_calib].high_adc = max_value;
+
 
 			sent_calib_done();
 
 			calib_select = -1;
 			calibration_counter = 0;
+
+			max_value = 0;
+			min_value = 65535;
 		}
 
 	}
