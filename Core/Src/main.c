@@ -448,7 +448,7 @@ static void MX_FDCAN1_Init(void)
     Error_Handler();
   }
   /* USER CODE BEGIN FDCAN1_Init 2 */
-  FDCAN_FilterTypeDef sFilterConfig;
+  /*FDCAN_FilterTypeDef sFilterConfig;
 
   if (HAL_FDCAN_ConfigRxFifoOverwrite(&hfdcan1, FDCAN_RX_FIFO0, FDCAN_RX_FIFO_OVERWRITE) != HAL_OK)
     {
@@ -491,7 +491,7 @@ static void MX_FDCAN1_Init(void)
 
 
 
-
+*/
 
   if(HAL_FDCAN_Start(&hfdcan1)!= HAL_OK){ Error_Handler(); }else{ HAL_GPIO_WritePin(LED1_GPIO_Port,LED1_Pin, SET); CAN_enable = 1;}
   if(HAL_FDCAN_ActivateNotification(&hfdcan1, FDCAN_IT_RX_FIFO0_NEW_MESSAGE,0) != HAL_OK) { Error_Handler(); }

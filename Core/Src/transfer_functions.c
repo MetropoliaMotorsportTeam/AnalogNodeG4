@@ -38,44 +38,48 @@ uint16_t bpps_global;
 uint16_t TF_BPPS(uint8_t bytes, uint32_t raw, Sensor *sensor){ //brake pedal position sensor
 	uint16_t max_pos = 100; //in percent
 
-	uint16_t min_raw = (sensor->calib_code % 2 == 1) ? 2615 : sensor->low_adc;
-	uint16_t max_raw = (sensor->calib_code > 2) ? 2925 : sensor->high_adc;
+	uint16_t min_raw = (sensor->calib_code % 2 == 1 && sensor->low_adc != 0) ? sensor->low_adc : 2615 ;
+	uint16_t max_raw = (sensor->calib_code > 2 && sensor->high_adc != 0) ? sensor->high_adc : 2925;
 
-	if(raw > min_raw){
-		uint16_t bpps = (raw-min_raw)*max_pos / (max_raw-min_raw);
+	uint16_t bpps = (raw-min_raw)*max_pos / (max_raw-min_raw);
+
+	if(min_raw > max_raw){
+
+		bpps = 100 - bpps;
 		bpps_global = bpps;
-		return bpps;
+
 	}
-	return 0;
+	return bpps;
 
 }
 uint16_t TF_APPS1(uint8_t bytes, uint32_t raw, Sensor *sensor){
 	uint16_t max_pos = 100; //in percent
 
-	uint16_t min_raw = (sensor->calib_code % 2 == 1) ? 650 : sensor->low_adc;
-	uint16_t max_raw = (sensor->calib_code > 2) ? 1990 : sensor->high_adc;
+	uint16_t min_raw = (sensor->calib_code % 2 == 1 && sensor->low_adc != 0) ? sensor->low_adc : 650;
+	uint16_t max_raw = (sensor->calib_code > 2 &&  sensor->high_adc != 0) ? sensor->high_adc : 1990 ;
 
+	uint16_t apps = (raw-min_raw)*max_pos / (max_raw-min_raw);
 
-	if(raw > min_raw){
-		uint16_t apps = (raw-min_raw)*max_pos / (max_raw-min_raw);
-		return 100 - apps;
+	if(min_raw > max_raw){
+
+		apps = 100 - apps;
 	}
-	return 0;
+	return apps;
 }
 
 uint16_t TF_APPS2(uint8_t bytes, uint32_t raw, Sensor *sensor){
 	uint16_t max_pos = 100; //in percent
 
-	uint16_t min_raw = (sensor->calib_code % 2 == 1) ? sensor->low_adc : 690;
-	uint16_t max_raw = (sensor->calib_code >= 2) ? sensor->high_adc : 2830;
+	uint16_t min_raw = (sensor->calib_code % 2 == 1 && sensor->low_adc != 0) ? sensor->low_adc : 690 ;
+	uint16_t max_raw = (sensor->calib_code >= 2 && sensor->high_adc != 0) ? sensor->high_adc : 2830;
 
+	uint16_t apps = (raw-min_raw)*max_pos / (max_raw-min_raw);
 
+	if(min_raw > max_raw){
 
-	if(raw > min_raw){
-		uint16_t apps = (raw-min_raw)*max_pos / (max_raw-min_raw);
-		return 100 - apps;
+		apps = 100 - apps;
 	}
-	return 0;
+	return apps;
 }
 
 uint16_t TF_BTN(uint8_t bytes, uint32_t raw, Sensor *sensor){

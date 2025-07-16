@@ -1,8 +1,8 @@
-../Core/Src/config.c:8:6:init_sensors	2
-../Core/Src/config.c:21:6:Config_Setup	1
-../Core/Src/config.c:37:6:ADC_Calib_Update	4
-../Core/Src/config.c:72:6:check_calib_status	3
-../Core/Src/config.c:85:6:read_all_calib_values	2
-../Core/Src/config.c:102:6:Config_1	1
-../Core/Src/config.c:131:6:Config_2	1
-../Core/Src/config.c:137:6:Config_3	1
+../Core/Src/config.c:31:6:init_sensors	2
+../Core/Src/config.c:44:6:Config_Setup	1
+../Core/Src/config.c:62:6:ADC_Calib_Update	4
+../Core/Src/config.c:97:6:check_calib_status	3
+../Core/Src/config.c:110:6:read_all_calib_values	4
+../Core/Src/config.c:138:6:Config_1	1
+../Core/Src/config.c:174:6:Config_2	1
+../Core/Src/config.c:180:6:Config_3	1

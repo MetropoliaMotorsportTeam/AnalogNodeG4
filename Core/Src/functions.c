@@ -79,6 +79,7 @@ void sent_calib_done(){
 
 	sensors[sensor_for_calib].calib_code = sensors[sensor_for_calib].calib_code | (1 << calib_select);
 
+	ADC_Calib_Update();
 
 }
 
@@ -99,15 +100,15 @@ void calibration(){
 		calibration_counter++;
 		//calibration_value += (sensors[sensor_for_calib].averages - calibration_value) / calibration_counter;
 
-		if (sensors[sensor_for_calib].high_adc > max_value) {
-					max_value = sensors[sensor_for_calib].high_adc;
+		if (sensors[sensor_for_calib].averages > max_value) {
+					max_value = sensors[sensor_for_calib].averages;
 				}
 
-		if (sensors[sensor_for_calib].low_adc < min_value) {
-					min_value = sensors[sensor_for_calib].low_adc;
+		if (sensors[sensor_for_calib].averages < min_value) {
+					min_value = sensors[sensor_for_calib].averages;
 				}
 
-		if(calibration_counter > 6000 / CAN_interval){
+		if(calibration_counter > (5000 / CAN_interval)){
 
 			//calibration_value = calibration_value / calibration_counter;
 

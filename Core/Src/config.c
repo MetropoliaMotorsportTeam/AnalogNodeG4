@@ -2,9 +2,9 @@
 
 #define FLASH_ADDRESS 0x0801F800
 
-#define ID 3
+#define ID 1
 
-void init_virtual_sensor(VirtualSensor *v_sensor,const char *name,
+/*void init_virtual_sensor(VirtualSensor *v_sensor,const char *name,
 		SensorUpdateFunc func, void *context, uint16_t CAN_ID) {
 	v_sensor->name = name;
 	v_sensor->update_func = func;
@@ -24,7 +24,7 @@ void update_virtual_sensor(VirtualSensor *v_sensor) {
 	if (v_sensor->update_func) {
 		v_sensor->update_func(v_sensor->context);
 	}
-}
+}*/
 
 
 
@@ -45,7 +45,6 @@ void Config_Setup(void) {
 	//initialize the sensors
 	init_sensors();
 
-	read_all_calib_values();
 
 #if ID == 1
     Config_1();
@@ -54,6 +53,9 @@ void Config_Setup(void) {
 #elif ID == 3
     Config_3();
 #endif
+
+	read_all_calib_values();
+
 }
 
 
@@ -97,9 +99,9 @@ void check_calib_status(Sensor *sensor){
 	uint16_t default_value = 0xFFFF;
 	int8_t code = 3;
 	if(sensor->low_adc == default_value )
-		code -= 1;
+		code += 1;
 	if(sensor->high_adc == default_value )
-		code -= 2;
+		code += 2;
 
 	sensor->calib_code = code;
 
@@ -117,7 +119,18 @@ void read_all_calib_values(){
 		sensors[i].low_adc = low;
 		sensors[i].high_adc = high;
 
-		check_calib_status(&sensors[i]);
+		uint16_t default_value = 0xFFFF;
+		int8_t code = 0;
+		if(sensors[i].low_adc != default_value )
+				code += 1;
+		if(sensors[i].high_adc != default_value )
+				code += 2;
+
+		sensors[i].calib_code = code;
+
+
+
+		//check_calib_status(&sensors[i]);
 	}
 }
 
@@ -126,7 +139,6 @@ void Config_1(void) {
 
 
 
-	// Sensor definitions
 	Sensor BTN1 = {TF_BTN, 12, 100, 0, V5_in0};
 	Sensor BTN2 = {TF_BTN, 13, 100, 0, V5_in5};
 	Sensor BTN3 = {TF_BTN, 14, 100, 0, V5_in4};
@@ -147,13 +159,15 @@ void Config_1(void) {
 	sensors[F_ROLL.pin] = F_ROLL;
 	sensors[F_HEAVE.pin] = F_HEAVE;
 	
+
+	/*
 	VirtualSensor pedalreq;
 	pedalreq.CAN_ID = 17;
 	SensorData data = {0};
 	pedalreq.output = data;
 	pedalreq.inputs[2];
 
-
+	*/
     CAN_interval = 20;
 }
 

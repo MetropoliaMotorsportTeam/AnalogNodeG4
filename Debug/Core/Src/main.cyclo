@@ -3,8 +3,8 @@
 ../Core/Src/main.c:201:13:MX_ADC1_Init	9
 ../Core/Src/main.c:314:13:MX_ADC2_Init	8
 ../Core/Src/main.c:418:13:MX_FDCAN1_Init	4
-../Core/Src/main.c:474:13:MX_TIM3_Init	4
-../Core/Src/main.c:517:13:MX_DMA_Init	1
-../Core/Src/main.c:539:13:MX_GPIO_Init	1
-../Core/Src/main.c:576:6:HAL_ADC_ConvCpltCallback	9
-../Core/Src/main.c:622:6:Error_Handler	1
+../Core/Src/main.c:518:13:MX_TIM3_Init	4
+../Core/Src/main.c:561:13:MX_DMA_Init	1
+../Core/Src/main.c:583:13:MX_GPIO_Init	1
+../Core/Src/main.c:620:6:HAL_ADC_ConvCpltCallback	9
+../Core/Src/main.c:666:6:Error_Handler	1
