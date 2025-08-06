@@ -10,6 +10,19 @@
 #include "main.h"
 #include "config.h"
 
+uint32_t ValueControl(uint32_t raw, uint32_t min_raw, uint32_t max_raw){
+
+	if(raw > max_raw)
+		return max_raw;
+
+	if(raw < min_raw)
+			return min_raw;
+
+	return raw;
+
+
+}
+
 uint16_t TF_3V3(uint8_t bytes, uint32_t raw, Sensor *sensor){
 
 
@@ -41,6 +54,8 @@ uint16_t TF_BPPS(uint8_t bytes, uint32_t raw, Sensor *sensor){ //brake pedal pos
 	uint16_t min_raw = (sensor->calib_code % 2 == 1 && sensor->low_adc != 0) ? sensor->low_adc : 2615 ;
 	uint16_t max_raw = (sensor->calib_code > 2 && sensor->high_adc != 0) ? sensor->high_adc : 2925;
 
+	raw = ValueControl(raw, min_raw, max_raw);
+
 	uint16_t bpps = (raw-min_raw)*max_pos / (max_raw-min_raw);
 
 	if(min_raw > max_raw){
@@ -58,6 +73,8 @@ uint16_t TF_APPS1(uint8_t bytes, uint32_t raw, Sensor *sensor){
 	uint16_t min_raw = (sensor->calib_code % 2 == 1 && sensor->low_adc != 0) ? sensor->low_adc : 650;
 	uint16_t max_raw = (sensor->calib_code > 2 &&  sensor->high_adc != 0) ? sensor->high_adc : 1990 ;
 
+	raw = ValueControl(raw, min_raw, max_raw);
+
 	uint16_t apps = (raw-min_raw)*max_pos / (max_raw-min_raw);
 
 	if(min_raw > max_raw){
@@ -72,6 +89,8 @@ uint16_t TF_APPS2(uint8_t bytes, uint32_t raw, Sensor *sensor){
 
 	uint16_t min_raw = (sensor->calib_code % 2 == 1 && sensor->low_adc != 0) ? sensor->low_adc : 690 ;
 	uint16_t max_raw = (sensor->calib_code >= 2 && sensor->high_adc != 0) ? sensor->high_adc : 2830;
+
+	raw = ValueControl(raw, min_raw, max_raw);
 
 	uint16_t apps = (raw-min_raw)*max_pos / (max_raw-min_raw);
 
@@ -110,7 +129,19 @@ uint16_t TF_TYRE_TEMP(uint8_t bytes, uint32_t raw, Sensor *sensor){
 	return 0;
 }
 uint16_t TF_ANGLE_GEAR(uint8_t bytes, uint32_t raw, Sensor *sensor){
-	return 0;
+
+	float SteeringAngleScope = 320; //how many degrees of movement steering wheel can do
+	float WheelAngleScope = 40;
+	uint16_t min_raw = (sensor->calib_code % 2 == 1 && sensor->low_adc != 0) ? sensor->low_adc : 690 ;
+	uint16_t max_raw = (sensor->calib_code >= 2 && sensor->high_adc != 0) ? sensor->high_adc : 2830;
+
+	raw = ValueControl(raw, min_raw, max_raw);
+
+
+	float SteeringAngle = (raw-min_raw) * SteeringAngleScope / (max_raw-min_raw);
+	SteeringAngle -= AngleScope/2;
+
+	return SteeringAngle;
 }
 uint16_t TF_WATER_LVL(uint8_t bytes, uint32_t raw, Sensor *sensor){
 	return 0;
