@@ -130,18 +130,19 @@ uint16_t TF_TYRE_TEMP(uint8_t bytes, uint32_t raw, Sensor *sensor){
 }
 uint16_t TF_ANGLE_GEAR(uint8_t bytes, uint32_t raw, Sensor *sensor){
 
-	float SteeringAngleScope = 320; //how many degrees of movement steering wheel can do
-	float WheelAngleScope = 40;
+	return 0;
+	//float SteeringAngleScope = 320; //how many degrees of movement steering wheel can do
+	/*float WheelAngleScope = 40;
 	uint16_t min_raw = (sensor->calib_code % 2 == 1 && sensor->low_adc != 0) ? sensor->low_adc : 690 ;
 	uint16_t max_raw = (sensor->calib_code >= 2 && sensor->high_adc != 0) ? sensor->high_adc : 2830;
 
 	raw = ValueControl(raw, min_raw, max_raw);
 
 
-	float SteeringAngle = (raw-min_raw) * SteeringAngleScope / (max_raw-min_raw);
+	float SteeringAngle = (raw-min_raw) * WheelAngleScope / (max_raw-min_raw);
 	SteeringAngle -= AngleScope/2;
 
-	return SteeringAngle;
+	return SteeringAngle;*/
 }
 uint16_t TF_WATER_LVL(uint8_t bytes, uint32_t raw, Sensor *sensor){
 	return 0;
