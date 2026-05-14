@@ -187,7 +187,6 @@ uint16_t TF_WATER_TEMP(uint8_t bytes, uint32_t raw, Sensor* sensor)
   const float T0 = 298.15f;
   const float R1 = 10000.0f;
 
-  // TODO: replace this with measured 5V rail
   float Vs = (v5_line_mv > 0) ? v5_line_mv : 5000.0f;
 
   const float Vref = 3300.0f;

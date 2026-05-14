@@ -1,5 +1,6 @@
 #include "config.h"
 #include "transfer_functions.h"
+#include <string.h>
 
 #define FLASH_ADDRESS 0x0801F800
 static void Config_1(void);
@@ -7,33 +8,39 @@ static void Config_2(void);
 static void Config_3(void);
 static void Config_4(void);
 
+VirtualSensor pedalreq = {0};
+
 #define DEFAULT_ID 4
 
-/*void init_virtual_sensor(VirtualSensor *v_sensor,const char *name,
-    SensorUpdateFunc func, void *context, uint16_t CAN_ID) {
+void init_virtual_sensor(VirtualSensor* v_sensor, const char* name, SensorUpdateFunc func,
+                         void* context, uint16_t CAN_ID)
+{
   v_sensor->name = name;
   v_sensor->update_func = func;
   v_sensor->context = context;
   v_sensor->CAN_ID = CAN_ID;
   v_sensor->input_count = 0;
-  //memset(&v_sensor->output, 0, sizeof(SensorData));
+  memset(&v_sensor->output, 0, sizeof(SensorData));
 }
 
-void add_input_sensor(VirtualSensor *v_sensor, VirtualSensor *input) {
-  if (v_sensor->input_count < MAX_INPUT_SENSORS) {
+void add_input_sensor(VirtualSensor* v_sensor, VirtualSensor* input)
+{
+  if (v_sensor->input_count < MAX_INPUT_SENSORS)
+  {
     v_sensor->inputs[v_sensor->input_count++] = input;
   }
 }
 
-void update_virtual_sensor(VirtualSensor *v_sensor) {
-  if (v_sensor->update_func) {
+void update_virtual_sensor(VirtualSensor* v_sensor)
+{
+  if (v_sensor->update_func)
+  {
     v_sensor->update_func(v_sensor->context);
   }
-}*/
+}
 
 void init_sensors(void)
 {
-  // initialize the sensors
   for (int i = 0; i < SENSOR_NUM; i++)
   {
     sensors[i].transfer_function = TF_3V3;
@@ -48,7 +55,6 @@ void init_sensors(void)
 
 void Config_Setup(void)
 {
-  // initialize the sensors
   init_sensors();
 
 #if DEFAULT_ID == 1
@@ -79,7 +85,7 @@ void Change_Sensor_Config(uint8_t opt)
     break;
   case 4:
     Config_4();
-
+    break;
   default:
     break;
   }
@@ -161,7 +167,7 @@ void read_all_calib_values()
 
     sensors[i].calib_code = code;
 
-    // check_calib_status(&sensors[i]);
+    check_calib_status(&sensors[i]);
   }
 }
 
@@ -180,7 +186,6 @@ static void Config_1(void)
   sensors[APPS1.pin] = APPS1;
   sensors[APPS2.pin] = APPS2;
   sensors[BPPS.pin] = BPPS;
-  // sensors[BTN1.pin] = BTN1;
   sensors[W_TEMP.pin] = W_TEMP;
   sensors[BTN2.pin] = BTN2;
   sensors[BTN3.pin] = BTN3;
@@ -188,14 +193,8 @@ static void Config_1(void)
   sensors[F_ROLL.pin] = F_ROLL;
   sensors[F_HEAVE.pin] = F_HEAVE;
 
-  /*
-  VirtualSensor pedalreq;
   pedalreq.CAN_ID = 17;
-  SensorData data = {0};
-  pedalreq.output = data;
-  pedalreq.inputs[2];
 
-  */
   CAN_interval = 20;
 }
 
@@ -215,6 +214,7 @@ static void Config_3(void)
 static void Config_4(void)
 {
   Sensor W_TEMP = {TF_WATER_TEMP, 2, 100, 0, V5_in0};
+
   // TODO: change this to the correct pin
   Sensor V5_LINE = {TF_5V_ASSIGN, 10, 100, 0, V5_in1};
 

@@ -6,30 +6,28 @@
 
 #define SENSOR_NUM 12 // MAX number of sensors handled by the board.
 typedef struct SensorType Sensor;
-/*#define MAX_INPUT_SENSORS 12
+#define MAX_INPUT_SENSORS 12
 
+typedef void (*SensorUpdateFunc)(void* context);
 
-
-typedef void (*SensorUpdateFunc)(void *context);
-
-typedef struct {
+typedef struct
+{
   float values[3];
 } SensorData;
 
-typedef struct VirtualSensor {
-  const char *name;
+typedef struct VirtualSensor VirtualSensor;
+
+struct VirtualSensor
+{
+  const char* name;
   SensorData output;
   uint16_t CAN_ID;
-  void *context;
+  void* context;
   SensorUpdateFunc update_func;
+  VirtualSensor* inputs[MAX_INPUT_SENSORS];
+  uint32_t input_count;
+};
 
-  //fusion
-  struct SensorType
-  *inputs[MAX_INPUT_SENSORS];
-  int input_count;
-} VirtualSensor;*/
-
-// Function Prototypes
 void Config_Setup(void);
 void Change_Sensor_Config(uint8_t opt);
 
