@@ -2,6 +2,7 @@
 #define INC_CONFIG_H_
 
 #include "main.h"
+#define CHANGE_SENSOR_CONFIG 0x00AA
 
 #define SENSOR_NUM 12 // MAX number of sensors handled by the board.
 typedef struct SensorType Sensor;
@@ -30,9 +31,7 @@ typedef struct VirtualSensor {
 
 // Function Prototypes
 void Config_Setup(void);
-void Config_1(void);
-void Config_2(void);
-void Config_3(void);
+void Change_Sensor_Config(uint8_t opt);
 
 typedef volatile struct CanDataType CANData;
 

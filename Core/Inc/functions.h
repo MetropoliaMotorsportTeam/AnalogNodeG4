@@ -8,6 +8,9 @@
 #ifndef INC_FUNCTIONS_H_
 #define INC_FUNCTIONS_H_
 
+#include "stm32g4xx_hal.h"
+#include <stdint.h>
+
 #define CAN_CALIB_ID 31
 #define CAN_CALIIB_DONE_ID 32
 
@@ -26,16 +29,17 @@
 #define virt_sensor_can_id_13 29;
 #define virt_sensor_can_id_14 30;
 
-typedef struct{
-	uint16_t Id;
-	uint8_t DLC;
-	uint8_t Bytes[8];
-}CAN_Message;
+typedef struct
+{
+  uint16_t Id;
+  uint8_t DLC;
+  uint8_t Bytes[8];
+} CAN_Message;
 
-extern uint8_t sensor_for_calib; //Sensor calibration number
-extern int8_t calib_select; //Upper or lower calibration
+extern uint8_t sensor_for_calib; // Sensor calibration number
+extern int8_t calib_select;      // Upper or lower calibration
 
-void CanSend(uint8_t *TxData);
+void CanSend(uint8_t* TxData);
 void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc);
 void print(uint16_t select);
 void decode(CAN_Message msg);

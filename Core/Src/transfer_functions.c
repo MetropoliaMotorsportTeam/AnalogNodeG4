@@ -9,6 +9,9 @@
 #include "config.h"
 #include "functions.h"
 #include "main.h"
+#include <math.h>
+
+extern uint16_t v5_line_mv;
 
 uint32_t ValueControl(uint32_t raw, uint32_t min_raw, uint32_t max_raw)
 {
@@ -160,4 +163,47 @@ uint16_t TF_WATER_LVL(uint8_t bytes, uint32_t raw, Sensor* sensor)
 uint16_t TF_BRK_PRES(uint8_t bytes, uint32_t raw, Sensor* sensor)
 {
   return 0;
+}
+
+uint16_t TF_5V_ASSIGN(uint8_t bytes, uint32_t raw, Sensor* sensor)
+{
+  (void)bytes;
+
+  uint16_t max_volt = 5000;
+  uint16_t voltage = raw * max_volt / 4095;
+
+  v5_line_mv = voltage;
+
+  return voltage;
+}
+
+uint16_t TF_WATER_TEMP(uint8_t bytes, uint32_t raw, Sensor* sensor)
+{
+  (void)bytes;
+  (void)sensor;
+
+  const float B = 3988.0f;
+  const float R0 = 10000.0f;
+  const float T0 = 298.15f;
+  const float R1 = 10000.0f;
+
+  // TODO: replace this with measured 5V rail
+  float Vs = (v5_line_mv > 0) ? v5_line_mv : 5000.0f;
+
+  const float Vref = 3300.0f;
+
+  float v = ((float)raw / 4095.0f) * Vref;
+
+  if (v <= 0.0f)
+    v = 0.001f;
+
+  if (v >= Vs)
+    v = Vs - 0.001f;
+
+  float r = (v * R1) / (Vs - v);
+
+  float temp_kelvin = 1.0f / ((1.0f / T0) + (logf(r / R0) / B));
+  float temp_celsius = temp_kelvin - 273.15f;
+
+  return (uint16_t)temp_celsius;
 }

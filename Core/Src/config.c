@@ -2,8 +2,12 @@
 #include "transfer_functions.h"
 
 #define FLASH_ADDRESS 0x0801F800
+static void Config_1(void);
+static void Config_2(void);
+static void Config_3(void);
+static void Config_4(void);
 
-#define ID 1
+#define DEFAULT_ID 4
 
 /*void init_virtual_sensor(VirtualSensor *v_sensor,const char *name,
     SensorUpdateFunc func, void *context, uint16_t CAN_ID) {
@@ -47,15 +51,38 @@ void Config_Setup(void)
   // initialize the sensors
   init_sensors();
 
-#if ID == 1
+#if DEFAULT_ID == 1
   Config_1();
-#elif ID == 2
+#elif DEFAULT_ID == 2
   Config_2();
-#elif ID == 3
+#elif DEFAULT_ID == 3
   Config_3();
+#elif DEFAULT_ID == 4
+  Config_4();
 #endif
 
   read_all_calib_values();
+}
+
+void Change_Sensor_Config(uint8_t opt)
+{
+  switch (opt)
+  {
+  case 1:
+    Config_1();
+    break;
+  case 2:
+    Config_2();
+    break;
+  case 3:
+    Config_3();
+    break;
+  case 4:
+    Config_4();
+
+  default:
+    break;
+  }
 }
 
 void ADC_Calib_Update()
@@ -138,10 +165,9 @@ void read_all_calib_values()
   }
 }
 
-void Config_1(void)
+static void Config_1(void)
 {
-
-  Sensor BTN1 = {TF_BTN, 12, 100, 0, V5_in0};
+  Sensor W_TEMP = {TF_WATER_TEMP, 2, 100, 0, V5_in0};
   Sensor BTN2 = {TF_BTN, 13, 100, 0, V5_in5};
   Sensor BTN3 = {TF_BTN, 14, 100, 0, V5_in4};
   Sensor APPS2 = {TF_APPS2, 2, 100, 0, V5_in1};
@@ -154,7 +180,8 @@ void Config_1(void)
   sensors[APPS1.pin] = APPS1;
   sensors[APPS2.pin] = APPS2;
   sensors[BPPS.pin] = BPPS;
-  sensors[BTN1.pin] = BTN1;
+  // sensors[BTN1.pin] = BTN1;
+  sensors[W_TEMP.pin] = W_TEMP;
   sensors[BTN2.pin] = BTN2;
   sensors[BTN3.pin] = BTN3;
   sensors[ANGLE.pin] = ANGLE;
@@ -172,17 +199,27 @@ void Config_1(void)
   CAN_interval = 20;
 }
 
-void Config_2(void)
+static void Config_2(void)
 {
-
   CAN_interval = 100;
 }
 
-void Config_3(void)
+static void Config_3(void)
 {
-
   Sensor APPS2 = {TF_APPS2, 2, 100, 0, V5_in1};
   sensors[APPS2.pin] = APPS2;
 
   CAN_interval = 100;
+}
+
+static void Config_4(void)
+{
+  Sensor W_TEMP = {TF_WATER_TEMP, 2, 100, 0, V5_in0};
+  // TODO: change this to the correct pin
+  Sensor V5_LINE = {TF_5V_ASSIGN, 10, 100, 0, V5_in1};
+
+  sensors[W_TEMP.pin] = W_TEMP;
+  sensors[V5_LINE.pin] = V5_LINE;
+
+  CAN_interval = 20;
 }

@@ -11,8 +11,6 @@
 // #include "main.h"
 #include "config.h" // Make sure config.h is included before using 'Sensor'
 
-typedef struct SensorType Sensor;
-
 uint16_t TF_3V3(uint8_t bytes, uint32_t raw, Sensor* sensor);
 uint16_t TF_5V(uint8_t bytes, uint32_t raw, Sensor* sensor);
 uint16_t TF_24V(uint8_t bytes, uint32_t raw, Sensor* sensor);
@@ -28,5 +26,7 @@ uint16_t TF_ANGLE_GEAR(uint8_t bytes, uint32_t raw, Sensor* sensor);
 uint16_t TF_WATER_LVL(uint8_t bytes, uint32_t raw, Sensor* sensor);
 uint16_t TF_BRK_PRES(uint8_t bytes, uint32_t raw, Sensor* sensor);
 uint16_t TF_BTN(uint8_t bytes, uint32_t raw, Sensor* sensor);
+uint16_t TF_WATER_TEMP(uint8_t bytes, uint32_t raw, Sensor* sensor);
+uint16_t TF_5V_ASSIGN(uint8_t bytes, uint32_t raw, Sensor* sensor);
 
 #endif /* INC_TRANSFER_FUNCTIONS_H_ */
