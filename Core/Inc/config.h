@@ -7,7 +7,6 @@
 #define SENSOR_NUM 12 // MAX number of sensors handled by the board.
 typedef struct SensorType Sensor;
 #define MAX_INPUT_SENSORS 12
-typedef struct VirtualSensor VirtualSensor;
 
 typedef struct
 {

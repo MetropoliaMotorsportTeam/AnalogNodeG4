@@ -32,7 +32,7 @@ void update_pedalreq(VirtualSensor* v_sensor)
 
   uint16_t request = (apps1 + apps2) / 2;
 
-  v_sensor->output.values[0] = request;             // pedal request x10
-  v_sensor->output.values[1] = PEDALREQ_FAULT_NONE; // fault code
-  v_sensor->output.values[2] = delta;               // APPS delta x10
+  v_sensor->output.values[0] = request;
+  v_sensor->output.values[1] = PEDALREQ_FAULT_NONE;
+  v_sensor->output.values[2] = delta;
 }

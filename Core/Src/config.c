@@ -1,6 +1,8 @@
 #include "config.h"
 #include "transfer_functions.h"
 #include <string.h>
+#include "virtual_sensors.h"
+#include "sensors.h"
 
 #define FLASH_ADDRESS 0x0801F800
 static void Config_1(void);
@@ -215,7 +217,7 @@ static void Config_3(void)
   pedalreq.inputs[0] = &sensors[APPS1.pin];
   pedalreq.inputs[1] = &sensors[APPS2.pin];
 
-  init_virtual_sensor(&pedalreq, "pedal request", NULL, &pedalctx, 17);
+  init_virtual_sensor(&pedalreq, "pedal request", update_pedalreq, &pedalctx, 17);
   add_input_sensor(&pedalreq, &sensors[APPS1.pin]);
   add_input_sensor(&pedalreq, &sensors[APPS2.pin]);
 
