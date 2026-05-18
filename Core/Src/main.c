@@ -64,7 +64,6 @@ uint16_t CAN_interval = 0;
 uint16_t init_can_id = 1;
 uint32_t millis;
 uint8_t CAN_enable = 0;
-uint16_t v5_line_mv = 0;
 
 FDCAN_TxHeaderTypeDef TxHeader;
 FDCAN_RxHeaderTypeDef RxHeader;
