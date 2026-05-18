@@ -7,15 +7,20 @@
 #define SENSOR_NUM 12 // MAX number of sensors handled by the board.
 typedef struct SensorType Sensor;
 #define MAX_INPUT_SENSORS 12
+typedef struct VirtualSensor VirtualSensor;
 
 typedef void (*SensorUpdateFunc)(void* context);
 
 typedef struct
 {
-  float values[3];
+  uint32_t values[3];
 } SensorData;
 
-typedef struct VirtualSensor VirtualSensor;
+typedef struct
+{
+  Sensor* apps1;
+  Sensor* apps2;
+} PedalContext;
 
 struct VirtualSensor
 {
@@ -24,7 +29,7 @@ struct VirtualSensor
   uint16_t CAN_ID;
   void* context;
   SensorUpdateFunc update_func;
-  VirtualSensor* inputs[MAX_INPUT_SENSORS];
+  Sensor* inputs[MAX_INPUT_SENSORS];
   uint32_t input_count;
 };
 
@@ -72,5 +77,7 @@ enum Pins
   V5_in3,
   V5_in2
 };
+
+#define V5_LINE_PIN V5_in1
 
 #endif /* INC_CONFIG_H_ */

@@ -9,8 +9,10 @@ static void Config_3(void);
 static void Config_4(void);
 
 VirtualSensor pedalreq = {0};
+PedalContext pedalctx = {0};
 
-#define DEFAULT_ID 4
+// TODO: change this to a variable instead
+#define DEFAULT_ID 3
 
 void init_virtual_sensor(VirtualSensor* v_sensor, const char* name, SensorUpdateFunc func,
                          void* context, uint16_t CAN_ID)
@@ -23,7 +25,7 @@ void init_virtual_sensor(VirtualSensor* v_sensor, const char* name, SensorUpdate
   memset(&v_sensor->output, 0, sizeof(SensorData));
 }
 
-void add_input_sensor(VirtualSensor* v_sensor, VirtualSensor* input)
+void add_input_sensor(VirtualSensor* v_sensor, Sensor* input)
 {
   if (v_sensor->input_count < MAX_INPUT_SENSORS)
   {
@@ -173,7 +175,7 @@ void read_all_calib_values()
 
 static void Config_1(void)
 {
-  Sensor W_TEMP = {TF_WATER_TEMP, 2, 100, 0, V5_in0};
+  Sensor BTN1 = {TF_BTN, 2, 100, 0, V5_in0};
   Sensor BTN2 = {TF_BTN, 13, 100, 0, V5_in5};
   Sensor BTN3 = {TF_BTN, 14, 100, 0, V5_in4};
   Sensor APPS2 = {TF_APPS2, 2, 100, 0, V5_in1};
@@ -186,16 +188,14 @@ static void Config_1(void)
   sensors[APPS1.pin] = APPS1;
   sensors[APPS2.pin] = APPS2;
   sensors[BPPS.pin] = BPPS;
-  sensors[W_TEMP.pin] = W_TEMP;
+  sensors[BTN1.pin] = BTN1;
   sensors[BTN2.pin] = BTN2;
   sensors[BTN3.pin] = BTN3;
   sensors[ANGLE.pin] = ANGLE;
   sensors[F_ROLL.pin] = F_ROLL;
   sensors[F_HEAVE.pin] = F_HEAVE;
 
-  pedalreq.CAN_ID = 17;
-
-  CAN_interval = 20;
+  CAN_interval = 100;
 }
 
 static void Config_2(void)
@@ -205,8 +205,19 @@ static void Config_2(void)
 
 static void Config_3(void)
 {
+  Sensor APPS1 = {TF_APPS1, 1, 100, 0, V5_in0};
   Sensor APPS2 = {TF_APPS2, 2, 100, 0, V5_in1};
+  sensors[APPS1.pin] = APPS1;
   sensors[APPS2.pin] = APPS2;
+
+  // TODO: make update function for pedalreq virtualsensor
+  pedalctx.apps1 = &sensors[V5_in0];
+  pedalctx.apps2 = &sensors[V5_in1];
+  pedalctx.brake = &sensors[V5_in2];
+
+  init_virtual_sensor(&pedalreq, "pedal request", NULL, &pedalctx, 17);
+  add_input_sensor(&pedalreq, &sensors[APPS1.pin]);
+  add_input_sensor(&pedalreq, &sensors[APPS2.pin]);
 
   CAN_interval = 100;
 }
@@ -214,12 +225,11 @@ static void Config_3(void)
 static void Config_4(void)
 {
   Sensor W_TEMP = {TF_WATER_TEMP, 2, 100, 0, V5_in0};
-
   // TODO: change this to the correct pin
-  Sensor V5_LINE = {TF_5V_ASSIGN, 10, 100, 0, V5_in1};
+  Sensor V5_LINE = {TF_5V, 10, 100, 0, V5_LINE_PIN};
 
   sensors[W_TEMP.pin] = W_TEMP;
   sensors[V5_LINE.pin] = V5_LINE;
 
-  CAN_interval = 20;
+  CAN_interval = 100;
 }
