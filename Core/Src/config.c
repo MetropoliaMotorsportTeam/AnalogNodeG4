@@ -211,8 +211,9 @@ static void Config_3(void)
   sensors[APPS2.pin] = APPS2;
 
   // TODO: make update function for pedalreq virtualsensor
-  pedalctx.apps1 = &sensors[V5_in0];
-  pedalctx.apps2 = &sensors[V5_in1];
+  pedalreq.input_count = 2;
+  pedalreq.inputs[0] = &sensors[APPS1.pin];
+  pedalreq.inputs[1] = &sensors[APPS2.pin];
 
   init_virtual_sensor(&pedalreq, "pedal request", NULL, &pedalctx, 17);
   add_input_sensor(&pedalreq, &sensors[APPS1.pin]);

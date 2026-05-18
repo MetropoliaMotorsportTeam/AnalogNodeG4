@@ -1,6 +1,6 @@
 #include "virtual_sensors.h"
 #include "config.h"
-#define APPS_DELTA_MAX_X10 100 // 10.0%
+#define APPS_DELTA_MAX_X10 100
 #define PEDALREQ_FAULT_NONE 0
 #define PEDALREQ_FAULT_APPS_DELTA 1
 

@@ -9,8 +9,6 @@ typedef struct SensorType Sensor;
 #define MAX_INPUT_SENSORS 12
 typedef struct VirtualSensor VirtualSensor;
 
-typedef void (*SensorUpdateFunc)(void* context);
-
 typedef struct
 {
   uint32_t values[3];
@@ -21,17 +19,6 @@ typedef struct
   Sensor* apps1;
   Sensor* apps2;
 } PedalContext;
-
-struct VirtualSensor
-{
-  const char* name;
-  SensorData output;
-  uint16_t CAN_ID;
-  void* context;
-  SensorUpdateFunc update_func;
-  Sensor* inputs[MAX_INPUT_SENSORS];
-  uint32_t input_count;
-};
 
 void Config_Setup(void);
 void Change_Sensor_Config(uint8_t opt);
