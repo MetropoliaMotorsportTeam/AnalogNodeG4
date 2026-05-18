@@ -105,7 +105,6 @@ extern "C"
   extern uint8_t CAN_enable;
   extern uint8_t CAL_counter;
   extern uint8_t CAL_ON;
-  extern uint16_t v5_line_mv;
   /* USER CODE END Private defines */
 
 #ifdef __cplusplus
