@@ -9,6 +9,7 @@
 #include "config.h"
 #include "functions.h"
 #include "main.h"
+#include "sensors.h"
 #include <math.h>
 static uint16_t bpps_global = 0;
 

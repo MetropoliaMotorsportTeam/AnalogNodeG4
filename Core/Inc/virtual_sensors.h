@@ -2,6 +2,8 @@
 #define VIRTUAL_SENSORS_H
 
 #include "config.h"
+#include "sensors.h"
+
 typedef struct VirtualSensor VirtualSensor;
 typedef void (*SensorUpdateFunc)(VirtualSensor* v_sensors);
 
@@ -15,5 +17,12 @@ struct VirtualSensor
   Sensor* inputs[MAX_INPUT_SENSORS];
   uint32_t input_count;
 };
+
 void update_pedalreq(VirtualSensor* v_sensor);
+void update_pedalreq(VirtualSensor* v_sensor);
+void init_virtual_sensor(VirtualSensor* v_sensor, const char* name, SensorUpdateFunc func,
+                         void* context, uint16_t CAN_ID);
+void add_input_sensor(VirtualSensor* v_sensor, Sensor* input);
+void update_virtual_sensor(VirtualSensor* v_sensor);
+
 #endif

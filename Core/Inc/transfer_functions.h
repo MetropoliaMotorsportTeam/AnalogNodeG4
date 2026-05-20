@@ -10,6 +10,7 @@
 
 // #include "main.h"
 #include "config.h" // Make sure config.h is included before using 'Sensor'
+#include "sensors.h"
 
 uint16_t TF_3V3(uint8_t bytes, uint32_t raw, Sensor* sensor);
 uint16_t TF_5V(uint8_t bytes, uint32_t raw, Sensor* sensor);

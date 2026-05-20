@@ -23,6 +23,8 @@
 /* USER CODE BEGIN Includes */
 #include "config.h"
 #include "functions.h"
+#include "sensors.h"
+#include "virtual_sensors.h"
 #include <stdio.h>
 #include <string.h>
 /* USER CODE END Includes */
