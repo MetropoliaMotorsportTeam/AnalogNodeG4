@@ -9,8 +9,6 @@ static void Config_2(void);
 static void Config_3(void);
 static void Config_4(void);
 
-VirtualSensor pedalreq = {0};
-
 // TODO: change this to a variable instead
 #define DEFAULT_ID 3
 
