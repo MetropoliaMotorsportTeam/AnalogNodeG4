@@ -2,9 +2,8 @@
 #include "config.h"
 #include "sensors.h"
 #include <string.h>
-#define APPS_DELTA_MAX_X10 100
-#define PEDALREQ_FAULT_NONE 0
-#define PEDALREQ_FAULT_APPS_DELTA 1
+
+VirtualSensor pedalreq = {0};
 
 void update_pedalreq(VirtualSensor* v_sensor)
 {
@@ -18,12 +17,15 @@ void update_pedalreq(VirtualSensor* v_sensor)
   Sensor* apps1_sensor = v_sensor->inputs[0];
   Sensor* apps2_sensor = v_sensor->inputs[1];
 
+  apps1_sensor->transfer_function(1, apps1_sensor->averages, apps1_sensor);
+  apps2_sensor->transfer_function(1, apps2_sensor->averages, apps2_sensor);
+
   uint16_t apps1 = apps1_sensor->data;
   uint16_t apps2 = apps2_sensor->data;
 
   uint16_t delta = apps1 > apps2 ? apps1 - apps2 : apps2 - apps1;
 
-  if (delta > APPS_DELTA_MAX_X10)
+  if (delta > APPS_DELTA_MAX)
   {
     v_sensor->output.values[0] = 0;
     v_sensor->output.values[1] = PEDALREQ_FAULT_APPS_DELTA;
@@ -61,6 +63,6 @@ void update_virtual_sensor(VirtualSensor* v_sensor)
 {
   if (v_sensor->update_func)
   {
-    v_sensor->update_func(v_sensor->context);
+    v_sensor->update_func(v_sensor);
   }
 }
