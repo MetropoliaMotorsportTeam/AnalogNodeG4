@@ -11,6 +11,11 @@
 typedef struct VirtualSensor VirtualSensor;
 typedef void (*SensorUpdateFunc)(VirtualSensor* v_sensors);
 
+typedef struct
+{
+  uint32_t values[3];
+} SensorData;
+
 struct VirtualSensor
 {
   const char* name;

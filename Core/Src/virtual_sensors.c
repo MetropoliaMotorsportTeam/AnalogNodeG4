@@ -9,8 +9,12 @@ void update_pedalreq(VirtualSensor* v_sensor)
 {
   if (v_sensor->input_count < 2)
   {
-    v_sensor->output.values[0] = 0;
-    v_sensor->output.values[1] = PEDALREQ_FAULT_APPS_DELTA;
+    Sensor* apps1_sensor = v_sensor->inputs[0];
+    apps1_sensor->transfer_function(1, apps1_sensor->averages, apps1_sensor);
+
+    v_sensor->output.values[0] = apps1_sensor->data;
+    v_sensor->output.values[1] = PEDALREQ_FAULT_NONE;
+    v_sensor->output.values[2] = 0;
     return;
   }
 

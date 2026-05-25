@@ -5,11 +5,6 @@
 #define CHANGE_CONFIGS 0x00AA
 #define FLASH_ADDRESS 0x0801F800
 
-typedef struct
-{
-  uint32_t values[3];
-} SensorData;
-
 void Config_Setup(void);
 void Change_Sensor_Config(uint8_t opt);
 

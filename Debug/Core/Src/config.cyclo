@@ -1,6 +1,6 @@
-../Core/Src/config.c:17:6:Config_Setup	1
-../Core/Src/config.c:34:6:Change_Sensor_Config	5
-../Core/Src/config.c:55:13:Config_1	1
-../Core/Src/config.c:80:13:Config_2	1
-../Core/Src/config.c:85:13:Config_3	1
-../Core/Src/config.c:103:13:Config_4	1
+../Core/Src/config.c:15:6:Config_Setup	1
+../Core/Src/config.c:32:6:Change_Sensor_Config	5
+../Core/Src/config.c:53:13:Config_1	1
+../Core/Src/config.c:78:13:Config_2	1
+../Core/Src/config.c:83:13:Config_3	1
+../Core/Src/config.c:101:13:Config_4	1

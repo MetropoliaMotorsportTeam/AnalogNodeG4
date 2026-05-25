@@ -22,6 +22,7 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "config.h"
+#include "curve.h"
 #include "functions.h"
 #include "sensors.h"
 #include "virtual_sensors.h"
@@ -149,6 +150,7 @@ int main(void)
     {
       if (millis % CAN_interval == 0)
       {
+        uint16_t pedal_percent = pedal_mapped_get_percentage(pedal_curve_linear);
         print(counter);
         calibration();
         counter++;
