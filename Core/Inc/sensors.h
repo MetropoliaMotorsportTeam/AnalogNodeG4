@@ -27,5 +27,6 @@ void ADC_Calib_Update();
 void init_sensors(void);
 
 extern Sensor sensors[SENSOR_NUM];
+extern Sensor* APPS_pedal;
 
 #endif

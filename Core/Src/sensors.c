@@ -3,6 +3,8 @@
 #include "stm32g4xx_hal_flash.h"
 #include "transfer_functions.h"
 
+Sensor* APPS_pedal = {0};
+
 void init_sensors(void)
 {
   for (int i = 0; i < SENSOR_NUM; i++)

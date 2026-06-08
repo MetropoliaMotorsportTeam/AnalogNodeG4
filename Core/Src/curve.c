@@ -4,13 +4,24 @@
 
 uint16_t pedal_mapped_get_percentage(const uint16_t* curve)
 {
+#ifdef VIRTUAL_SENSOR
   pedalreq.update_func(&pedalreq);
   return pedal_map(pedalreq.output.values[0], curve);
+#else
+  APPS_pedal->transfer_function(1, APPS_pedal->averages, APPS_pedal);
+  return pedal_map(APPS_pedal->data, curve);
+#endif
+  return 0;
 }
 
 uint16_t pedal_map(uint16_t pedal, const uint16_t* curve)
 {
   if (pedal >= PEDAL_MAX_VALUE)
+  {
+    return PEDAL_MAX_VALUE;
+  }
+
+  if (curve[PEDAL_LUT_STEP - 1] >= PEDAL_MAX_VALUE)
   {
     return PEDAL_MAX_VALUE;
   }
