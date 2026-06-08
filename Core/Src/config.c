@@ -11,27 +11,13 @@ static void Config_4(void);
 
 // TODO: change this to a variable instead
 #define DEFAULT_ID 3
+uint8_t current_id = DEFAULT_ID;
 
 void Config_Setup(void)
 {
   init_sensors();
 
-#if DEFAULT_ID == 1
-  Config_1();
-#elif DEFAULT_ID == 2
-  Config_2();
-#elif DEFAULT_ID == 3
-  Config_3();
-#elif DEFAULT_ID == 4
-  Config_4();
-#endif
-
-  read_all_calib_values();
-}
-
-void Change_Sensor_Config(uint8_t opt)
-{
-  switch (opt)
+  switch (current_id)
   {
   case 1:
     Config_1();
@@ -48,6 +34,14 @@ void Change_Sensor_Config(uint8_t opt)
   default:
     break;
   }
+
+  read_all_calib_values();
+}
+
+void Change_Sensor_Config(uint8_t opt)
+{
+  current_id = opt;
+  init_sensors();
 }
 
 static void Config_1(void)
@@ -77,6 +71,9 @@ static void Config_1(void)
 
 static void Config_2(void)
 {
+  Sensor APPS2 = {TF_APPS2, 2, 100, 0, V5_in1};
+  sensors[APPS2.pin] = APPS2;
+  APPS_pedal = &sensors[APPS2.pin];
   CAN_interval = 100;
 }
 
@@ -101,7 +98,6 @@ static void Config_3(void)
 static void Config_4(void)
 {
   Sensor W_TEMP = {TF_WATER_TEMP, 2, 100, 0, V5_in0};
-  // TODO: change this to the correct pin
   Sensor V5_LINE = {TF_5V, 10, 100, 0, V5_LINE_PIN};
 
   sensors[W_TEMP.pin] = W_TEMP;
