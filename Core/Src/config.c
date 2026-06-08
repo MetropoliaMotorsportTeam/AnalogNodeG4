@@ -41,7 +41,7 @@ void Config_Setup(void)
 void Change_Sensor_Config(uint8_t opt)
 {
   current_id = opt;
-  init_sensors();
+  Config_Setup();
 }
 
 static void Config_1(void)
