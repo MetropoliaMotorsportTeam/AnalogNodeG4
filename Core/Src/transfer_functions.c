@@ -28,6 +28,7 @@ uint16_t TF_3V3(uint8_t bytes, uint32_t raw, Sensor* sensor)
   const uint16_t max_volt = 3300;
 
   uint16_t voltage = raw * max_volt / 4095;
+  sensor->data = voltage;
   return voltage;
 }
 
@@ -36,6 +37,7 @@ uint16_t TF_5V(uint8_t bytes, uint32_t raw, Sensor* sensor)
   const uint16_t max_volt = 5000;
 
   uint16_t voltage = raw * max_volt / 4095;
+  sensor->data = voltage;
   return voltage;
 }
 
@@ -44,6 +46,7 @@ uint16_t TF_24V(uint8_t bytes, uint32_t raw, Sensor* sensor)
   uint16_t max_volt = 24000;
 
   uint16_t voltage = raw * max_volt / 4095;
+  sensor->data = voltage;
   return voltage;
 }
 
@@ -61,8 +64,10 @@ uint16_t TF_BPPS(uint8_t bytes, uint32_t raw, Sensor* sensor)
   if (min_raw > max_raw)
   {
     bpps = 100 - bpps;
-    bpps_global = bpps;
   }
+
+  bpps_global = bpps;
+  sensor->data = bpps;
   return bpps;
 }
 uint16_t TF_APPS1(uint8_t bytes, uint32_t raw, Sensor* sensor)
