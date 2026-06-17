@@ -204,3 +204,30 @@ uint16_t TF_WATER_TEMP(uint8_t bytes, uint32_t raw, Sensor* sensor)
   sensors->data = (uint16_t)temp_celsius;
   return (uint16_t)temp_celsius;
 }
+uint16_t TF_SUSP_TRAVEL(uint8_t bytes, uint32_t raw, Sensor* sensor)
+{
+  const uint16_t max_travel = 1000;
+  // 1000 = 100.0 mm, adjust this to match your sensor/suspension range
+
+  uint16_t low_raw = (sensor->calib_code % 2 == 1 && sensor->low_adc != 0) ? sensor->low_adc : 650;
+
+  uint16_t high_raw = (sensor->calib_code > 2 && sensor->high_adc != 0) ? sensor->high_adc : 1990;
+
+  uint16_t min_raw = (low_raw < high_raw) ? low_raw : high_raw;
+  uint16_t max_raw = (low_raw < high_raw) ? high_raw : low_raw;
+
+  raw = ValueControl(raw, min_raw, max_raw);
+
+  uint16_t range = max_raw - min_raw;
+
+  uint16_t travel = ((raw - min_raw) * max_travel + (range / 2)) / range;
+
+  // NOTE: invert if mounted backwards
+  if (low_raw > high_raw)
+  {
+    travel = max_travel - travel;
+  }
+
+  sensor->data = travel;
+  return travel;
+}

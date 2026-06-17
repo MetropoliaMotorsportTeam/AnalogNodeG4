@@ -29,5 +29,6 @@ uint16_t TF_BRK_PRES(uint8_t bytes, uint32_t raw, Sensor* sensor);
 uint16_t TF_BTN(uint8_t bytes, uint32_t raw, Sensor* sensor);
 uint16_t TF_WATER_TEMP(uint8_t bytes, uint32_t raw, Sensor* sensor);
 uint16_t TF_5V_ASSIGN(uint8_t bytes, uint32_t raw, Sensor* sensor);
+uint16_t TF_SUSP_TRAVEL(uint8_t bytes, uint32_t raw, Sensor* sensor);
 
 #endif /* INC_TRANSFER_FUNCTIONS_H_ */
