@@ -204,30 +204,42 @@ uint16_t TF_WATER_TEMP(uint8_t bytes, uint32_t raw, Sensor* sensor)
   sensors->data = (uint16_t)temp_celsius;
   return (uint16_t)temp_celsius;
 }
+
 uint16_t TF_SUSP_TRAVEL(uint8_t bytes, uint32_t raw, Sensor* sensor)
 {
-  const uint16_t max_travel = 1000;
-  // 1000 = 100.0 mm, adjust this to match your sensor/suspension range
+  const uint16_t sensor_stroke = 1000;
 
-  uint16_t low_raw = (sensor->calib_code % 2 == 1 && sensor->low_adc != 0) ? sensor->low_adc : 650;
+  uint16_t raw_extended =
+      (sensor->calib_code % 2 == 1 && sensor->low_adc != 0) ? sensor->low_adc : 650;
 
-  uint16_t high_raw = (sensor->calib_code > 2 && sensor->high_adc != 0) ? sensor->high_adc : 1990;
+  uint16_t raw_compressed =
+      (sensor->calib_code > 2 && sensor->high_adc != 0) ? sensor->high_adc : 1990;
 
-  uint16_t min_raw = (low_raw < high_raw) ? low_raw : high_raw;
-  uint16_t max_raw = (low_raw < high_raw) ? high_raw : low_raw;
+  uint16_t raw_min = raw_extended < raw_compressed ? raw_extended : raw_compressed;
+  uint16_t raw_max = raw_extended < raw_compressed ? raw_compressed : raw_extended;
 
-  raw = ValueControl(raw, min_raw, max_raw);
+  raw = ValueControl(raw, raw_min, raw_max);
 
-  uint16_t range = max_raw - min_raw;
+  int32_t raw_range = (int32_t)raw_compressed - (int32_t)raw_extended;
 
-  uint16_t travel = ((raw - min_raw) * max_travel + (range / 2)) / range;
-
-  // NOTE: invert if mounted backwards
-  if (low_raw > high_raw)
+  if (raw_range == 0)
   {
-    travel = max_travel - travel;
+    sensor->data = 0;
+    return 0;
   }
 
-  sensor->data = travel;
-  return travel;
+  int32_t travel = ((int32_t)raw - (int32_t)raw_extended) * sensor_stroke / raw_range;
+
+  if (travel < 0)
+  {
+    travel = 0;
+  }
+
+  if (travel > sensor_stroke)
+  {
+    travel = sensor_stroke;
+  }
+
+  sensor->data = (uint16_t)travel;
+  return (uint16_t)travel;
 }
