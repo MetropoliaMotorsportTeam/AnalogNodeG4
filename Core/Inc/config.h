@@ -2,11 +2,15 @@
 #define INC_CONFIG_H_
 
 #include "main.h"
-#define CHANGE_CONFIGS 0x00AA
+#define CAN_CHANGE_CONFIG 0x10
 #define FLASH_ADDRESS 0x0801F800
+#define DEFAULT_CONF 1
+#define NUM_CONF 4
 
 void Config_Setup(void);
-void Change_Sensor_Config(uint8_t opt);
+void Apply_Config(uint8_t config);
+void Load_Config();
+void Save_Config(uint8_t config);
 
 typedef volatile struct CanDataType CANData;
 

@@ -1,4 +1,5 @@
 #include "config.h"
+#include "flash_conf.h"
 #include "sensors.h"
 #include "transfer_functions.h"
 #include "virtual_sensors.h"
@@ -9,15 +10,16 @@ static void Config_2(void);
 static void Config_3(void);
 static void Config_4(void);
 
-// TODO: change this to a variable instead
-#define DEFAULT_ID 3
-uint8_t current_id = DEFAULT_ID;
-
 void Config_Setup(void)
 {
   init_sensors();
+  Load_Config();
+  read_all_calib_values();
+}
 
-  switch (current_id)
+void Apply_Config(uint8_t config)
+{
+  switch (config)
   {
   case 1:
     Config_1();
@@ -34,14 +36,19 @@ void Config_Setup(void)
   default:
     break;
   }
-
-  read_all_calib_values();
 }
 
-void Change_Sensor_Config(uint8_t opt)
+void Load_Config()
 {
-  current_id = opt;
-  Config_Setup();
+  uint8_t conf = read_flash_memory(CONFIG_FLASH_ADDR);
+  Apply_Config((conf > NUM_CONF || conf <= 0) ? DEFAULT_CONF : conf);
+}
+
+void Save_Config(uint8_t config)
+{
+  uint8_t conf = (config > NUM_CONF ? DEFAULT_CONF : config);
+  store_flash_memory(CONFIG_FLASH_ADDR, conf);
+  Apply_Config(config);
 }
 
 static void Config_1(void)

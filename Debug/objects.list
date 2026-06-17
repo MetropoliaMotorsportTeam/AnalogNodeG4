@@ -1,5 +1,6 @@
 "./Core/Src/config.o"
 "./Core/Src/curve.o"
+"./Core/Src/flash_conf.o"
 "./Core/Src/functions.o"
 "./Core/Src/main.o"
 "./Core/Src/sensors.o"

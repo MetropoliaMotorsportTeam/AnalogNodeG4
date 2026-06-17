@@ -145,8 +145,8 @@ void decode(CAN_Message msg)
     sensor_for_calib = msg.Bytes[0];
     calib_select = msg.Bytes[1];
     break;
-  case CHANGE_CONFIGS:
-    Change_Sensor_Config(msg.Bytes[0]);
+  case CAN_CHANGE_CONFIG:
+    Save_Config(msg.Bytes[0]);
   default:
     break;
   }
