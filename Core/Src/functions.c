@@ -146,7 +146,7 @@ void decode(CAN_Message msg)
     calib_select = msg.Bytes[1];
     break;
   case CAN_CHANGE_CONFIG:
-    Save_Config(msg.Bytes[0]);
+    Process_Config(msg.Bytes[0]);
   default:
     break;
   }

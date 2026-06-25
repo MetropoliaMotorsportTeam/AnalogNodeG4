@@ -4,13 +4,13 @@
 #include "main.h"
 #define CAN_CHANGE_CONFIG 0x10
 #define FLASH_ADDRESS 0x0801F800
-#define DEFAULT_CONF 1
+#define DEFAULT_CONF 2
 #define NUM_CONF 4
 
 void Config_Setup(void);
 void Apply_Config(uint8_t config);
 void Load_Config();
-void Save_Config(uint8_t config);
+void Process_Config(uint8_t config);
 
 typedef volatile struct CanDataType CANData;
 

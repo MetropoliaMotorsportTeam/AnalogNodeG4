@@ -40,15 +40,18 @@ void Apply_Config(uint8_t config)
 
 void Load_Config()
 {
-  uint8_t conf = read_flash_memory(CONFIG_FLASH_ADDR);
-  Apply_Config((conf > NUM_CONF || conf <= 0) ? DEFAULT_CONF : conf);
+  uint8_t config = get_curr_conf();
+  uint8_t conf = ((config < 1 || config > NUM_CONF) ? DEFAULT_CONF : config);
+  Apply_Config(conf);
 }
 
-void Save_Config(uint8_t config)
+void Process_Config(uint8_t config)
 {
-  uint8_t conf = (config > NUM_CONF ? DEFAULT_CONF : config);
-  store_flash_memory(CONFIG_FLASH_ADDR, conf);
-  Apply_Config(config);
+  uint8_t conf = ((config < 1 || config > NUM_CONF) ? DEFAULT_CONF : config);
+  if (save_config(conf) != HAL_OK)
+    Error_Handler();
+
+  Apply_Config(conf);
 }
 
 static void Config_1(void)
@@ -78,7 +81,8 @@ static void Config_1(void)
 
 static void Config_2(void)
 {
-  Sensor APPS2 = {TF_APPS2, 2, 100, 0, V5_in1};
+  // switch to V24_in1 if V5 doesn't work
+  Sensor APPS2 = {TF_APPS2, 2, 100, 0, V5_in0};
   sensors[APPS2.pin] = APPS2;
   APPS_pedal = &sensors[APPS2.pin];
   CAN_interval = 100;

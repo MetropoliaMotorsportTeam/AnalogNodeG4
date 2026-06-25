@@ -16,3 +16,4 @@
 ../Core/Src/transfer_functions.c:166:10:TF_BRK_PRES	1
 ../Core/Src/transfer_functions.c:171:24:GET_5V_LINE	1
 ../Core/Src/transfer_functions.c:176:10:TF_WATER_TEMP	4
+../Core/Src/transfer_functions.c:208:10:TF_SUSP_TRAVEL	8
