@@ -150,7 +150,10 @@ int main(void)
     {
       if (millis % CAN_interval == 0)
       {
-        uint16_t pedal_percent = pedal_mapped_get_percentage(pedal_curve_linear);
+        uint32_t raw = APPS_pedal->averages;
+        uint16_t test_func = pedal_mapped_get_percentage(pedal_curve_linear);
+        uint32_t data = APPS_pedal->data;
+        uint32_t calib_code = APPS_pedal->calib_code;
         print(counter);
         calibration();
         counter++;

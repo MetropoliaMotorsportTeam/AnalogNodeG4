@@ -70,6 +70,27 @@ uint16_t TF_BPPS(uint8_t bytes, uint32_t raw, Sensor* sensor)
   sensor->data = bpps;
   return bpps;
 }
+uint16_t TF_APPS_TEST(uint8_t bytes, uint32_t raw, Sensor* sensor)
+{
+  const uint16_t max_pos = 1000; // in percent
+
+  // TODO:update this to use calibration
+  uint16_t min_raw = 1105;
+  uint16_t max_raw = 1950;
+
+  raw = ValueControl(raw, min_raw, max_raw);
+
+  uint16_t range = max_raw - min_raw;
+  uint16_t apps = ((raw - min_raw) * max_pos + (range / 2)) / range;
+
+  if (min_raw > max_raw)
+  {
+    apps = 1000 - apps;
+  }
+  sensor->data = apps;
+  return apps;
+}
+
 uint16_t TF_APPS1(uint8_t bytes, uint32_t raw, Sensor* sensor)
 {
   const uint16_t max_pos = 1000; // in percent
@@ -86,7 +107,7 @@ uint16_t TF_APPS1(uint8_t bytes, uint32_t raw, Sensor* sensor)
   {
     apps = 1000 - apps;
   }
-  sensors->data = apps;
+  sensor->data = apps;
   return apps;
 }
 
@@ -155,7 +176,7 @@ uint16_t TF_ANGLE_GEAR(uint8_t bytes, uint32_t raw, Sensor* sensor)
   float SteeringAngle = (raw - min_raw) * WheelAngleScope / (max_raw - min_raw);
   SteeringAngle -= SteeringAngleScope / 2;
 
-  sensors->data = (uint16_t)SteeringAngle;
+  sensor->data = (uint16_t)SteeringAngle;
   return (uint16_t)SteeringAngle;
 }
 uint16_t TF_WATER_LVL(uint8_t bytes, uint32_t raw, Sensor* sensor)
@@ -201,7 +222,7 @@ uint16_t TF_WATER_TEMP(uint8_t bytes, uint32_t raw, Sensor* sensor)
   float temp_kelvin = 1.0f / ((1.0f / T0) + (logf(r / R0) / B));
   float temp_celsius = temp_kelvin - 273.15f;
 
-  sensors->data = (uint16_t)temp_celsius;
+  sensor->data = (uint16_t)temp_celsius;
   return (uint16_t)temp_celsius;
 }
 

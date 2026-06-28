@@ -40,9 +40,10 @@ void Apply_Config(uint8_t config)
 
 void Load_Config()
 {
-  uint8_t config = get_curr_conf();
+  /* uint8_t config = get_curr_conf();
   uint8_t conf = ((config < 1 || config > NUM_CONF) ? DEFAULT_CONF : config);
-  Apply_Config(conf);
+  Apply_Config(conf); */
+  Apply_Config(2);
 }
 
 void Process_Config(uint8_t config)
@@ -82,10 +83,10 @@ static void Config_1(void)
 static void Config_2(void)
 {
   // switch to V24_in1 if V5 doesn't work
-  Sensor APPS2 = {TF_APPS2, 2, 100, 0, V5_in0};
+  Sensor APPS2 = {TF_APPS_TEST, 2, 20, 0, V5_in0};
   sensors[APPS2.pin] = APPS2;
   APPS_pedal = &sensors[APPS2.pin];
-  CAN_interval = 100;
+  CAN_interval = 20;
 }
 
 static void Config_3(void)
