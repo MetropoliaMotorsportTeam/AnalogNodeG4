@@ -153,7 +153,6 @@ int main(void)
         uint32_t raw = APPS_pedal->averages;
         uint16_t test_func = pedal_mapped_get_percentage(pedal_curve_linear);
         uint32_t data = APPS_pedal->data;
-        uint32_t calib_code = APPS_pedal->calib_code;
         print(counter);
         calibration();
         counter++;
@@ -645,7 +644,7 @@ void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc)
   if (hadc->Instance == ADC1)
   {
     // Store ADC1 conversion results into sensors[0..5]
-    for (int j = 0; j < hadc->Init.NbrOfConversion; j++)
+    for (uint8_t j = 0; j < hadc->Init.NbrOfConversion; j++)
     {
       all_raw_data[j][AVE_POS] = ADC1Data[j];
     }
@@ -654,7 +653,7 @@ void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc)
   else if (hadc->Instance == ADC2)
   {
     // Store ADC2 conversion results into sensors[6..11]
-    for (int j = 0; j < hadc->Init.NbrOfConversion; j++)
+    for (uint8_t j = 0; j < hadc->Init.NbrOfConversion; j++)
     {
       all_raw_data[j + 6][AVE_POS] = ADC2Data[j];
     }

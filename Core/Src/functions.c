@@ -22,6 +22,12 @@ CAN_Message TxMessage;
 uint8_t sensor_for_calib; // Sensor calibration number
 int8_t calib_select = -1; // Upper or lower calibration
 
+/*
+calib_code = 0  -> no calibration
+calib_code = 1  -> low_adc is valid
+calib_code = 2  -> high_adc is valid
+calib_code = 3  -> both are valid
+*/
 void CanSend(uint8_t* TxData)
 {
   while (HAL_FDCAN_GetTxFifoFreeLevel(&hfdcan1) != 0 &&
@@ -76,6 +82,8 @@ void print(uint16_t select)
 
 void sent_calib_done()
 {
+  if (calib_select == -1)
+    return;
 
   TxHeader.Identifier = CAN_CALIIB_DONE_ID;
   TxMessage.Bytes[0] = sensor_for_calib;
@@ -83,14 +91,15 @@ void sent_calib_done()
 
   sensors[sensor_for_calib].calib_code = sensors[sensor_for_calib].calib_code | (1 << calib_select);
 
+  // TODO:writing whenever we calibrate (maybe optimize this)
   ADC_Calib_Update();
 }
 
-uint8_t calibration_counter = 0;
-uint16_t calibration_value = 0;
+static uint8_t calibration_counter = 0;
+static uint16_t calibration_value = 0;
 
-uint16_t max_value = 0;
-uint16_t min_value = 65535;
+static uint16_t max_value = 0;
+static uint16_t min_value = 65535;
 
 void calibration()
 {
@@ -103,8 +112,8 @@ void calibration()
   {
 
     calibration_counter++;
-    // calibration_value += (sensors[sensor_for_calib].averages - calibration_value) /
-    // calibration_counter;
+    calibration_value +=
+        (sensors[sensor_for_calib].averages - calibration_value) / calibration_counter;
 
     if (sensors[sensor_for_calib].averages > max_value)
     {
@@ -119,7 +128,7 @@ void calibration()
     if (calibration_counter > (5000 / CAN_interval))
     {
 
-      // calibration_value = calibration_value / calibration_counter;
+      calibration_value = calibration_value / calibration_counter;
 
       if (calib_select == 0)
         sensors[sensor_for_calib].low_adc = min_value;

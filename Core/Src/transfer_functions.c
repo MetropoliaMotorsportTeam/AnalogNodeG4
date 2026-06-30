@@ -11,7 +11,21 @@
 #include "main.h"
 #include "sensors.h"
 #include <math.h>
+
 static uint16_t bpps_global = 0;
+
+static inline void get_calib_values(Sensor* sensor, uint16_t* low, uint16_t* high)
+{
+  if ((sensor->calib_code & CALIB_LOW_VALID) && sensor->low_adc != CALIB_DEFAULT)
+  {
+    *low = sensor->low_adc;
+  }
+
+  if ((sensor->calib_code & CALIB_HIGH_VALID) && sensor->high_adc != CALIB_DEFAULT)
+  {
+    *high = sensor->high_adc;
+  }
+}
 
 static inline uint32_t ValueControl(uint32_t raw, uint32_t min_raw, uint32_t max_raw)
 {
@@ -24,7 +38,6 @@ static inline uint32_t ValueControl(uint32_t raw, uint32_t min_raw, uint32_t max
 
 uint16_t TF_3V3(uint8_t bytes, uint32_t raw, Sensor* sensor)
 {
-
   const uint16_t max_volt = 3300;
 
   uint16_t voltage = raw * max_volt / 4095;
@@ -51,11 +64,13 @@ uint16_t TF_24V(uint8_t bytes, uint32_t raw, Sensor* sensor)
 }
 
 uint16_t TF_BPPS(uint8_t bytes, uint32_t raw, Sensor* sensor)
-{                               // brake pedal position sensor
-  const uint16_t max_pos = 100; // in percent
+{
+  const uint16_t max_pos = 100;
 
-  uint16_t min_raw = (sensor->calib_code % 2 == 1 && sensor->low_adc != 0) ? sensor->low_adc : 2615;
-  uint16_t max_raw = (sensor->calib_code > 2 && sensor->high_adc != 0) ? sensor->high_adc : 2925;
+  uint16_t min_raw = 2615;
+  uint16_t max_raw = 2925;
+
+  get_calib_values(sensor, &min_raw, &max_raw);
 
   raw = ValueControl(raw, min_raw, max_raw);
 
@@ -70,13 +85,15 @@ uint16_t TF_BPPS(uint8_t bytes, uint32_t raw, Sensor* sensor)
   sensor->data = bpps;
   return bpps;
 }
+
 uint16_t TF_APPS_TEST(uint8_t bytes, uint32_t raw, Sensor* sensor)
 {
-  const uint16_t max_pos = 1000; // in percent
+  const uint16_t max_pos = 1000;
 
-  // TODO:update this to use calibration
   uint16_t min_raw = 1105;
-  uint16_t max_raw = 1950;
+  uint16_t max_raw = 1940;
+
+  get_calib_values(sensor, &min_raw, &max_raw);
 
   raw = ValueControl(raw, min_raw, max_raw);
 
@@ -85,18 +102,21 @@ uint16_t TF_APPS_TEST(uint8_t bytes, uint32_t raw, Sensor* sensor)
 
   if (min_raw > max_raw)
   {
-    apps = 1000 - apps;
+    apps = max_pos - apps;
   }
+
   sensor->data = apps;
   return apps;
 }
 
 uint16_t TF_APPS1(uint8_t bytes, uint32_t raw, Sensor* sensor)
 {
-  const uint16_t max_pos = 1000; // in percent
+  const uint16_t max_pos = 1000;
 
-  uint16_t min_raw = (sensor->calib_code % 2 == 1 && sensor->low_adc != 0) ? sensor->low_adc : 650;
-  uint16_t max_raw = (sensor->calib_code > 2 && sensor->high_adc != 0) ? sensor->high_adc : 1990;
+  uint16_t min_raw = 650;
+  uint16_t max_raw = 1990;
+
+  get_calib_values(sensor, &min_raw, &max_raw);
 
   raw = ValueControl(raw, min_raw, max_raw);
 
@@ -107,16 +127,19 @@ uint16_t TF_APPS1(uint8_t bytes, uint32_t raw, Sensor* sensor)
   {
     apps = 1000 - apps;
   }
+
   sensor->data = apps;
   return apps;
 }
 
 uint16_t TF_APPS2(uint8_t bytes, uint32_t raw, Sensor* sensor)
 {
-  const uint16_t max_pos = 1000; // in percent
+  const uint16_t max_pos = 1000;
 
-  uint16_t min_raw = (sensor->calib_code % 2 == 1 && sensor->low_adc != 0) ? sensor->low_adc : 690;
-  uint16_t max_raw = (sensor->calib_code >= 2 && sensor->high_adc != 0) ? sensor->high_adc : 2830;
+  uint16_t min_raw = 690;
+  uint16_t max_raw = 2830;
+
+  get_calib_values(sensor, &min_raw, &max_raw);
 
   raw = ValueControl(raw, min_raw, max_raw);
 
@@ -127,6 +150,7 @@ uint16_t TF_APPS2(uint8_t bytes, uint32_t raw, Sensor* sensor)
   {
     apps = 1000 - apps;
   }
+
   sensor->data = apps;
   return apps;
 }
@@ -147,29 +171,36 @@ uint16_t TF_FRONT_HEAVE(uint8_t bytes, uint32_t raw, Sensor* sensor)
 {
   return 0;
 }
+
 uint16_t TF_REAR_HEAVE(uint8_t bytes, uint32_t raw, Sensor* sensor)
 {
   return 0;
 }
+
 uint16_t TF_FRONT_ROLL(uint8_t bytes, uint32_t raw, Sensor* sensor)
 {
   return 0;
 }
+
 uint16_t TF_REAR_ROLL(uint8_t bytes, uint32_t raw, Sensor* sensor)
 {
   return 0;
 }
+
 uint16_t TF_TYRE_TEMP(uint8_t bytes, uint32_t raw, Sensor* sensor)
 {
   return 0;
 }
+
 uint16_t TF_ANGLE_GEAR(uint8_t bytes, uint32_t raw, Sensor* sensor)
 {
-
-  float SteeringAngleScope = 320; // how many degrees of movement steering wheel can do
+  float SteeringAngleScope = 320;
   float WheelAngleScope = 40;
-  uint16_t min_raw = (sensor->calib_code % 2 == 1 && sensor->low_adc != 0) ? sensor->low_adc : 690;
-  uint16_t max_raw = (sensor->calib_code >= 2 && sensor->high_adc != 0) ? sensor->high_adc : 2830;
+
+  uint16_t min_raw = 690;
+  uint16_t max_raw = 2830;
+
+  get_calib_values(sensor, &min_raw, &max_raw);
 
   raw = ValueControl(raw, min_raw, max_raw);
 
@@ -179,6 +210,7 @@ uint16_t TF_ANGLE_GEAR(uint8_t bytes, uint32_t raw, Sensor* sensor)
   sensor->data = (uint16_t)SteeringAngle;
   return (uint16_t)SteeringAngle;
 }
+
 uint16_t TF_WATER_LVL(uint8_t bytes, uint32_t raw, Sensor* sensor)
 {
   return 0;
@@ -230,11 +262,10 @@ uint16_t TF_SUSP_TRAVEL(uint8_t bytes, uint32_t raw, Sensor* sensor)
 {
   const uint16_t sensor_stroke = 1000;
 
-  uint16_t raw_extended =
-      (sensor->calib_code % 2 == 1 && sensor->low_adc != 0) ? sensor->low_adc : 650;
+  uint16_t raw_extended = 1100;
+  uint16_t raw_compressed = 1950;
 
-  uint16_t raw_compressed =
-      (sensor->calib_code > 2 && sensor->high_adc != 0) ? sensor->high_adc : 1990;
+  get_calib_values(sensor, &raw_extended, &raw_compressed);
 
   uint16_t raw_min = raw_extended < raw_compressed ? raw_extended : raw_compressed;
   uint16_t raw_max = raw_extended < raw_compressed ? raw_compressed : raw_extended;

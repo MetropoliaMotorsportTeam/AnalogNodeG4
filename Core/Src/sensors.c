@@ -1,9 +1,27 @@
 #include "sensors.h"
 #include "config.h"
+#include "functions.h"
 #include "stm32g4xx_hal_flash.h"
 #include "transfer_functions.h"
 
 Sensor* APPS_pedal = {0};
+
+static inline uint64_t pack_calib_values(Sensor* sensor)
+{
+  return ((uint64_t)sensor->high_adc << 16) | ((uint64_t)sensor->low_adc);
+}
+
+static inline uint8_t calib_flash_needs_update(void)
+{
+  for (int i = 0; i < SENSOR_NUM; i++)
+  {
+    uint32_t flash_value = *(__IO uint32_t*)(FLASH_ADDRESS + i * 8);
+    uint32_t ram_value = (uint32_t)pack_calib_values(&sensors[i]);
+    if (flash_value != ram_value)
+      return 1;
+  }
+  return 0;
+}
 
 void init_sensors(void)
 {
@@ -16,6 +34,7 @@ void init_sensors(void)
     sensors[i].pin = i;
     sensors[i].high_adc = 0xFFFF;
     sensors[i].low_adc = 0xFFFF;
+    sensors[i].calib_code = 0;
   }
 }
 
@@ -23,6 +42,9 @@ void ADC_Calib_Update()
 { // writes all 12 * 2 calibration values into the FLASH memory
   static FLASH_EraseInitTypeDef FlashErase;
   uint32_t PageError = 0;
+
+  if (!calib_flash_needs_update())
+    return;
 
   // Unlock the Flash memory
   HAL_FLASH_Unlock();
@@ -45,11 +67,11 @@ void ADC_Calib_Update()
   for (int i = 0; i < SENSOR_NUM; i++)
   {
     // Prepare data to write
-    uint64_t data_to_write = (sensors[i].high_adc << 16) | sensors[i].low_adc;
+    uint64_t data_to_write = pack_calib_values(&sensors[i]);
     // Program the flash memory
     if (HAL_FLASH_Program(FLASH_TYPEPROGRAM_DOUBLEWORD, FLASH_ADDRESS + i * 8, data_to_write) !=
         HAL_OK)
-    { // TODO Figure out how to write just 32 bits without a need for filler 0s
+    {
       Error_Handler();
     }
   }
@@ -61,12 +83,10 @@ void ADC_Calib_Update()
 
 void check_calib_status(Sensor* sensor)
 {
-
-  uint16_t default_value = 0xFFFF;
-  int8_t code = 3;
-  if (sensor->low_adc == default_value)
+  int8_t code = 0;
+  if (sensor->low_adc != CALIB_DEFAULT)
     code += 1;
-  if (sensor->high_adc == default_value)
+  if (sensor->high_adc != CALIB_DEFAULT)
     code += 2;
 
   sensor->calib_code = code;
@@ -86,15 +106,12 @@ void read_all_calib_values()
     sensors[i].low_adc = low;
     sensors[i].high_adc = high;
 
-    uint16_t default_value = 0xFFFF;
     int8_t code = 0;
-    if (sensors[i].low_adc != default_value)
+    if (sensors[i].low_adc != CALIB_DEFAULT)
       code += 1;
-    if (sensors[i].high_adc != default_value)
+    if (sensors[i].high_adc != CALIB_DEFAULT)
       code += 2;
 
     sensors[i].calib_code = code;
-
-    check_calib_status(&sensors[i]);
   }
 }

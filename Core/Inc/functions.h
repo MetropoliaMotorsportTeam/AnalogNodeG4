@@ -14,6 +14,10 @@
 #define CAN_CALIB_ID 31
 #define CAN_CALIIB_DONE_ID 32
 
+#define CALIB_LOW_VALID (1 << 0)
+#define CALIB_HIGH_VALID (1 << 1)
+#define CALIB_DEFAULT 0xFFFF
+
 #define virt_sensor_can_id_1 17;
 #define virt_sensor_can_id_2 18;
 #define virt_sensor_can_id_3 19;
