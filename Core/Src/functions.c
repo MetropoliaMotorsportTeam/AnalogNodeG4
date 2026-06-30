@@ -21,6 +21,7 @@ CAN_Message TxMessage;
 
 uint8_t sensor_for_calib; // Sensor calibration number
 int8_t calib_select = -1; // Upper or lower calibration
+uint8_t CANRxReady = 0;
 
 /*
 calib_code = 0  -> no calibration
@@ -53,7 +54,7 @@ void HAL_FDCAN_RxFifo0Callback(FDCAN_HandleTypeDef* hfdcan, uint32_t RxFifo0ITs)
       RxMessage.Id = RxHeader.Identifier;
       RxMessage.DLC = RxHeader.DataLength;
 
-      decode(RxMessage);
+      CANRxReady = 1;
     }
 
     if (HAL_FDCAN_ActivateNotification(hfdcan, FDCAN_IT_RX_FIFO0_NEW_MESSAGE, 0) != HAL_OK)
@@ -91,7 +92,6 @@ void sent_calib_done()
 
   sensors[sensor_for_calib].calib_code = sensors[sensor_for_calib].calib_code | (1 << calib_select);
 
-  // TODO:writing whenever we calibrate (maybe optimize this)
   ADC_Calib_Update();
 }
 

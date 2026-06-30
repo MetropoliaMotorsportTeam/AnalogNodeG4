@@ -148,6 +148,12 @@ int main(void)
   {
     if (CAN_enable == 1)
     {
+      if (CANRxReady)
+      {
+        CANRxReady = 0;
+        decode(RxMessage);
+      }
+
       if (millis % CAN_interval == 0)
       {
         uint32_t raw = APPS_pedal->averages;

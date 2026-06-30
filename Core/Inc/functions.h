@@ -48,5 +48,8 @@ void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc);
 void print(uint16_t select);
 void decode(CAN_Message msg);
 void calibration();
+extern uint8_t CANRxReady;
+extern CAN_Message RxMessage;
+extern CAN_Message TxMessage;
 
 #endif /* INC_FUNCTIONS_H_ */
