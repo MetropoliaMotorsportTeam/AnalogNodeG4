@@ -46,7 +46,6 @@ void ADC_Calib_Update()
   if (!calib_flash_needs_update())
     return;
 
-  // Unlock the Flash memory
   HAL_FLASH_Unlock();
 
   // Erase memory before writing
@@ -57,27 +56,23 @@ void ADC_Calib_Update()
 
   __disable_irq();
 
-  // Perform the erase operation
   if (HAL_FLASHEx_Erase(&FlashErase, &PageError) != HAL_OK)
   {
-    // Handle the error
+    __enable_irq();
+    HAL_FLASH_Lock();
     Error_Handler();
   }
 
   for (int i = 0; i < SENSOR_NUM; i++)
   {
-    // Prepare data to write
     uint64_t data_to_write = pack_calib_values(&sensors[i]);
-    // Program the flash memory
     if (HAL_FLASH_Program(FLASH_TYPEPROGRAM_DOUBLEWORD, FLASH_ADDRESS + i * 8, data_to_write) !=
         HAL_OK)
     {
       Error_Handler();
     }
   }
-  // Lock the Flash memory after operation
   HAL_FLASH_Lock();
-  // Enable interrupts after the operation
   __enable_irq();
 }
 
@@ -97,7 +92,6 @@ void read_all_calib_values()
 
   for (int i = 0; i < SENSOR_NUM; i++)
   {
-
     uint32_t value = *(__IO uint32_t*)(FLASH_ADDRESS + i * 8);
 
     uint16_t low = value;

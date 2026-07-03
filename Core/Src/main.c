@@ -148,7 +148,7 @@ int main(void)
   {
     if (CAN_enable == 1)
     {
-      if (CANRxReady)
+      if (CANRxReady == 1)
       {
         CANRxReady = 0;
         decode(RxMessage);
@@ -156,9 +156,12 @@ int main(void)
 
       if (millis % CAN_interval == 0)
       {
+        CanSend(&CANRxReady);
         uint32_t raw = APPS_pedal->averages;
         uint16_t test_func = pedal_mapped_get_percentage(pedal_curve_linear);
         uint32_t data = APPS_pedal->data;
+        uint16_t adc_low = APPS_pedal->low_adc;
+        uint16_t adc_high = APPS_pedal->high_adc;
         print(counter);
         calibration();
         counter++;

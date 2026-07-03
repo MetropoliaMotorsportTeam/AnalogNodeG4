@@ -11,8 +11,8 @@
 #include "stm32g4xx_hal.h"
 #include <stdint.h>
 
-#define CAN_CALIB_ID 31
-#define CAN_CALIIB_DONE_ID 32
+#define CAN_CALIB_ID 0x20
+#define CAN_CALIB_DONE_ID 32
 
 #define CALIB_LOW_VALID (1 << 0)
 #define CALIB_HIGH_VALID (1 << 1)
@@ -48,7 +48,7 @@ void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc);
 void print(uint16_t select);
 void decode(CAN_Message msg);
 void calibration();
-extern uint8_t CANRxReady;
+extern volatile uint8_t CANRxReady;
 extern CAN_Message RxMessage;
 extern CAN_Message TxMessage;
 

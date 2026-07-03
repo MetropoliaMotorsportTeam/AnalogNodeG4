@@ -21,7 +21,7 @@ CAN_Message TxMessage;
 
 uint8_t sensor_for_calib; // Sensor calibration number
 int8_t calib_select = -1; // Upper or lower calibration
-uint8_t CANRxReady = 0;
+volatile uint8_t CANRxReady = 0;
 
 /*
 calib_code = 0  -> no calibration
@@ -86,7 +86,7 @@ void sent_calib_done()
   if (calib_select == -1)
     return;
 
-  TxHeader.Identifier = CAN_CALIIB_DONE_ID;
+  TxHeader.Identifier = CAN_CALIB_DONE_ID;
   TxMessage.Bytes[0] = sensor_for_calib;
   CanSend(TxMessage.Bytes);
 
@@ -110,6 +110,9 @@ void calibration()
   }
   else
   {
+    uint8_t data[8] = {0};
+    TxHeader.Identifier = 0x12;
+    CanSend(data);
 
     calibration_counter++;
     calibration_value +=
