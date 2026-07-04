@@ -37,7 +37,6 @@ void CanSend(uint8_t* TxData)
     Error_Handler();
   }
 }
-
 void HAL_FDCAN_RxFifo0Callback(FDCAN_HandleTypeDef* hfdcan, uint32_t RxFifo0ITs)
 {
   if ((RxFifo0ITs & FDCAN_IT_RX_FIFO0_NEW_MESSAGE) != RESET)
@@ -54,7 +53,7 @@ void HAL_FDCAN_RxFifo0Callback(FDCAN_HandleTypeDef* hfdcan, uint32_t RxFifo0ITs)
       RxMessage.Id = RxHeader.Identifier;
       RxMessage.DLC = RxHeader.DataLength;
 
-      CANRxReady = 1;
+      decode(RxMessage);
     }
 
     if (HAL_FDCAN_ActivateNotification(hfdcan, FDCAN_IT_RX_FIFO0_NEW_MESSAGE, 0) != HAL_OK)
@@ -101,6 +100,16 @@ static uint16_t calibration_value = 0;
 static uint16_t max_value = 0;
 static uint16_t min_value = 65535;
 
+void set_calib_values(uint8_t sensor, int8_t select)
+{
+  static uint8_t counter = 0;
+  if (counter > 0)
+    return;
+  sensor_for_calib = sensor;
+  calib_select = select;
+  counter++;
+}
+
 void calibration()
 {
 
@@ -110,10 +119,6 @@ void calibration()
   }
   else
   {
-    uint8_t data[8] = {0};
-    TxHeader.Identifier = 0x12;
-    CanSend(data);
-
     calibration_counter++;
     calibration_value +=
         (sensors[sensor_for_calib].averages - calibration_value) / calibration_counter;
@@ -128,7 +133,7 @@ void calibration()
       min_value = sensors[sensor_for_calib].averages;
     }
 
-    if (calibration_counter > (5000 / CAN_interval))
+    if (calibration_counter >= (5000 / CAN_interval))
     {
 
       calibration_value = calibration_value / calibration_counter;

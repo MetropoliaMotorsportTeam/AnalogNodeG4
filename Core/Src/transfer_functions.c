@@ -86,35 +86,12 @@ uint16_t TF_BPPS(uint8_t bytes, uint32_t raw, Sensor* sensor)
   return bpps;
 }
 
-uint16_t TF_APPS_TEST(uint8_t bytes, uint32_t raw, Sensor* sensor)
+uint16_t TF_APPS1(uint8_t bytes, uint32_t raw, Sensor* sensor)
 {
   const uint16_t max_pos = 1000;
 
   uint16_t min_raw = 1105;
   uint16_t max_raw = 1940;
-
-  get_calib_values(sensor, &min_raw, &max_raw);
-
-  raw = ValueControl(raw, min_raw, max_raw);
-
-  uint16_t range = max_raw - min_raw;
-  uint16_t apps = ((raw - min_raw) * max_pos + (range / 2)) / range;
-
-  if (min_raw > max_raw)
-  {
-    apps = max_pos - apps;
-  }
-
-  sensor->data = apps;
-  return apps;
-}
-
-uint16_t TF_APPS1(uint8_t bytes, uint32_t raw, Sensor* sensor)
-{
-  const uint16_t max_pos = 1000;
-
-  uint16_t min_raw = 650;
-  uint16_t max_raw = 1990;
 
   get_calib_values(sensor, &min_raw, &max_raw);
 

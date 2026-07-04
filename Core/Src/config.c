@@ -82,8 +82,7 @@ static void Config_1(void)
 
 static void Config_2(void)
 {
-  // switch to V24_in1 if V5 doesn't work
-  Sensor APPS2 = {TF_APPS_TEST, 2, 20, 0, V5_in0};
+  Sensor APPS2 = {TF_APPS1, 2, 20, 0, V5_in0};
   sensors[APPS2.pin] = APPS2;
   APPS_pedal = &sensors[APPS2.pin];
   CAN_interval = 100;

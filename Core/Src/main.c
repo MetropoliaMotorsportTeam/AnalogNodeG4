@@ -144,19 +144,13 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+
   while (1)
   {
     if (CAN_enable == 1)
     {
-      if (CANRxReady == 1)
-      {
-        CANRxReady = 0;
-        decode(RxMessage);
-      }
-
       if (millis % CAN_interval == 0)
       {
-        CanSend(&CANRxReady);
         uint32_t raw = APPS_pedal->averages;
         uint16_t test_func = pedal_mapped_get_percentage(pedal_curve_linear);
         uint32_t data = APPS_pedal->data;
