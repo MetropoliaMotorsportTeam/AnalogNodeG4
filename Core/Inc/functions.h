@@ -40,9 +40,6 @@ typedef struct
   uint8_t Bytes[8];
 } CAN_Message;
 
-extern uint8_t sensor_for_calib; // Sensor calibration number
-extern int8_t calib_select;      // Upper or lower calibration
-
 void CanSend(uint8_t* TxData);
 void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc);
 void print(uint16_t select);

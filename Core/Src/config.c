@@ -40,15 +40,14 @@ void Apply_Config(uint8_t config)
 
 void Load_Config()
 {
-  /* uint8_t config = get_curr_conf();
-  uint8_t conf = ((config < 1 || config > NUM_CONF) ? DEFAULT_CONF : config);
-  Apply_Config(conf); */
-  Apply_Config(2);
+  uint8_t config = get_curr_conf();
+  uint8_t conf = (valid_config(config) ? config : DEFAULT_CONF);
+  Apply_Config(conf);
 }
 
 void Process_Config(uint8_t config)
 {
-  uint8_t conf = ((config < 1 || config > NUM_CONF) ? DEFAULT_CONF : config);
+  uint8_t conf = (valid_config(config) ? config : DEFAULT_CONF);
   if (save_config(conf) != HAL_OK)
     Error_Handler();
 
@@ -82,14 +81,15 @@ static void Config_1(void)
 
 static void Config_2(void)
 {
-  Sensor APPS2 = {TF_APPS1, 2, 20, 0, V5_in0};
-  sensors[APPS2.pin] = APPS2;
-  APPS_pedal = &sensors[APPS2.pin];
+  Sensor APPS1 = {TF_APPS1, 2, 20, 0, V3_in0};
+  sensors[APPS1.pin] = APPS1;
+  APPS_pedal = &sensors[APPS1.pin];
   CAN_interval = 100;
 }
 
 static void Config_3(void)
 {
+  // Virtual sensor config
   Sensor APPS1 = {TF_APPS1, 1, 100, 0, V5_in0};
   Sensor APPS2 = {TF_APPS2, 2, 100, 0, V5_in1};
   sensors[APPS1.pin] = APPS1;

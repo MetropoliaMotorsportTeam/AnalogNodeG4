@@ -19,8 +19,8 @@ extern FDCAN_RxHeaderTypeDef RxHeader;
 CAN_Message RxMessage;
 CAN_Message TxMessage;
 
-uint8_t sensor_for_calib; // Sensor calibration number
-int8_t calib_select = -1; // Upper or lower calibration
+static uint8_t sensor_for_calib; // Sensor calibration number
+static int8_t calib_select = -1; // Upper or lower calibration
 volatile uint8_t CANRxReady = 0;
 
 /*
