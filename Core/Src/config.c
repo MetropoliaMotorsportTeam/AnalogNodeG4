@@ -81,7 +81,7 @@ static void Config_1(void)
 
 static void Config_2(void)
 {
-  Sensor APPS1 = {TF_APPS1, 2, 20, 0, V3_in0};
+  Sensor APPS1 = {TF_APPS1, 2, 20, 0, V5_in0};
   sensors[APPS1.pin] = APPS1;
   APPS_pedal = &sensors[APPS1.pin];
   CAN_interval = 100;
