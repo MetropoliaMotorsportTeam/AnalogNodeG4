@@ -18,6 +18,6 @@ static const uint16_t pedal_curve_aggressive[PEDAL_LUT_SIZE] = {0,   316, 447, 5
 static const uint16_t pedal_curve_stupid[PEDAL_LUT_SIZE] = {0,   20,  60,  120, 200, 320,
                                                             460, 620, 780, 910, 1000};
 uint16_t pedal_map(uint16_t pedal, const uint16_t* curve);
-uint16_t pedal_mapped_get_percentage(const uint16_t* curve);
+uint16_t pedal_map_get_percentage(const uint16_t* curve);
 
 #endif

@@ -9,6 +9,7 @@
 #include "config.h"
 #include "functions.h"
 #include "main.h"
+#include "pedal_map.h"
 #include "sensors.h"
 #include <math.h>
 
@@ -105,7 +106,7 @@ uint16_t TF_APPS1(uint8_t bytes, uint32_t raw, Sensor* sensor)
     apps = 1000 - apps;
   }
 
-  sensor->data = apps;
+  sensor->data = pedal_map(apps, NULL);
   return apps;
 }
 
