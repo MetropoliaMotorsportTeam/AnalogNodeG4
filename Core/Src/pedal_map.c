@@ -2,7 +2,7 @@
 #include "sensors.h"
 #include "virtual_sensors.h"
 
-static const uint16_t* default_curve = pedal_curve_aggressive;
+static const uint16_t* used_curve = pedal_curve_aggressive;
 
 // test function
 uint16_t pedal_map_get_percentage(const uint16_t* curve)
@@ -18,7 +18,7 @@ uint16_t pedal_map_get_percentage(const uint16_t* curve)
 
 uint16_t pedal_map(uint16_t pedal, const uint16_t* curve)
 {
-  const uint16_t* used_curve = default_curve;
+  const uint16_t* used_curve = used_curve;
   if (curve)
     used_curve = curve;
 
@@ -42,4 +42,30 @@ uint16_t pedal_map(uint16_t pedal, const uint16_t* curve)
   }
 
   return (uint16_t)y;
+}
+
+void change_curve(pedal_curve curve)
+{
+
+  switch (curve)
+  {
+  case LINEAR:
+    used_curve = pedal_curve_linear;
+    break;
+
+  case PARABOLIC:
+    used_curve = pedal_curve_aggressive;
+    break;
+
+  case SOFT:
+    used_curve = pedal_curve_soft;
+    break;
+
+  case STUPID:
+    used_curve = pedal_curve_stupid;
+    break;
+
+  default:
+    break;
+  }
 }
