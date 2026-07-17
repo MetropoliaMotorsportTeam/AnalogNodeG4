@@ -22,13 +22,14 @@
 #include "dma.h"
 #include "fdcan.h"
 #include "gpio.h"
+#include "pedal_map.h"
 #include "tim.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "config.h"
-#include "curve.h"
 #include "functions.h"
+#include "pedal_map.h"
 #include "sensors.h"
 #include "virtual_sensors.h"
 #include <stdio.h>
@@ -142,8 +143,10 @@ int main(void)
     {
       if (millis % CAN_interval == 0)
       {
+        uint8_t test_bytes[8] = {10, 10, 10, 10, 10, 10, 10, 10};
+        CanSend(test_bytes);
         uint32_t raw = APPS_pedal->averages;
-        uint16_t test_func = pedal_mapped_get_percentage(pedal_curve_linear);
+        // uint16_t test_func = pedal_map_get_percentage(pedal_curve_linear);
         uint32_t data = APPS_pedal->data;
         uint16_t adc_low = APPS_pedal->low_adc;
         uint16_t adc_high = APPS_pedal->high_adc;

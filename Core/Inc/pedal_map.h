@@ -1,5 +1,5 @@
-#ifndef CURVE_H
-#define CURVE_H
+#ifndef PEDAL_MAP_H
+#define PEDAL_MAP_H
 #include "functions.h"
 #include <stdint.h>
 
