@@ -3,7 +3,7 @@
 #include "virtual_sensors.h"
 #include <string.h>
 
-static const uint16_t* curr_curve = pedal_curve_aggressive;
+const uint16_t* curr_curve = pedal_curve_aggressive;
 static uint16_t pedal_curve_slots[PEDAL_CONFIG_SLOTS][PEDAL_LUT_SIZE];
 
 // test function
@@ -13,12 +13,12 @@ uint16_t pedal_map_get_percentage(const uint16_t* curve)
   pedalreq.update_func(&pedalreq);
   return pedal_map(pedalreq.output.values[0], curve);
 #else
-  return pedal_map(APPS_pedal->transfer_function(1, APPS_pedal->averages, APPS_pedal), curve);
+  return pedal_map(APPS_pedal->transfer_function(1, APPS_pedal->averages, APPS_pedal));
 #endif
   return 0;
 }
 
-uint16_t pedal_map(uint16_t pedal, const uint16_t* curve)
+uint16_t pedal_map(uint16_t pedal)
 {
 
   if (pedal >= PEDAL_MAX_VALUE)
@@ -29,8 +29,8 @@ uint16_t pedal_map(uint16_t pedal, const uint16_t* curve)
   uint16_t index = pedal / PEDAL_LUT_STEP;
   uint16_t remainder = pedal % PEDAL_LUT_STEP;
 
-  uint16_t y0 = curve[index];
-  uint16_t y1 = curve[index + 1];
+  uint16_t y0 = curr_curve[index];
+  uint16_t y1 = curr_curve[index + 1];
 
   uint32_t delta = (uint32_t)(y1 - y0);
   uint32_t y = (uint32_t)y0 + ((delta * remainder) / PEDAL_LUT_STEP);

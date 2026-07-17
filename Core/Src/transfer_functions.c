@@ -106,7 +106,7 @@ uint16_t TF_APPS1(uint8_t bytes, uint32_t raw, Sensor* sensor)
     apps = 1000 - apps;
   }
 
- // sensor->data = pedal_map(apps, NULL);
+  sensor->data = pedal_map(apps);
   return apps;
 }
 
