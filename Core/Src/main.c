@@ -146,7 +146,7 @@ int main(void)
         uint8_t test_bytes[8] = {10, 10, 10, 10, 10, 10, 10, 10};
         CanSend(test_bytes);
         uint32_t raw = APPS_pedal->averages;
-        // uint16_t test_func = pedal_map_get_percentage(pedal_curve_linear);
+        uint16_t test_func = pedal_map_get_percentage();
         uint32_t data = APPS_pedal->data;
         uint16_t adc_low = APPS_pedal->low_adc;
         uint16_t adc_high = APPS_pedal->high_adc;
