@@ -8,6 +8,7 @@
 #include "functions.h"
 #include "config.h"
 #include "main.h"
+#include "pedal_map.h"
 #include "stm32g4xx.h"
 #include "stm32g4xx_hal.h"
 #include "transfer_functions.h"
@@ -164,6 +165,13 @@ void decode(CAN_Message msg)
     break;
   case CAN_CHANGE_CONFIG:
     Process_Config(msg.Bytes[0]);
+  case CAN_CHANGE_PEDAL_PROFILE:
+    change_pedal_curve(msg.Bytes[0]);
+    break;
+  case CAN_ADD_PEDAL_PROFILE:
+    process_pedal_config(msg);
+    break;
+
   default:
     break;
   }

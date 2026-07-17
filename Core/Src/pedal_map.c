@@ -1,8 +1,10 @@
 #include "pedal_map.h"
 #include "sensors.h"
 #include "virtual_sensors.h"
+#include <string.h>
 
 static const uint16_t* used_curve = pedal_curve_aggressive;
+static uint16_t pedal_curve_slots[PEDAL_CONFIG_SLOTS][PEDAL_LUT_SIZE];
 
 // test function
 uint16_t pedal_map_get_percentage(const uint16_t* curve)
@@ -44,9 +46,9 @@ uint16_t pedal_map(uint16_t pedal, const uint16_t* curve)
   return (uint16_t)y;
 }
 
-void change_curve(pedal_curve curve)
+void change_pedal_curve(pedal_curve curve)
 {
-
+  // TODO: rewrite to be able to switch to non-preset curve
   switch (curve)
   {
   case LINEAR:
@@ -68,4 +70,32 @@ void change_curve(pedal_curve curve)
   default:
     break;
   }
+}
+
+void process_pedal_config(CAN_Message msg)
+{
+  static uint8_t CAN_msg_buf[PEDAL_LUT_SIZE];
+  static uint8_t slot = 0;
+  static uint8_t size = 0;
+
+  // TODO:make documents for what data needs to be sent
+  if (size == PEDAL_LUT_SIZE)
+  {
+    add_pedal_curve(CAN_msg_buf, slot, size);
+    memset(CAN_msg_buf, 0, sizeof(CAN_msg_buf));
+    slot = 0;
+    size = 0;
+  }
+}
+
+uint8_t add_pedal_curve(uint8_t values[], uint8_t slot, uint8_t size)
+{
+  if (size < PEDAL_LUT_SIZE)
+    return 1;
+
+  if (!values)
+    return 1;
+
+  memcpy(pedal_curve_slots[slot], values, PEDAL_LUT_SIZE);
+  return 0;
 }
