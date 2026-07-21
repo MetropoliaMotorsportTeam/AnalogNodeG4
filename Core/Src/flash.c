@@ -6,6 +6,17 @@ HAL_StatusTypeDef flash_erase_page(uint32_t mem_addr, uint8_t num_pages)
   {
     return HAL_ERROR;
   }
+
+  if (num_pages == 0U)
+  {
+    return HAL_ERROR;
+  }
+
+  if (mem_addr < FLASH_BASE)
+  {
+    return HAL_ERROR;
+  }
+
   FLASH_EraseInitTypeDef flash_erase = {0};
   uint32_t page_error;
 
@@ -26,6 +37,7 @@ HAL_StatusTypeDef flash_erase_page(uint32_t mem_addr, uint8_t num_pages)
   return status;
 }
 
+// TODO: update this to handle larger amount of data
 HAL_StatusTypeDef flash_store(uint32_t addr, uint64_t data)
 {
   if ((addr % 8U) != 0U)
@@ -35,6 +47,8 @@ HAL_StatusTypeDef flash_store(uint32_t addr, uint64_t data)
 
   __disable_irq();
   HAL_FLASH_Unlock();
+
+  __HAL_FLASH_CLEAR_FLAG(FLASH_FLAG_ALL_ERRORS);
 
   HAL_StatusTypeDef status = HAL_FLASH_Program(FLASH_TYPEPROGRAM_DOUBLEWORD, addr, data);
 

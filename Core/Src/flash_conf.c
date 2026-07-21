@@ -1,62 +1,10 @@
 #include "flash_conf.h"
 #include "config.h"
+#include "flash.h"
 #include "main.h"
 #include "stm32g4xx_it.h"
-#include <stdint.h>
 
-static HAL_StatusTypeDef flash_store_conf(uint32_t addr, uint8_t config);
-static HAL_StatusTypeDef flash_erase_page(uint32_t mem_addr);
-static volatile uint32_t get_empty_conf_addr();
-
-static HAL_StatusTypeDef flash_erase_page(uint32_t mem_addr)
-{
-  if ((mem_addr % 8U) != 0U)
-  {
-    return HAL_ERROR;
-  }
-  FLASH_EraseInitTypeDef flash_erase = {0};
-  uint32_t page_error;
-
-  __disable_irq();
-  HAL_FLASH_Unlock();
-
-  __HAL_FLASH_CLEAR_FLAG(FLASH_FLAG_ALL_ERRORS);
-
-  flash_erase.TypeErase = FLASH_TYPEERASE_PAGES;
-  flash_erase.Banks = FLASH_BANK_1;
-  flash_erase.Page = (mem_addr - FLASH_BASE) / FLASH_PAGE_SIZE;
-  flash_erase.NbPages = 1;
-
-  HAL_StatusTypeDef status = HAL_FLASHEx_Erase(&flash_erase, &page_error);
-
-  HAL_FLASH_Lock();
-  __enable_irq();
-  return status;
-}
-
-static HAL_StatusTypeDef flash_store_conf(uint32_t addr, uint8_t config)
-{
-  if (!valid_config(config))
-  {
-    return HAL_ERROR;
-  }
-
-  if ((addr % 8U) != 0U)
-  {
-    return HAL_ERROR;
-  }
-
-  __disable_irq();
-  HAL_FLASH_Unlock();
-  uint64_t record = make_config_record(config);
-
-  HAL_StatusTypeDef status = HAL_FLASH_Program(FLASH_TYPEPROGRAM_DOUBLEWORD, addr, record);
-
-  HAL_FLASH_Lock();
-  __enable_irq();
-
-  return status;
-}
+static uint32_t get_empty_conf_addr();
 
 HAL_StatusTypeDef save_config(uint8_t config)
 {
@@ -70,15 +18,15 @@ HAL_StatusTypeDef save_config(uint8_t config)
   if (addr == 0)
   {
     // flash full
-    if (flash_erase_page(CONFIG_FLASH_ADDR) != HAL_OK)
+    if (flash_erase_page(CONFIG_FLASH_ADDR, 1) != HAL_OK)
       return HAL_ERROR;
 
     addr = CONFIG_FLASH_ADDR;
   }
-  return flash_store_conf(addr, config);
+  return flash_store(addr, make_config_record(config));
 }
 
-static volatile uint32_t get_empty_conf_addr()
+static uint32_t get_empty_conf_addr()
 {
   uint32_t addr = CONFIG_FLASH_ADDR;
 
