@@ -5,9 +5,11 @@
 
 #define PEDAL_MAX_VALUE 1000U
 #define PEDAL_LUT_STEP 100U
-#define PEDAL_LUT_SIZE 11U
-#define PEDAL_CONFIG_SLOTS 10U
+#define PEDAL_LUT_SIZE 9U
+#define PEDAL_PROFILE_SLOTS 10U
 #define PEDAL_TRANSFER_DONE 0xFFU
+#define PEDAL_PROFILE_SIZE (PEDAL_LUT_SIZE * 2)
+#define PEDAL_TOT_SIZE (PEDAL_PROFILE_SIZE * PEDAL_PROFILE_SLOTS)
 
 #define CAN_CHANGE_PEDAL_PROFILE (0x17)
 #define CAN_ADD_PEDAL_PROFILE (0x18)
@@ -21,17 +23,15 @@ typedef enum pedal_profile
   STUPID,
 } pedal_profile;
 
-static const uint16_t pedal_profile_linear[PEDAL_LUT_SIZE] = {0,   100, 200, 300, 400, 500,
-                                                              600, 700, 800, 900, 1000};
+static const uint16_t pedal_profile_linear[PEDAL_LUT_SIZE] = {100, 200, 300, 400, 500,
+                                                              600, 700, 800, 900};
+static const uint16_t pedal_profile_parabolic[PEDAL_LUT_SIZE] = {316, 447, 548, 632, 707,
+                                                                 775, 837, 894, 949};
+static const uint16_t pedal_profile_soft[PEDAL_LUT_SIZE] = {10,  40,  90,  160, 250,
+                                                            360, 490, 640, 810};
+static const uint16_t pedal_profile_stupid[PEDAL_LUT_SIZE] = {20,  60,  120, 200, 320,
+                                                              460, 620, 780, 910};
 
-static const uint16_t pedal_profile_aggressive[PEDAL_LUT_SIZE] = {0,   316, 447, 548, 632, 707,
-                                                                  775, 837, 894, 949, 1000};
-
-static const uint16_t pedal_profile_soft[PEDAL_LUT_SIZE] = {0,   10,  40,  90,  160, 250,
-                                                            360, 490, 640, 810, 1000};
-
-static const uint16_t pedal_profile_stupid[PEDAL_LUT_SIZE] = {0,   20,  60,  120, 200, 320,
-                                                              460, 620, 780, 910, 1000};
 uint16_t pedal_map(uint16_t pedal);
 uint16_t pedal_map_get_percentage();
 extern const uint16_t* curr_profile;
