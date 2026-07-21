@@ -164,7 +164,7 @@ void decode(CAN_Message msg)
     calib_select = msg.Bytes[1];
     break;
   case CAN_CHANGE_CONFIG:
-    Process_Config(msg.Bytes[0]);
+    process_config(msg.Bytes[0]);
   case CAN_CHANGE_PEDAL_PROFILE:
     process_pedal_profile_change(msg);
     break;

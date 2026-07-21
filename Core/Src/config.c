@@ -10,7 +10,7 @@ static void config_2(void);
 static void config_3(void);
 static void config_4(void);
 
-void config_setup(void)
+void Config_Setup(void)
 {
   init_sensors();
   load_config();
