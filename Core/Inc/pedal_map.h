@@ -6,36 +6,39 @@
 #define PEDAL_MAX_VALUE 1000U
 #define PEDAL_LUT_STEP 100U
 #define PEDAL_LUT_SIZE 11U
-#define PEDAL_CONFIG_SLOTS 20U
+#define PEDAL_CONFIG_SLOTS 10U
+#define PEDAL_TRANSFER_DONE 0xFFU
 
 #define CAN_CHANGE_PEDAL_PROFILE (0x17)
 #define CAN_ADD_PEDAL_PROFILE (0x18)
+#define CAN_PEDAL_SAVE_FLASH (0x19)
 
-typedef enum pedal_curve
+typedef enum pedal_profile
 {
   LINEAR,
   PARABOLIC,
   SOFT,
   STUPID,
-} pedal_curve;
+} pedal_profile;
 
-static const uint16_t pedal_curve_linear[PEDAL_LUT_SIZE] = {0,   100, 200, 300, 400, 500,
-                                                            600, 700, 800, 900, 1000};
+static const uint16_t pedal_profile_linear[PEDAL_LUT_SIZE] = {0,   100, 200, 300, 400, 500,
+                                                              600, 700, 800, 900, 1000};
 
-static const uint16_t pedal_curve_aggressive[PEDAL_LUT_SIZE] = {0,   316, 447, 548, 632, 707,
-                                                                775, 837, 894, 949, 1000};
+static const uint16_t pedal_profile_aggressive[PEDAL_LUT_SIZE] = {0,   316, 447, 548, 632, 707,
+                                                                  775, 837, 894, 949, 1000};
 
-static const uint16_t pedal_curve_soft[PEDAL_LUT_SIZE] = {0,   10,  40,  90,  160, 250,
-                                                          360, 490, 640, 810, 1000};
+static const uint16_t pedal_profile_soft[PEDAL_LUT_SIZE] = {0,   10,  40,  90,  160, 250,
+                                                            360, 490, 640, 810, 1000};
 
-static const uint16_t pedal_curve_stupid[PEDAL_LUT_SIZE] = {0,   20,  60,  120, 200, 320,
-                                                            460, 620, 780, 910, 1000};
+static const uint16_t pedal_profile_stupid[PEDAL_LUT_SIZE] = {0,   20,  60,  120, 200, 320,
+                                                              460, 620, 780, 910, 1000};
 uint16_t pedal_map(uint16_t pedal);
 uint16_t pedal_map_get_percentage();
-extern const uint16_t* curr_curve;
+extern const uint16_t* curr_profile;
 
-void change_pedal_curve(pedal_curve curve);
-uint8_t add_pedal_curve(uint8_t values[], uint8_t slot, uint8_t size);
-void process_pedal_config(CAN_Message msg);
+void change_pedal_profile(pedal_profile profile);
+uint8_t add_pedal_profile(void* values, uint8_t slot, uint8_t size);
+void process_pedal_profile_add(CAN_Message msg);
+void process_pedal_profile_change(CAN_Message msg);
 
 #endif

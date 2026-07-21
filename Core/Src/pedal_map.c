@@ -3,15 +3,16 @@
 #include "virtual_sensors.h"
 #include <string.h>
 
-const uint16_t* curr_curve = pedal_curve_aggressive;
-static uint16_t pedal_curve_slots[PEDAL_CONFIG_SLOTS][PEDAL_LUT_SIZE];
+// TODO: write these to flash
+const uint16_t* curr_profile = pedal_profile_aggressive;
+static uint16_t pedal_profile_slots[PEDAL_CONFIG_SLOTS][PEDAL_LUT_SIZE];
 
 // test function
-uint16_t pedal_map_get_percentage(const uint16_t* curve)
+uint16_t pedal_map_get_percentage()
 {
 #ifdef VIRTUAL_SENSOR
   pedalreq.update_func(&pedalreq);
-  return pedal_map(pedalreq.output.values[0], curve);
+  return pedal_map(pedalreq.output.values[0]);
 #else
   return pedal_map(APPS_pedal->transfer_function(1, APPS_pedal->averages, APPS_pedal));
 #endif
@@ -29,8 +30,8 @@ uint16_t pedal_map(uint16_t pedal)
   uint16_t index = pedal / PEDAL_LUT_STEP;
   uint16_t remainder = pedal % PEDAL_LUT_STEP;
 
-  uint16_t y0 = curr_curve[index];
-  uint16_t y1 = curr_curve[index + 1];
+  uint16_t y0 = curr_profile[index];
+  uint16_t y1 = curr_profile[index + 1];
 
   uint32_t delta = (uint32_t)(y1 - y0);
   uint32_t y = (uint32_t)y0 + ((delta * remainder) / PEDAL_LUT_STEP);
@@ -43,25 +44,24 @@ uint16_t pedal_map(uint16_t pedal)
   return (uint16_t)y;
 }
 
-void change_pedal_curve(pedal_curve curve)
+void change_pedal_profile(pedal_profile profile)
 {
-  // TODO: rewrite to be able to switch to non-preset curve
-  switch (curve)
+  switch (profile)
   {
   case LINEAR:
-    curr_curve = pedal_curve_linear;
+    curr_profile = pedal_profile_linear;
     break;
 
   case PARABOLIC:
-    curr_curve = pedal_curve_aggressive;
+    curr_profile = pedal_profile_aggressive;
     break;
 
   case SOFT:
-    curr_curve = pedal_curve_soft;
+    curr_profile = pedal_profile_soft;
     break;
 
   case STUPID:
-    curr_curve = pedal_curve_stupid;
+    curr_profile = pedal_profile_stupid;
     break;
 
   default:
@@ -69,30 +69,81 @@ void change_pedal_curve(pedal_curve curve)
   }
 }
 
-void process_pedal_config(CAN_Message msg)
+static uint8_t validate_pedal_values(uint16_t values[], uint8_t size)
 {
-  static uint8_t CAN_msg_buf[PEDAL_LUT_SIZE];
-  static uint8_t slot = 0;
-  static uint8_t size = 0;
-
-  // TODO:make documents for what data needs to be sent
-  if (size == PEDAL_LUT_SIZE)
-  {
-    add_pedal_curve(CAN_msg_buf, slot, size);
-    memset(CAN_msg_buf, 0, sizeof(CAN_msg_buf));
-    slot = 0;
-    size = 0;
-  }
+  // TODO: make when i feel like it
+  return 1;
 }
 
-uint8_t add_pedal_curve(uint8_t values[], uint8_t slot, uint8_t size)
+void process_pedal_profile_add(CAN_Message msg)
+{
+  static uint16_t CAN_msg_buf[PEDAL_LUT_SIZE];
+  CAN_msg_buf[0] = 0;
+  CAN_msg_buf[10] = 1000;
+  static uint8_t slot = 0xFF;
+  static uint8_t size = 0;
+
+  if (slot == 0xFF)
+    slot = msg.Bytes[0];
+
+  if (slot >= PEDAL_CONFIG_SLOTS)
+  {
+    slot = 0xFF;
+    return;
+  }
+
+  uint8_t index = msg.Bytes[1];
+
+  // check for valid indexes
+  if (index != 1U && index != 4U && index != 7U)
+    return;
+
+  memcpy(&CAN_msg_buf[index], &msg.Bytes[2], 6);
+  size += 6;
+
+  if (msg.Bytes[0] == PEDAL_TRANSFER_DONE)
+  {
+    if (validate_pedal_values(CAN_msg_buf, size))
+      add_pedal_profile(CAN_msg_buf, slot, size);
+
+    size = 0;
+    slot = 0xFF;
+    // clear everything except first and last element
+    memset(&CAN_msg_buf[1], 0, sizeof(CAN_msg_buf) - sizeof(uint16_t) * 2);
+  }
+
+  index = msg.Bytes[0];
+}
+
+uint8_t add_pedal_profile(void* values, uint8_t slot, uint8_t size)
 {
   if (size < PEDAL_LUT_SIZE)
-    return 1;
+    return 0;
 
   if (!values)
-    return 1;
+    return 0;
 
-  memcpy(pedal_curve_slots[slot], values, PEDAL_LUT_SIZE);
-  return 0;
+  if (slot >= PEDAL_CONFIG_SLOTS)
+    return 0;
+
+  memcpy(pedal_profile_slots[slot], values, PEDAL_LUT_SIZE);
+  return 1;
+}
+
+void process_pedal_profile_change(CAN_Message msg)
+{
+  uint8_t profile_type = msg.Bytes[0];
+  uint8_t profile_index = msg.Bytes[1];
+
+  if (profile_type == 0U)
+  {
+    change_pedal_profile(profile_index);
+  }
+  else if (profile_type == 1U)
+  {
+    if (profile_index < PEDAL_CONFIG_SLOTS)
+    {
+      curr_profile = pedal_profile_slots[profile_index];
+    }
+  }
 }

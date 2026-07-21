@@ -166,10 +166,14 @@ void decode(CAN_Message msg)
   case CAN_CHANGE_CONFIG:
     Process_Config(msg.Bytes[0]);
   case CAN_CHANGE_PEDAL_PROFILE:
-    change_pedal_curve(msg.Bytes[0]);
+    process_pedal_profile_change(msg);
     break;
   case CAN_ADD_PEDAL_PROFILE:
-    process_pedal_config(msg);
+    process_pedal_profile_add(msg);
+    break;
+
+  case CAN_PEDAL_SAVE_FLASH:
+    // TODO: implement when i feel like it
     break;
 
   default:
