@@ -4,7 +4,7 @@
 #include "stm32g4xx_it.h"
 #include <stdint.h>
 
-static HAL_StatusTypeDef flash_store(uint32_t addr, uint8_t config);
+static HAL_StatusTypeDef flash_store_conf(uint32_t addr, uint8_t config);
 static HAL_StatusTypeDef flash_erase_page(uint32_t mem_addr);
 static volatile uint32_t get_empty_conf_addr();
 
@@ -34,7 +34,7 @@ static HAL_StatusTypeDef flash_erase_page(uint32_t mem_addr)
   return status;
 }
 
-static HAL_StatusTypeDef flash_store(uint32_t addr, uint8_t config)
+static HAL_StatusTypeDef flash_store_conf(uint32_t addr, uint8_t config)
 {
   if (!valid_config(config))
   {
@@ -75,7 +75,7 @@ HAL_StatusTypeDef save_config(uint8_t config)
 
     addr = CONFIG_FLASH_ADDR;
   }
-  return flash_store(addr, config);
+  return flash_store_conf(addr, config);
 }
 
 static volatile uint32_t get_empty_conf_addr()
