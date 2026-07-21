@@ -57,7 +57,7 @@ CM_ SG_ 2147483671 ProfileType "Mux_switch_for_preset_or_custom_profiles.";
 CM_ SG_ 2147483671 ProfileSlotCustom "Pick_between_10_custom_profile_slots.";
 CM_ SG_ 2147483671 ProfileSlotPreset "Pick_between_4_preset_profiles.";
 CM_ SG_ 2147483672 ProfileSlot "Profile_picker";
-CM_ SG_ 2147483672 ProfileIndex "Final_array_will_have_11_elements,_the_first_and_last_element_is_always_0_and_1000._Only_send_the_other_data_points_in_between";
+CM_ SG_ 2147483672 ProfileIndex "Final_array_will_have_11_elements,_the_first_and_last_element_are_always_0_and_1000._Only_need_to_send_the_other_data_points.";
 BA_DEF_ BO_ "GenMsgBackgroundColor" STRING ;
 BA_DEF_ BO_ "GenMsgForegroundColor" STRING ;
 BA_DEF_ BO_ "matchingcriteria" INT 0 0;
