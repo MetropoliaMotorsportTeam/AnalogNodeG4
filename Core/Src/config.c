@@ -5,56 +5,56 @@
 #include "virtual_sensors.h"
 #include <string.h>
 
-static void Config_1(void);
-static void Config_2(void);
-static void Config_3(void);
-static void Config_4(void);
+static void config_1(void);
+static void config_2(void);
+static void config_3(void);
+static void config_4(void);
 
-void Config_Setup(void)
+void config_setup(void)
 {
   init_sensors();
-  Load_Config();
+  load_config();
   read_all_calib_values();
 }
 
-void Apply_Config(uint8_t config)
+void apply_config(uint8_t config)
 {
   switch (config)
   {
   case 1:
-    Config_1();
+    config_1();
     break;
   case 2:
-    Config_2();
+    config_2();
     break;
   case 3:
-    Config_3();
+    config_3();
     break;
   case 4:
-    Config_4();
+    config_4();
     break;
   default:
     break;
   }
 }
 
-void Load_Config()
+void load_config()
 {
   uint8_t config = get_curr_conf();
   uint8_t conf = (valid_config(config) ? config : DEFAULT_CONF);
-  Apply_Config(conf);
+  apply_config(conf);
 }
 
-void Process_Config(uint8_t config)
+void process_config(uint8_t config)
 {
   uint8_t conf = (valid_config(config) ? config : DEFAULT_CONF);
   if (save_config(conf) != HAL_OK)
     Error_Handler();
 
-  Apply_Config(conf);
+  apply_config(conf);
 }
 
-static void Config_1(void)
+static void config_1(void)
 {
   Sensor BTN1 = {TF_BTN, 2, 100, 0, V5_in0};
   Sensor BTN2 = {TF_BTN, 13, 100, 0, V5_in5};
@@ -79,7 +79,7 @@ static void Config_1(void)
   CAN_interval = 100;
 }
 
-static void Config_2(void)
+static void config_2(void)
 {
   Sensor APPS1 = {TF_APPS1, 2, 20, 0, V5_in0};
   sensors[APPS1.pin] = APPS1;
@@ -87,7 +87,7 @@ static void Config_2(void)
   CAN_interval = 100;
 }
 
-static void Config_3(void)
+static void config_3(void)
 {
   // Virtual sensor config
   Sensor APPS1 = {TF_APPS1, 1, 100, 0, V5_in0};
@@ -106,7 +106,7 @@ static void Config_3(void)
   CAN_interval = 100;
 }
 
-static void Config_4(void)
+static void config_4(void)
 {
   Sensor W_TEMP = {TF_WATER_TEMP, 2, 100, 0, V5_in0};
   Sensor V5_LINE = {TF_5V, 10, 100, 0, V5_LINE_PIN};

@@ -8,8 +8,8 @@
 #define NUM_CONF 4
 
 void Config_Setup(void);
-void Apply_Config(uint8_t config);
-void Load_Config();
+void apply_config(uint8_t config);
+void load_config(void);
 void Process_Config(uint8_t config);
 
 typedef volatile struct CanDataType CANData;
