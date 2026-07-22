@@ -48,8 +48,8 @@ volatile uint8_t get_saved_conf(void)
 
   for (uint32_t i = 0; i < CONFIG_NUM_SLOTS; i++)
   {
-    volatile uint64_t* mem_ptr = (volatile uint64_t*)addr;
-    uint64_t record = *mem_ptr;
+    volatile uint64_t* memptr = (volatile uint64_t*)addr;
+    uint64_t record = *memptr;
 
     if (record == FLASH_EMPTY_U64)
     {

@@ -1,9 +1,9 @@
 ../Core/Inc/flash_conf.h:24:23:valid_config	3
-../Core/Src/config.c:13:6:Config_Setup	1
-../Core/Src/config.c:20:6:apply_config	5
-../Core/Src/config.c:41:6:load_config	2
-../Core/Src/config.c:48:6:process_config	3
-../Core/Src/config.c:57:13:config_1	1
-../Core/Src/config.c:82:13:config_2	1
-../Core/Src/config.c:90:13:config_3	1
-../Core/Src/config.c:109:13:config_4	1
+../Core/Src/config.c:15:6:Config_Setup	1
+../Core/Src/config.c:23:6:apply_config	5
+../Core/Src/config.c:44:6:load_config	2
+../Core/Src/config.c:51:6:process_config	3
+../Core/Src/config.c:60:13:config_1	1
+../Core/Src/config.c:85:13:config_2	1
+../Core/Src/config.c:93:13:config_3	1
+../Core/Src/config.c:112:13:config_4	1

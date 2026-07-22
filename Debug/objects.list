@@ -4,7 +4,7 @@
 "./Core/Src/fdcan.o"
 "./Core/Src/flash.o"
 "./Core/Src/flash_conf.o"
-"./Core/Src/flash_pedal_map.o"
+"./Core/Src/flash_pedal_profiles.o"
 "./Core/Src/functions.o"
 "./Core/Src/gpio.o"
 "./Core/Src/main.o"
