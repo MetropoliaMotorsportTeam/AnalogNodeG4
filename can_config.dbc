@@ -37,12 +37,12 @@ BO_ 2147483680 Calib: 8 Calib
    SG_ SensorSelect : 0|1@0+ (1,0) [0|11] "" Vector__XXX
    SG_ CalibSelect : 1|1@0- (1,0) [0|1] "" Vector__XXX
 
-BO_ 2147483671 ChangePedalCurve: 8 PedalMapping
+BO_ 2147483671 ChangePedalProfile: 8 PedalMapping
    SG_ ProfileType M : 0|1@1+ (1,0) [0|1] "" Vector__XXX
    SG_ ProfileSlotCustom m1 : 1|1@1+ (1,0) [0|9] "" Vector__XXX
    SG_ ProfileSlotPreset m0 : 1|1@1+ (1,0) [0|3] "" Vector__XXX
 
-BO_ 2147483672 AddPedalCurve: 8 PedalMapping
+BO_ 2147483672 AddPedalProfile: 8 PedalMapping
    SG_ ProfileSlot : 0|1@1+ (1,0) [0|9] "" Vector__XXX
    SG_ ProfileIndex : 1|1@1+ (1,0) [0|8] "" Vector__XXX
    SG_ Data1 : 2|2@1+ (1,0) [0|65535] "" Vector__XXX
@@ -50,6 +50,9 @@ BO_ 2147483672 AddPedalCurve: 8 PedalMapping
    SG_ Data3 : 6|2@1+ (1,0) [0|65535] "" Vector__XXX
 
 BO_ 2147483673 SaveToFlash: 0 PedalMapping
+
+BO_ 2147483664 ChangeConfig: 1 Configuration
+   SG_ Config : 0|1@1+ (1,0) [1|4] "" Vector__XXX
 
 CM_ BO_ 2147483680 "Starts calibration";
 CM_ SG_ 2147483680 CalibSelect "High_or_low_calibration_value";
@@ -70,13 +73,12 @@ BA_DEF_DEF_ "GenMsgBackgroundColor" "#ffffff";
 BA_DEF_DEF_ "GenMsgForegroundColor" "#000000";
 BA_DEF_DEF_ "matchingcriteria" 0;
 BA_DEF_DEF_ "filterlabeling" 1;
-BA_DEF_DEF_ "matchingcriteria" 0;
-BA_DEF_DEF_ "filterlabeling" 1;
 BA_ "GenMsgForegroundColor" BO_ 2147483680 "#000000";
 BA_ "GenMsgForegroundColor" BO_ 2147483671 "#000000";
 BA_ "GenMsgForegroundColor" BO_ 2147483673 "#000000";
+BA_ "GenMsgForegroundColor" BO_ 2147483664 "#000000";
 VAL_ 2147483680 SensorSelect 0 "No Description";
 VAL_ 2147483680 CalibSelect 0 "Low" 1 "High" 1 "Default_invalid_value";
 VAL_ 2147483671 ProfileType 0 "Preset_profiles" 1 "Custom_profiles";
 VAL_ 2147483671 ProfileSlotPreset 0 "Linear_profile" 1 "Parabolic_profile" 2 "Soft_profile" 3 "Stupid_profile";
-VAL_ 2147483672 ProfileSlot 255 "Pedal_profile_transfer_complete";
+VAL_ 2147483672 ProfileSlot 255 "Pedal_profile_transfer_complete" 254 "Reset_temporary_message_buffer";
