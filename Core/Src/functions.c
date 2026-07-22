@@ -171,9 +171,8 @@ void decode(CAN_Message msg)
   case CAN_ADD_PEDAL_PROFILE:
     process_pedal_profile_add(msg);
     break;
-
   case CAN_PEDAL_SAVE_FLASH:
-    // TODO: implement when i feel like it
+    process_pedal_flash_save(msg);
     break;
 
   default:

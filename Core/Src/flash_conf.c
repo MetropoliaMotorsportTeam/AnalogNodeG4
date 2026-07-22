@@ -11,7 +11,7 @@ HAL_StatusTypeDef save_config(uint8_t config)
   if (!valid_config(config))
     config = DEFAULT_CONF;
 
-  if (get_curr_conf() == config)
+  if (get_saved_conf() == config)
     return HAL_OK;
 
   uint32_t addr = get_empty_conf_addr();
@@ -23,7 +23,7 @@ HAL_StatusTypeDef save_config(uint8_t config)
 
     addr = CONFIG_FLASH_ADDR;
   }
-  return flash_store(addr, make_config_record(config));
+  return flash_store(addr, &config, 1);
 }
 
 static uint32_t get_empty_conf_addr()
@@ -41,7 +41,7 @@ static uint32_t get_empty_conf_addr()
   }
   return 0;
 }
-volatile uint8_t get_curr_conf(void)
+volatile uint8_t get_saved_conf(void)
 {
   uint32_t addr = CONFIG_FLASH_ADDR;
   uint8_t last_valid_conf = DEFAULT_CONF;

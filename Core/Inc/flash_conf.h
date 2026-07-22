@@ -39,6 +39,6 @@ static inline uint8_t config_from_record(uint64_t record)
 }
 
 HAL_StatusTypeDef save_config(uint8_t config);
-volatile uint8_t get_curr_conf();
+volatile uint8_t get_saved_conf();
 
 #endif

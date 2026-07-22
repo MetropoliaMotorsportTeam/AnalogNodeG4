@@ -8,6 +8,6 @@
 #define PEDAL_FLASH_ADDR (0x0801F800U + FLASH_PAGE_SIZE)
 #define PEDAL_FLASH_PAGE 128U
 
-HAL_StatusTypeDef save_pedal_profile(uint16_t** pedal_profiles);
+HAL_StatusTypeDef save_all_pedal_profiles(uint16_t** pedal_profiles);
 
 #endif
