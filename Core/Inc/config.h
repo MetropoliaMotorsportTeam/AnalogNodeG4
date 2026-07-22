@@ -1,7 +1,7 @@
 #ifndef INC_CONFIG_H_
 #define INC_CONFIG_H_
 
-#include "main.h"
+#include <stdint.h>
 #define CAN_CHANGE_CONFIG 0x10
 #define FLASH_ADDRESS 0x0801F800
 #define DEFAULT_CONF 2

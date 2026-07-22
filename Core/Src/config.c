@@ -1,5 +1,6 @@
 #include "config.h"
 #include "flash_conf.h"
+#include "main.h"
 #include "sensors.h"
 #include "transfer_functions.h"
 #include "virtual_sensors.h"
