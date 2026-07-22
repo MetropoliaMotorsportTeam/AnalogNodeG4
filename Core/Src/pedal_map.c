@@ -1,4 +1,5 @@
 #include "pedal_map.h"
+#include "flash_pedal_profiles.h"
 #include "sensors.h"
 #include "virtual_sensors.h"
 #include <string.h>
@@ -78,52 +79,68 @@ void change_pedal_profile(pedal_profile profile)
   }
 }
 
-static uint8_t validate_pedal_values(uint16_t values[], uint8_t size)
+static uint8_t validate_profile_values(uint16_t profile[PEDAL_LUT_SIZE])
 {
-  // TODO: make when i feel like it
+  for (uint8_t i = 1; i < PEDAL_LUT_SIZE; i++)
+  {
+    if (profile[i] < profile[i - 1])
+      return 0;
+  }
   return 1;
 }
 
-// TODO: enforce size and index consistency
+static uint8_t validate_pedal_values(uint16_t values[3], uint8_t slot, uint8_t index)
+{
+  uint16_t prev = 0;
+  uint16_t next = PEDAL_MAX_VALUE;
+
+  if (index > 0)
+    prev = pedal_profile_slots[slot][index - 1];
+  if (index < PEDAL_LUT_SIZE - 1)
+    next = pedal_profile_slots[slot][index + 3];
+
+  if (values[0] > PEDAL_MAX_VALUE || values[1] > PEDAL_MAX_VALUE || values[2] > PEDAL_MAX_VALUE)
+  {
+    return 0;
+  }
+
+  if (values[0] > values[1] || values[1] > values[2])
+  {
+    return 0;
+  }
+
+  if (values[0] < prev || values[2] > next)
+    return 0;
+
+  return 1;
+}
+
 void process_pedal_profile_add(CAN_Message msg)
 {
-  static uint16_t CAN_msg_buf[PEDAL_LUT_SIZE];
-  static uint8_t slot = 0xFF;
-  static uint8_t size = 0;
 
-  uint8_t newest_slot = msg.Bytes[0];
+  uint8_t slot = msg.Bytes[0];
   uint8_t index = msg.Bytes[1];
+  uint16_t values[3];
 
   // check for valid indexes
   if (index != 0U && index != 3U && index != 6U)
     return;
 
-  if (slot == 0xFF)
-  {
-    size = 0;
-    if (newest_slot < PEDAL_PROFILE_SLOTS)
-      slot = newest_slot;
-  }
-
   if (slot >= PEDAL_PROFILE_SLOTS)
+    return;
+
+  memcpy(values, &msg.Bytes[2], sizeof(values));
+
+  if (!validate_pedal_values(values, slot, index))
   {
+    // TODO: send CAN error
     return;
   }
 
-  memcpy(&CAN_msg_buf[index], &msg.Bytes[2], 6);
-  size += 6;
-
-  if (msg.Bytes[0] == PEDAL_TRANSFER_DONE)
-  {
-    if (validate_pedal_values(CAN_msg_buf, size))
-      add_pedal_profile(CAN_msg_buf, slot, size);
-
-    size = 0;
-    slot = 0xFF;
-    memset(CAN_msg_buf, 0, sizeof(CAN_msg_buf));
-  }
+  memcpy(&pedal_profile_slots[slot][index], values, sizeof(values));
 }
 
+// for testing
 uint8_t add_pedal_profile(void* values, uint8_t slot, uint8_t size)
 {
   if (size != PEDAL_PROFILE_SIZE)
@@ -152,7 +169,19 @@ void process_pedal_profile_change(CAN_Message msg)
   {
     if (profile_index < PEDAL_PROFILE_SLOTS)
     {
-      curr_profile = pedal_profile_slots[profile_index];
+      uint16_t* profile = pedal_profile_slots[profile_index];
+      if (!validate_profile_values(profile))
+        return;
+
+      curr_profile = profile;
     }
   }
+}
+
+void process_pedal_flash_save(CAN_Message msg)
+{
+}
+
+void init_pedal_map(void)
+{
 }
