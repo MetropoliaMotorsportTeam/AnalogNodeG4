@@ -49,7 +49,9 @@ BO_ 2147483672 AddPedalProfile: 8 Backend
    SG_ Data2 : 32|16@1- (1,0) [-32768|32767] "" AnalogNode
    SG_ Data3 : 48|16@1- (1,0) [-32768|32767] "" AnalogNode
 
-BO_ 2147483673 SaveToFlash: 0 Backend
+BO_ 2147483673 SaveToFlash: 8 Backend
+   SG_ SaveType M : 0|8@1+ (1,0) [0|1] "" AnalogNode
+   SG_ SaveProfileWithIndex m0 : 8|8@1+ (1,0) [0|9] "" AnalogNode
 
 BO_ 2147483664 ChangeConfig: 1 Configuration
    SG_ Config : 0|8@1+ (1,0) [1|4] "" AnalogNode
@@ -84,6 +86,8 @@ BA_DEF_ BO_ "matchingcriteria" INT 0 0;
 BA_DEF_ BO_ "filterlabeling" INT 0 0;
 BA_DEF_ BO_ "matchingcriteria" INT 0 0;
 BA_DEF_ BO_ "filterlabeling" INT 0 0;
+BA_DEF_ BO_ "matchingcriteria" INT 0 0;
+BA_DEF_ BO_ "filterlabeling" INT 0 0;
 BA_DEF_DEF_ "GenMsgBackgroundColor" "#ffffff";
 BA_DEF_DEF_ "GenMsgForegroundColor" "#000000";
 BA_DEF_DEF_ "matchingcriteria" 0;
@@ -98,4 +102,5 @@ VAL_ 2147483680 SensorSelect 0 "No Description";
 VAL_ 2147483680 CalibSelect 0 "Low" 1 "High" 1 "Default_invalid_value";
 VAL_ 2147483671 ProfileType 0 "Preset_profiles" 1 "Custom_profiles";
 VAL_ 2147483671 ProfileSlotPreset 0 "Linear_profile" 1 "Parabolic_profile";
+VAL_ 2147483673 SaveType 0 "Save_currently_used_profile_slot_to_flash" 1 "Save_all_profile_slots_to_flash";
 VAL_ 2147483681 ErrorValue 0 "STATUS_OK" 1 "STATUS_NULL_PTR" 2 "STATUS_INVALID_SLOT" 3 "STATUS_INVALID_RAM_PROFILE" 4 "STATUS_INVALID_FLASH_PROFILE" 5 "STATUS_FLASH_ERASE_FAILED" 6 "STATUS_FLASH_WRITE_FAILED";
