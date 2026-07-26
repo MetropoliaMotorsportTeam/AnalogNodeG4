@@ -1,7 +1,0 @@
-../Core/Src/functions.c:33:6:CanSend	3
-../Core/Src/functions.c:41:6:HAL_FDCAN_RxFifo0Callback	4
-../Core/Src/functions.c:68:6:print	2
-../Core/Src/functions.c:84:6:sent_calib_done	2
-../Core/Src/functions.c:104:6:set_calib_values	2
-../Core/Src/functions.c:114:6:calibration	7
-../Core/Src/functions.c:158:6:decode	6
