@@ -7,7 +7,7 @@
 #define SENSOR_NUM 12
 
 typedef struct SensorType Sensor;
-typedef uint16_t (*DataHandler)(uint8_t bytes, uint32_t raw, Sensor* sensor);
+typedef int16_t (*DataHandler)(uint8_t bytes, uint32_t raw, Sensor* sensor);
 
 struct SensorType
 {
@@ -17,7 +17,7 @@ struct SensorType
   uint32_t averages;
   uint8_t pin;
   uint8_t calib_code;
-  uint16_t data;
+  int16_t data;
   uint16_t low_adc;
   uint16_t high_adc;
 };

@@ -8,12 +8,11 @@
 #include "transfer_functions.h"
 #include "config.h"
 #include "functions.h"
-#include "main.h"
 #include "pedal_map.h"
 #include "sensors.h"
 #include <math.h>
 
-static uint16_t bpps_global = 0;
+static int16_t bpps_global = 0;
 
 static inline void get_calib_values(Sensor* sensor, uint16_t* low, uint16_t* high)
 {
@@ -37,7 +36,7 @@ static inline uint32_t ValueControl(uint32_t raw, uint32_t min_raw, uint32_t max
   return raw;
 }
 
-uint16_t TF_3V3(uint8_t bytes, uint32_t raw, Sensor* sensor)
+int16_t TF_3V3(uint8_t bytes, uint32_t raw, Sensor* sensor)
 {
   const uint16_t max_volt = 3300;
 
@@ -46,7 +45,7 @@ uint16_t TF_3V3(uint8_t bytes, uint32_t raw, Sensor* sensor)
   return voltage;
 }
 
-uint16_t TF_5V(uint8_t bytes, uint32_t raw, Sensor* sensor)
+int16_t TF_5V(uint8_t bytes, uint32_t raw, Sensor* sensor)
 {
   const uint16_t max_volt = 5000;
 
@@ -55,7 +54,7 @@ uint16_t TF_5V(uint8_t bytes, uint32_t raw, Sensor* sensor)
   return voltage;
 }
 
-uint16_t TF_24V(uint8_t bytes, uint32_t raw, Sensor* sensor)
+int16_t TF_24V(uint8_t bytes, uint32_t raw, Sensor* sensor)
 {
   uint16_t max_volt = 24000;
 
@@ -64,7 +63,7 @@ uint16_t TF_24V(uint8_t bytes, uint32_t raw, Sensor* sensor)
   return voltage;
 }
 
-uint16_t TF_BPPS(uint8_t bytes, uint32_t raw, Sensor* sensor)
+int16_t TF_BPPS(uint8_t bytes, uint32_t raw, Sensor* sensor)
 {
   const uint16_t max_pos = 100;
 
@@ -87,7 +86,7 @@ uint16_t TF_BPPS(uint8_t bytes, uint32_t raw, Sensor* sensor)
   return bpps;
 }
 
-uint16_t TF_APPS1(uint8_t bytes, uint32_t raw, Sensor* sensor)
+int16_t TF_APPS1(uint8_t bytes, uint32_t raw, Sensor* sensor)
 {
   const uint16_t max_pos = 1000;
 
@@ -110,7 +109,7 @@ uint16_t TF_APPS1(uint8_t bytes, uint32_t raw, Sensor* sensor)
   return apps;
 }
 
-uint16_t TF_APPS2(uint8_t bytes, uint32_t raw, Sensor* sensor)
+int16_t TF_APPS2(uint8_t bytes, uint32_t raw, Sensor* sensor)
 {
   const uint16_t max_pos = 1000;
 
@@ -133,7 +132,7 @@ uint16_t TF_APPS2(uint8_t bytes, uint32_t raw, Sensor* sensor)
   return apps;
 }
 
-uint16_t TF_BTN(uint8_t bytes, uint32_t raw, Sensor* sensor)
+int16_t TF_BTN(uint8_t bytes, uint32_t raw, Sensor* sensor)
 {
   uint16_t max_volt = 5000;
 
@@ -145,32 +144,32 @@ uint16_t TF_BTN(uint8_t bytes, uint32_t raw, Sensor* sensor)
     return 1;
 }
 
-uint16_t TF_FRONT_HEAVE(uint8_t bytes, uint32_t raw, Sensor* sensor)
+int16_t TF_FRONT_HEAVE(uint8_t bytes, uint32_t raw, Sensor* sensor)
 {
   return 0;
 }
 
-uint16_t TF_REAR_HEAVE(uint8_t bytes, uint32_t raw, Sensor* sensor)
+int16_t TF_REAR_HEAVE(uint8_t bytes, uint32_t raw, Sensor* sensor)
 {
   return 0;
 }
 
-uint16_t TF_FRONT_ROLL(uint8_t bytes, uint32_t raw, Sensor* sensor)
+int16_t TF_FRONT_ROLL(uint8_t bytes, uint32_t raw, Sensor* sensor)
 {
   return 0;
 }
 
-uint16_t TF_REAR_ROLL(uint8_t bytes, uint32_t raw, Sensor* sensor)
+int16_t TF_REAR_ROLL(uint8_t bytes, uint32_t raw, Sensor* sensor)
 {
   return 0;
 }
 
-uint16_t TF_TYRE_TEMP(uint8_t bytes, uint32_t raw, Sensor* sensor)
+int16_t TF_TYRE_TEMP(uint8_t bytes, uint32_t raw, Sensor* sensor)
 {
   return 0;
 }
 
-uint16_t TF_ANGLE_GEAR(uint8_t bytes, uint32_t raw, Sensor* sensor)
+int16_t TF_ANGLE_GEAR(uint8_t bytes, uint32_t raw, Sensor* sensor)
 {
   float SteeringAngleScope = 320;
   float WheelAngleScope = 40;
@@ -185,16 +184,16 @@ uint16_t TF_ANGLE_GEAR(uint8_t bytes, uint32_t raw, Sensor* sensor)
   float SteeringAngle = (raw - min_raw) * WheelAngleScope / (max_raw - min_raw);
   SteeringAngle -= SteeringAngleScope / 2;
 
-  sensor->data = (uint16_t)SteeringAngle;
-  return (uint16_t)SteeringAngle;
+  sensor->data = (int16_t)SteeringAngle;
+  return (int16_t)SteeringAngle;
 }
 
-uint16_t TF_WATER_LVL(uint8_t bytes, uint32_t raw, Sensor* sensor)
+int16_t TF_WATER_LVL(uint8_t bytes, uint32_t raw, Sensor* sensor)
 {
   return 0;
 }
 
-uint16_t TF_BRK_PRES(uint8_t bytes, uint32_t raw, Sensor* sensor)
+int16_t TF_BRK_PRES(uint8_t bytes, uint32_t raw, Sensor* sensor)
 {
   return 0;
 }
@@ -204,7 +203,7 @@ static inline uint16_t GET_5V_LINE(enum Pins pin)
   return sensors[pin].transfer_function(1, sensors[pin].averages, &sensors[pin]);
 }
 
-uint16_t TF_WATER_TEMP(uint8_t bytes, uint32_t raw, Sensor* sensor)
+int16_t TF_WATER_TEMP(uint8_t bytes, uint32_t raw, Sensor* sensor)
 {
   (void)bytes;
   (void)sensor;
@@ -232,11 +231,11 @@ uint16_t TF_WATER_TEMP(uint8_t bytes, uint32_t raw, Sensor* sensor)
   float temp_kelvin = 1.0f / ((1.0f / T0) + (logf(r / R0) / B));
   float temp_celsius = temp_kelvin - 273.15f;
 
-  sensor->data = (uint16_t)temp_celsius;
-  return (uint16_t)temp_celsius;
+  sensor->data = (int16_t)temp_celsius;
+  return (int16_t)temp_celsius;
 }
 
-uint16_t TF_SUSP_TRAVEL(uint8_t bytes, uint32_t raw, Sensor* sensor)
+int16_t TF_SUSP_TRAVEL(uint8_t bytes, uint32_t raw, Sensor* sensor)
 {
   const uint16_t sensor_stroke = 1000;
 
@@ -270,6 +269,6 @@ uint16_t TF_SUSP_TRAVEL(uint8_t bytes, uint32_t raw, Sensor* sensor)
     travel = sensor_stroke;
   }
 
-  sensor->data = (uint16_t)travel;
-  return (uint16_t)travel;
+  sensor->data = (int16_t)travel;
+  return (int16_t)travel;
 }
