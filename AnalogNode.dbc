@@ -32,27 +32,30 @@ NS_ :
     SG_MUL_VAL_
 
 BS_: 
-BU_: Calib Configuration PedalMapping AnalogNode 
+BU_: Calib Configuration Backend AnalogNode 
 BO_ 2147483680 Calib: 8 Calib
-   SG_ SensorSelect : 0|1@0+ (1,0) [0|11] "" Vector__XXX
-   SG_ CalibSelect : 1|1@0- (1,0) [0|1] "" Vector__XXX
+   SG_ SensorSelect : 0|8@1+ (1,0) [0|11] "" AnalogNode
+   SG_ CalibSelect : 8|8@1- (1,0) [0|1] "" AnalogNode
 
-BO_ 2147483671 ChangePedalProfile: 8 PedalMapping
-   SG_ ProfileType M : 0|1@1+ (1,0) [0|1] "" Vector__XXX
-   SG_ ProfileSlotCustom m1 : 1|1@1+ (1,0) [0|9] "" Vector__XXX
-   SG_ ProfileSlotPreset m0 : 1|1@1+ (1,0) [0|2] "" Vector__XXX
+BO_ 2147483671 ChangePedalProfile: 8 Backend
+   SG_ ProfileType M : 0|8@1+ (1,0) [0|1] "" AnalogNode
+   SG_ ProfileSlotCustom m1 : 8|8@1+ (1,0) [0|9] "" AnalogNode
+   SG_ ProfileSlotPreset m0 : 8|8@1+ (1,0) [0|1] "" AnalogNode
 
-BO_ 2147483672 AddPedalProfile: 8 PedalMapping
-   SG_ ProfileSlot : 0|1@1+ (1,0) [0|20] "" Vector__XXX
-   SG_ ProfileIndex : 1|1@1+ (1,0) [0|8] "" Vector__XXX
-   SG_ Data1 : 2|2@1- (1,0) [-32768|32767] "" Vector__XXX
-   SG_ Data2 : 4|2@1- (1,0) [-32768|32767] "" AnalogNode
-   SG_ Data3 : 6|2@1- (1,0) [-32768|32767] "" AnalogNode
+BO_ 2147483672 AddPedalProfile: 8 Backend
+   SG_ ProfileSlot : 0|8@1+ (1,0) [0|20] "" AnalogNode
+   SG_ ProfileIndex : 8|8@1+ (1,0) [0|8] "" AnalogNode
+   SG_ Data1 : 16|16@1- (1,0) [-32768|32767] "" AnalogNode
+   SG_ Data2 : 32|16@1- (1,0) [-32768|32767] "" AnalogNode
+   SG_ Data3 : 48|16@1- (1,0) [-32768|32767] "" AnalogNode
 
-BO_ 2147483673 SaveToFlash: 0 PedalMapping
+BO_ 2147483673 SaveToFlash: 0 Backend
 
 BO_ 2147483664 ChangeConfig: 1 Configuration
-   SG_ Config : 0|1@1+ (1,0) [1|4] "" Vector__XXX
+   SG_ Config : 0|8@1+ (1,0) [1|4] "" AnalogNode
+
+BO_ 2147483681 ErrorMessage: 8 AnalogNode
+   SG_ ErrorValue : 0|8@1+ (1,0) [0|255] "" Backend
 
 CM_ BO_ 2147483680 "Starts calibration";
 CM_ SG_ 2147483680 CalibSelect "High_or_low_calibration_value";
@@ -61,8 +64,11 @@ CM_ SG_ 2147483671 ProfileSlotCustom "Pick_between_10_custom_profile_slots.";
 CM_ SG_ 2147483671 ProfileSlotPreset "Pick_between_2_preset_profiles.";
 CM_ SG_ 2147483672 ProfileSlot "Profile_picker";
 CM_ SG_ 2147483672 ProfileIndex "Index_in_the_21_element_array_to_send_the_3_elements_to.";
+CM_ SG_ 2147483681 ErrorValue "WIP";
 BA_DEF_ BO_ "GenMsgBackgroundColor" STRING ;
 BA_DEF_ BO_ "GenMsgForegroundColor" STRING ;
+BA_DEF_ BO_ "matchingcriteria" INT 0 0;
+BA_DEF_ BO_ "filterlabeling" INT 0 0;
 BA_DEF_ BO_ "matchingcriteria" INT 0 0;
 BA_DEF_ BO_ "filterlabeling" INT 0 0;
 BA_DEF_ BO_ "matchingcriteria" INT 0 0;
@@ -88,6 +94,6 @@ BA_ "GenMsgForegroundColor" BO_ 2147483671 "#000000";
 BA_ "GenMsgForegroundColor" BO_ 2147483673 "#000000";
 BA_ "GenMsgForegroundColor" BO_ 2147483664 "#000000";
 VAL_ 2147483680 SensorSelect 0 "No Description";
-VAL_ 2147483680 CalibSelect 0 "Low" 1 "High" 1 "Default_invalid_value";
+VAL_ 2147483680 CalibSelect 0 "Low" 1 "High" -1 "Default_invalid_value";
 VAL_ 2147483671 ProfileType 0 "Preset_profiles" 1 "Custom_profiles";
 VAL_ 2147483671 ProfileSlotPreset 0 "Linear_profile" 1 "Parabolic_profile";
