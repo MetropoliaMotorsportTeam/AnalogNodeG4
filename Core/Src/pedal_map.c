@@ -85,7 +85,7 @@ void change_preset_pedal_profile(pedal_profile profile)
   }
 }
 
-uint8_t validate_pedal_profile(const int16_t pedal_profile[PEDAL_LUT_LENGTH])
+uint8_t validate_pedal_profile(const int16_t pedal_profile[])
 {
   if (!pedal_profile)
     return 0;
