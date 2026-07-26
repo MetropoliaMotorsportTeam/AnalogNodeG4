@@ -1,4 +1,4 @@
-#include "flash_pedal_profiles.h"
+#include "flash_pedal_lut.h"
 #include "flash.h"
 #include "main.h"
 #include "stm32g4xx_it.h"
@@ -6,7 +6,7 @@
 #include <string.h>
 
 PedalProfileStatus
-save_all_pedal_profiles(uint16_t pedal_profiles[PEDAL_PROFILE_SLOTS][PEDAL_LUT_SIZE])
+save_all_pedal_profiles(int16_t pedal_profiles[PEDAL_PROFILE_SLOTS][PEDAL_LUT_SIZE])
 {
   if (!pedal_profiles)
     return PEDAL_PROFILE_STATUS_NULL_PTR;
@@ -38,7 +38,7 @@ save_all_pedal_profiles(uint16_t pedal_profiles[PEDAL_PROFILE_SLOTS][PEDAL_LUT_S
   return PEDAL_PROFILE_STATUS_OK;
 }
 
-PedalProfileStatus restore_pedal_profile_from_flash(uint8_t slot, uint16_t* pedal_profile)
+PedalProfileStatus restore_pedal_profile_from_flash(uint8_t slot, int16_t* pedal_profile)
 {
   if (slot >= PEDAL_PROFILE_SLOTS)
     return PEDAL_PROFILE_STATUS_INVALID_SLOT;
@@ -46,7 +46,7 @@ PedalProfileStatus restore_pedal_profile_from_flash(uint8_t slot, uint16_t* peda
   if (!pedal_profile)
     return PEDAL_PROFILE_STATUS_NULL_PTR;
 
-  const uint16_t* saved_profile = get_saved_profile(slot);
+  const int16_t* saved_profile = get_saved_profile(slot);
 
   if (!saved_profile)
     return PEDAL_PROFILE_STATUS_NULL_PTR;
@@ -58,10 +58,10 @@ PedalProfileStatus restore_pedal_profile_from_flash(uint8_t slot, uint16_t* peda
   return PEDAL_PROFILE_STATUS_OK;
 }
 
-const uint16_t* get_saved_profile(uint8_t slot)
+const int16_t* get_saved_profile(uint8_t slot)
 {
   if (slot >= PEDAL_PROFILE_SLOTS)
     return NULL;
 
-  return (const uint16_t*)(PEDAL_FLASH_ADDR + ((uint32_t)slot * PEDAL_PROFILE_SIZE));
+  return (const int16_t*)(PEDAL_FLASH_ADDR + ((uint32_t)slot * PEDAL_PROFILE_SIZE));
 }
