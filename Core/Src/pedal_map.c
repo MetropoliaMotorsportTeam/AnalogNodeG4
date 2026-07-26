@@ -4,7 +4,6 @@
 #include "virtual_sensors.h"
 #include <string.h>
 
-// TODO: write these to flash
 const uint16_t* curr_profile = pedal_profile_parabolic;
 static uint16_t pedal_profile_slots[PEDAL_PROFILE_SLOTS][PEDAL_LUT_SIZE];
 
@@ -43,7 +42,7 @@ uint16_t pedal_map(uint16_t pedal)
   uint16_t y0 = pedal_profile_get_point(curr_profile, index);
   uint16_t y1 = pedal_profile_get_point(curr_profile, index + 1);
 
-  uint32_t delta = (uint32_t)(y1 - y0);
+  uint32_t delta = (uint32_t)y1 - (uint32_t)y0;
   uint32_t y = (uint32_t)y0 + ((delta * remainder) / PEDAL_LUT_STEP);
 
   if (y > PEDAL_LUT_MAX_VALUE)
@@ -54,7 +53,7 @@ uint16_t pedal_map(uint16_t pedal)
   return (uint16_t)y;
 }
 
-void change_pedal_profile(pedal_profile profile)
+void change_preset_pedal_profile(pedal_profile profile)
 {
   switch (profile)
   {
@@ -79,28 +78,9 @@ void change_pedal_profile(pedal_profile profile)
   }
 }
 
-static uint8_t validate_profile_values(uint16_t profile[PEDAL_LUT_SIZE])
+static uint8_t validate_pedal_values(const uint16_t values[3])
 {
-  for (uint8_t i = 1; i < PEDAL_LUT_SIZE; i++)
-  {
-    if (profile[i] < profile[i - 1])
-      return 0;
-  }
-  return 1;
-}
-
-static uint8_t validate_pedal_values(uint16_t values[3], uint8_t slot, uint8_t index)
-{
-  uint16_t prev = 0;
-  uint16_t next = PEDAL_LUT_MAX_VALUE;
-
-  if (index > 0)
-    prev = pedal_profile_slots[slot][index - 1];
-  if (index < PEDAL_LUT_SIZE - 1)
-    next = pedal_profile_slots[slot][index + 3];
-
-  if (values[0] > PEDAL_LUT_MAX_VALUE || values[1] > PEDAL_LUT_MAX_VALUE ||
-      values[2] > PEDAL_LUT_MAX_VALUE)
+  if (values[0] > PEDAL_MAX_VALUE || values[1] > PEDAL_MAX_VALUE || values[2] > PEDAL_MAX_VALUE)
   {
     return 0;
   }
@@ -109,9 +89,6 @@ static uint8_t validate_pedal_values(uint16_t values[3], uint8_t slot, uint8_t i
   {
     return 0;
   }
-
-  if (values[0] < prev || values[2] > next)
-    return 0;
 
   return 1;
 }
@@ -132,7 +109,7 @@ void process_pedal_profile_add(CAN_Message msg)
 
   memcpy(values, &msg.Bytes[2], sizeof(values));
 
-  if (!validate_pedal_values(values, slot, index))
+  if (!validate_pedal_values(values))
   {
     // TODO: send CAN error
     return;
@@ -157,23 +134,51 @@ uint8_t add_pedal_profile(void* values, uint8_t slot, uint8_t size)
   return 1;
 }
 
+static void process_pedal_profile_status(PedalProfileStatus status)
+{
+  switch (status)
+  {
+  case PEDAL_PROFILE_STATUS_OK:
+    break;
+
+    // TODO: send error codes via CAN
+  case PEDAL_PROFILE_STATUS_NULL_PTR:
+    break;
+  case PEDAL_PROFILE_STATUS_INVALID_SLOT:
+    break;
+  case PEDAL_PROFILE_STATUS_INVALID_RAM_PROFILE:
+    break;
+  case PEDAL_PROFILE_STATUS_INVALID_FLASH_PROFILE:
+    break;
+  case PEDAL_PROFILE_STATUS_FLASH_ERASE_FAILED:
+    break;
+  case PEDAL_PROFILE_STATUS_FLASH_WRITE_FAILED:
+    break;
+  default:
+    break;
+  }
+}
+
 void process_pedal_profile_change(CAN_Message msg)
 {
-  uint8_t profile_type = msg.Bytes[0];
-  uint8_t profile_index = msg.Bytes[1];
+  uint8_t type = msg.Bytes[0];
+  uint8_t slot = msg.Bytes[1];
 
-  if (profile_type == 0U)
+  if (type == 0U)
   {
-    change_pedal_profile(profile_index);
+    change_preset_pedal_profile(slot);
   }
-  else if (profile_type == 1U)
+  else if (type == 1U)
   {
-    if (profile_index < PEDAL_PROFILE_SLOTS)
+    if (slot < PEDAL_PROFILE_SLOTS)
     {
-      uint16_t* profile = pedal_profile_slots[profile_index];
-      if (!validate_profile_values(profile))
-        return;
-
+      uint16_t* profile = pedal_profile_slots[slot];
+      if (!validate_pedal_profile(profile))
+      {
+        PedalProfileStatus status = restore_pedal_profile_from_flash(slot, profile);
+        process_pedal_profile_status(status);
+        // TODO: uh yeah idk
+      }
       curr_profile = profile;
     }
   }
@@ -181,8 +186,21 @@ void process_pedal_profile_change(CAN_Message msg)
 
 void process_pedal_flash_save(CAN_Message msg)
 {
+  PedalProfileStatus status = save_all_pedal_profiles(pedal_profile_slots);
+  process_pedal_profile_status(status);
+}
+
+uint8_t validate_pedal_profile(const uint16_t pedal_profile[PEDAL_LUT_SIZE])
+{
+  for (uint8_t i = 1; i < PEDAL_LUT_SIZE; i++)
+  {
+    if (pedal_profile[i] < pedal_profile[i - 1])
+      return 0;
+  }
+  return 1;
 }
 
 void init_pedal_map(void)
 {
+  memcpy(pedal_profile_slots, get_saved_profile(0), PEDAL_PROFILES_TOT_SIZE);
 }

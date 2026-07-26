@@ -143,8 +143,6 @@ int main(void)
     {
       if (millis % CAN_interval == 0)
       {
-        uint8_t test_bytes[8] = {10, 10, 10, 10, 10, 10, 10, 10};
-        CanSend(test_bytes);
         uint32_t raw = APPS_pedal->averages;
         uint16_t test_func = pedal_map_get_percentage();
         uint32_t data = APPS_pedal->data;

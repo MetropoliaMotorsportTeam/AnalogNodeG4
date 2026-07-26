@@ -4,40 +4,64 @@
 #include "stm32g4xx_it.h"
 #include <stdint.h>
 #include <string.h>
-static uint16_t** get_saved_profiles(void);
-static void restore_pedal_profile(uint8_t slot);
 
-uint8_t validate_pedal_profile(uint16_t* pedal_profiles)
+PedalProfileStatus
+save_all_pedal_profiles(uint16_t pedal_profiles[PEDAL_PROFILE_SLOTS][PEDAL_LUT_SIZE])
 {
-}
+  if (!pedal_profiles)
+    return PEDAL_PROFILE_STATUS_NULL_PTR;
 
-HAL_StatusTypeDef save_all_pedal_profiles(uint16_t** pedal_profiles)
-{
-  for (uint8_t slot = 0U; slot < PEDAL_PROFILE_SLOTS; slot++)
+  for (uint8_t slot = 0; slot < PEDAL_PROFILE_SLOTS; slot++)
   {
     if (!validate_pedal_profile(pedal_profiles[slot]))
     {
-      restore_pedal_profile(slot);
+      PedalProfileStatus restore_status =
+          restore_pedal_profile_from_flash(slot, pedal_profiles[slot]);
+
+      if (restore_status != PEDAL_PROFILE_STATUS_OK)
+      {
+        return restore_status;
+      }
     }
   }
 
-  if (memcmp(get_saved_profiles(), pedal_profiles, PEDAL_PROFILES_TOT_SIZE) == 0)
-    return HAL_OK;
-
   if (flash_erase_page(PEDAL_FLASH_ADDR, 1) != HAL_OK)
-    return HAL_ERROR;
+  {
+    return PEDAL_PROFILE_STATUS_FLASH_ERASE_FAILED;
+  }
 
-  return HAL_OK;
+  if (flash_store(PEDAL_FLASH_ADDR, pedal_profiles, PEDAL_PROFILES_TOT_SIZE) != HAL_OK)
+  {
+    return PEDAL_PROFILE_STATUS_FLASH_WRITE_FAILED;
+  }
+
+  return PEDAL_PROFILE_STATUS_OK;
 }
 
-static uint16_t** get_saved_profiles()
-{
-  volatile uint64_t* mem_ptr = (volatile uint64_t*)PEDAL_FLASH_ADDR;
-  return (uint16_t**)mem_ptr;
-}
-
-static void restore_pedal_profile(uint8_t slot)
+PedalProfileStatus restore_pedal_profile_from_flash(uint8_t slot, uint16_t* pedal_profile)
 {
   if (slot >= PEDAL_PROFILE_SLOTS)
-    return;
+    return PEDAL_PROFILE_STATUS_INVALID_SLOT;
+
+  if (!pedal_profile)
+    return PEDAL_PROFILE_STATUS_NULL_PTR;
+
+  const uint16_t* saved_profile = get_saved_profile(slot);
+
+  if (!saved_profile)
+    return PEDAL_PROFILE_STATUS_NULL_PTR;
+
+  if (!validate_pedal_profile(saved_profile))
+    return PEDAL_PROFILE_STATUS_INVALID_FLASH_PROFILE;
+
+  memcpy(pedal_profile, saved_profile, PEDAL_PROFILE_SIZE);
+  return PEDAL_PROFILE_STATUS_OK;
+}
+
+const uint16_t* get_saved_profile(uint8_t slot)
+{
+  if (slot >= PEDAL_PROFILE_SLOTS)
+    return NULL;
+
+  return (const uint16_t*)(PEDAL_FLASH_ADDR + ((uint32_t)slot * PEDAL_PROFILE_SIZE));
 }

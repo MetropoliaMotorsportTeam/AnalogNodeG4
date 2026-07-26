@@ -37,10 +37,11 @@ void init_pedal_map(void);
 int16_t pedal_map(int16_t pedal);
 int16_t pedal_map_get_percentage();
 
-void change_pedal_profile(pedal_profile profile);
+void change_preset_pedal_profile(pedal_profile profile);
 uint8_t add_pedal_profile(void* values, uint8_t slot, uint8_t size);
 void process_pedal_profile_add(CAN_Message msg);
 void process_pedal_profile_change(CAN_Message msg);
 void process_pedal_flash_save(CAN_Message msg);
+uint8_t validate_pedal_profile(const uint16_t* pedal_profile);
 
 #endif
