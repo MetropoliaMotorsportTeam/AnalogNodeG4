@@ -87,10 +87,18 @@ void change_preset_pedal_profile(pedal_profile profile)
 
 uint8_t validate_pedal_profile(const int16_t pedal_profile[PEDAL_LUT_LENGTH])
 {
+  if (!pedal_profile)
+    return 0;
+
+  if ((pedal_profile[6] | pedal_profile[7]) != 0)
+    return 0;
+
   for (uint8_t i = 1; i < PEDAL_LUT_LENGTH; i++)
   {
     if (pedal_profile[i] < pedal_profile[i - 1])
       return 0;
+
+    // check for deadzone
   }
   return 1;
 }
@@ -102,7 +110,7 @@ static uint8_t validate_pedal_values(const int16_t values[3])
     return 0;
   }
 
-  if (values[0] < PEDAL_INPUT_MAX || values[1] < PEDAL_INPUT_MAX || values[2] < PEDAL_INPUT_MAX)
+  if (values[0] < PEDAL_OUTPUT_MIN || values[1] < PEDAL_OUTPUT_MIN || values[2] < PEDAL_OUTPUT_MIN)
   {
     return 0;
   }
