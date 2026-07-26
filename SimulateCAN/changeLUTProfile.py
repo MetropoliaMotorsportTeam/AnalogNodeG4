@@ -1,0 +1,111 @@
+import can
+import time
+import struct
+
+
+CHANNEL = "can0"
+BAUD_RATE = 1000000  # need to manually set baudrate when running on linux
+ID = 0x20
+linear = [
+    -1000,
+    -833,
+    -667,
+    -500,
+    -333,
+    -167,
+    0,
+    0,
+    77,
+    154,
+    231,
+    308,
+    385,
+    462,
+    538,
+    615,
+    692,
+    769,
+    846,
+    923,
+    1000,
+]
+parabolic = [
+    -1000,
+    -694,
+    -444,
+    -250,
+    -111,
+    -28,
+    0,
+    0,
+    6,
+    24,
+    53,
+    95,
+    148,
+    213,
+    290,
+    379,
+    479,
+    592,
+    716,
+    852,
+    1000,
+]
+
+custom = linear
+
+RESP_ACK = 200
+TIMEOUT_S = 3.0
+
+
+def run_test():
+    print(f"Opening CAN channel {CHANNEL}...")
+
+    try:
+        bus = can.interface.Bus(channel=CHANNEL, interface="socketcan")
+    except Exception as e:
+        print(f"Failed to open CAN interface: {e}")
+        return
+
+    print(f"Sending Command, ID: {hex(ID)}")
+
+    idx = 0
+    slot = 0
+    while idx < len(custom):
+        values = custom[idx : idx + 3]
+        data = struct.pack("<BBhhh", slot, idx, *values)
+        print(f"TX slot={slot}, idx={idx}, values={values}, bytes={data.hex(' ')}")
+        msg = can.Message(arbitration_id=ID, data=data, is_extended_id=False)
+
+        try:
+            bus.send(msg)
+        except can.CanError as e:
+            print(f"TX failed: {e}")
+            break
+
+        deadline = time.monotonic() + TIMEOUT_S
+        success = False
+
+        while time.monotonic() < deadline:
+            rx = bus.recv(timeout=1.0)
+            if rx is None:
+                continue
+
+            print(f"RX: id=0x{rx.arbitration_id:X}, dlc={rx.dlc}, data={list(rx.data)}")
+
+            if rx.arbitration_id == RESP_ACK:
+                print("SUCCESS: Received ACK.")
+                success = True
+                break
+
+        if not success:
+            print("FAILED: No response.")
+            break
+        idx += 3
+    print("Shutting down bus.")
+    bus.shutdown()
+
+
+if __name__ == "__main__":
+    run_test()

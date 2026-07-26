@@ -1,4 +1,4 @@
-#include "flash_conf.h"
+#include "flash_byte.h"
 #include "config.h"
 #include "flash.h"
 #include "main.h"

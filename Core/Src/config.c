@@ -16,7 +16,7 @@ void Config_Setup(void)
 {
   init_sensors();
   load_config();
-  init_pedal_map();
+  // init_pedal_map();
   read_all_calib_values();
 }
 
@@ -43,9 +43,10 @@ void apply_config(uint8_t config)
 
 void load_config()
 {
-  uint8_t config = get_saved_conf();
+  /* uint8_t config = get_saved_conf();
   uint8_t conf = (valid_config(config) ? config : DEFAULT_CONF);
-  apply_config(conf);
+  apply_config(conf); */
+  config_2();
 }
 
 void process_config(uint8_t config)
