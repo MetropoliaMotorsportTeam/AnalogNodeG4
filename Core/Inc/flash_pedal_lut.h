@@ -23,7 +23,7 @@ typedef enum
 } PedalProfileStatus;
 
 PedalProfileStatus
-save_all_pedal_profiles(int16_t pedal_profiles[PEDAL_PROFILE_SLOTS][PEDAL_LUT_SIZE]);
+save_all_pedal_profiles(int16_t pedal_profiles[PEDAL_LUT_PROFILE_SLOTS][PEDAL_LUT_LENGTH]);
 const int16_t* get_saved_profile(uint8_t slot);
 PedalProfileStatus restore_pedal_profile_from_flash(uint8_t slot, int16_t* pedal_profile);
 

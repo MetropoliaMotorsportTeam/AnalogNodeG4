@@ -4,8 +4,15 @@
 #include "virtual_sensors.h"
 #include <string.h>
 
-const int16_t* curr_profile = pedal_profile_parabolic;
-static int16_t pedal_profile_slots[PEDAL_PROFILE_SLOTS][PEDAL_LUT_SIZE];
+const int16_t* curr_pedal_profile = pedal_profile_parabolic;
+static int16_t pedal_profile_slots[PEDAL_LUT_PROFILE_SLOTS][PEDAL_LUT_LENGTH];
+
+const int16_t pedal_profile_linear[PEDAL_LUT_LENGTH] = {-1000, -833, -667, -500, -333, -167, 0,
+                                                        0,     77,   154,  231,  308,  385,  462,
+                                                        538,   615,  692,  769,  846,  923,  1000};
+const int16_t pedal_profile_parabolic[PEDAL_LUT_LENGTH] = {
+    -1000, -694, -444, -250, -111, -28, 0,   0,   6,   24,  53,
+    95,    148,  213,  290,  379,  479, 592, 716, 852, 1000};
 
 // test function
 int16_t pedal_map_get_percentage()
@@ -19,35 +26,43 @@ int16_t pedal_map_get_percentage()
   return 0;
 }
 
-static inline int16_t pedal_profile_get_point(const int16_t* profile, uint8_t point)
+int16_t pedal_map(uint16_t pedal)
 {
-  if (point == 0U)
-    return 0U;
-  if (point >= (PEDAL_LUT_SIZE + 1U))
-    return PEDAL_LUT_MAX_VALUE;
-  return profile[point - 1U];
-}
-
-int16_t pedal_map(int16_t pedal)
-{
-
-  if (pedal >= PEDAL_LUT_MAX_VALUE)
+  if (!curr_pedal_profile)
   {
-    return PEDAL_LUT_MAX_VALUE;
+    return 0;
   }
 
-  int16_t index = pedal / PEDAL_LUT_STEP;
-  int16_t remainder = pedal % PEDAL_LUT_STEP;
-
-  int16_t y0 = pedal_profile_get_point(curr_profile, index);
-  int16_t y1 = pedal_profile_get_point(curr_profile, index + 1);
-
-  uint32_t delta = (uint32_t)y1 - (uint32_t)y0;
-  uint32_t y = (uint32_t)y0 + ((delta * remainder) / PEDAL_LUT_STEP);
-
-  if (y > PEDAL_LUT_MAX_VALUE)
+  if (pedal >= PEDAL_INPUT_MAX)
   {
-    y = PEDAL_LUT_MAX_VALUE;
+    return PEDAL_OUTPUT_MAX;
+  }
+
+  if (pedal >= PEDAL_REGEN_END && pedal <= PEDAL_TORQUE_START)
+  {
+    // deadzone
+    return 0;
+  }
+
+  uint16_t pedal_step = PEDAL_INPUT_MAX / PEDAL_LUT_INTERVAL;
+
+  int16_t index = pedal / pedal_step;
+  int16_t remainder = pedal % pedal_step;
+
+  int16_t y0 = curr_pedal_profile[index];
+  int16_t y1 = curr_pedal_profile[index + 1];
+
+  int32_t delta = (int32_t)y1 - (int32_t)y0;
+  int32_t y = (int32_t)y0 + ((delta * remainder) / pedal_step);
+
+  if (y > PEDAL_OUTPUT_MAX)
+  {
+    y = PEDAL_OUTPUT_MAX;
+  }
+
+  if (y < PEDAL_OUTPUT_MIN)
+  {
+    y = PEDAL_OUTPUT_MIN;
   }
 
   return (int16_t)y;
@@ -58,19 +73,11 @@ void change_preset_pedal_profile(pedal_profile profile)
   switch (profile)
   {
   case LINEAR:
-    curr_profile = pedal_profile_linear;
+    curr_pedal_profile = pedal_profile_linear;
     break;
 
   case PARABOLIC:
-    curr_profile = pedal_profile_parabolic;
-    break;
-
-  case SOFT:
-    curr_profile = pedal_profile_soft;
-    break;
-
-  case STUPID:
-    curr_profile = pedal_profile_stupid;
+    curr_pedal_profile = pedal_profile_parabolic;
     break;
 
   default:
@@ -78,10 +85,24 @@ void change_preset_pedal_profile(pedal_profile profile)
   }
 }
 
+uint8_t validate_pedal_profile(const int16_t pedal_profile[PEDAL_LUT_LENGTH])
+{
+  for (uint8_t i = 1; i < PEDAL_LUT_LENGTH; i++)
+  {
+    if (pedal_profile[i] < pedal_profile[i - 1])
+      return 0;
+  }
+  return 1;
+}
+
 static uint8_t validate_pedal_values(const int16_t values[3])
 {
-  if (values[0] > PEDAL_LUT_MAX_VALUE || values[1] > PEDAL_LUT_MAX_VALUE ||
-      values[2] > PEDAL_LUT_MAX_VALUE)
+  if (values[0] > PEDAL_OUTPUT_MAX || values[1] > PEDAL_OUTPUT_MAX || values[2] > PEDAL_OUTPUT_MAX)
+  {
+    return 0;
+  }
+
+  if (values[0] < PEDAL_INPUT_MAX || values[1] < PEDAL_INPUT_MAX || values[2] < PEDAL_INPUT_MAX)
   {
     return 0;
   }
@@ -105,7 +126,7 @@ void process_pedal_profile_add(CAN_Message msg)
   if (index != 0U && index != 3U && index != 6U)
     return;
 
-  if (slot >= PEDAL_PROFILE_SLOTS)
+  if (slot >= PEDAL_LUT_PROFILE_SLOTS)
     return;
 
   memcpy(values, &msg.Bytes[2], sizeof(values));
@@ -122,16 +143,16 @@ void process_pedal_profile_add(CAN_Message msg)
 // for testing
 uint8_t add_pedal_profile(void* values, uint8_t slot, uint8_t size)
 {
-  if (size != PEDAL_PROFILE_SIZE)
+  if (size != PEDAL_LUT_SIZE_BYTES)
     return 0;
 
   if (!values)
     return 0;
 
-  if (slot >= PEDAL_PROFILE_SLOTS)
+  if (slot >= PEDAL_LUT_PROFILE_SLOTS)
     return 0;
 
-  memcpy(pedal_profile_slots[slot], values, PEDAL_PROFILE_SIZE);
+  memcpy(pedal_profile_slots[slot], values, PEDAL_LUT_LENGTH);
   return 1;
 }
 
@@ -171,7 +192,7 @@ void process_pedal_profile_change(CAN_Message msg)
   }
   else if (type == 1U)
   {
-    if (slot < PEDAL_PROFILE_SLOTS)
+    if (slot < PEDAL_LUT_PROFILE_SLOTS)
     {
       int16_t* profile = pedal_profile_slots[slot];
       if (!validate_pedal_profile(profile))
@@ -180,7 +201,7 @@ void process_pedal_profile_change(CAN_Message msg)
         process_pedal_profile_status(status);
         // TODO: uh yeah idk
       }
-      curr_profile = profile;
+      curr_pedal_profile = profile;
     }
   }
 }
@@ -191,17 +212,7 @@ void process_pedal_flash_save(CAN_Message msg)
   process_pedal_profile_status(status);
 }
 
-uint8_t validate_pedal_profile(const int16_t pedal_profile[PEDAL_LUT_SIZE])
-{
-  for (uint8_t i = 1; i < PEDAL_LUT_SIZE; i++)
-  {
-    if (pedal_profile[i] < pedal_profile[i - 1])
-      return 0;
-  }
-  return 1;
-}
-
 void init_pedal_map(void)
 {
-  memcpy(pedal_profile_slots, get_saved_profile(0), PEDAL_PROFILES_TOT_SIZE);
+  memcpy(pedal_profile_slots, get_saved_profile(0), PEDAL_LUT_TOT_SIZE);
 }
