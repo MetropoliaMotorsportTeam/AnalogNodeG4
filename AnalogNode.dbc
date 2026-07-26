@@ -40,7 +40,7 @@ BO_ 2147483680 Calib: 8 Calib
 BO_ 2147483671 ChangePedalProfile: 8 PedalMapping
    SG_ ProfileType M : 0|1@1+ (1,0) [0|1] "" Vector__XXX
    SG_ ProfileSlotCustom m1 : 1|1@1+ (1,0) [0|9] "" Vector__XXX
-   SG_ ProfileSlotPreset m0 : 1|1@1+ (1,0) [0|3] "" Vector__XXX
+   SG_ ProfileSlotPreset m0 : 1|1@1+ (1,0) [0|2] "" Vector__XXX
 
 BO_ 2147483672 AddPedalProfile: 8 PedalMapping
    SG_ ProfileSlot : 0|1@1+ (1,0) [0|9] "" Vector__XXX
@@ -58,7 +58,7 @@ CM_ BO_ 2147483680 "Starts calibration";
 CM_ SG_ 2147483680 CalibSelect "High_or_low_calibration_value";
 CM_ SG_ 2147483671 ProfileType "Mux_switch_for_preset_or_custom_profiles.";
 CM_ SG_ 2147483671 ProfileSlotCustom "Pick_between_10_custom_profile_slots.";
-CM_ SG_ 2147483671 ProfileSlotPreset "Pick_between_4_preset_profiles.";
+CM_ SG_ 2147483671 ProfileSlotPreset "Pick_between_2_preset_profiles.";
 CM_ SG_ 2147483672 ProfileSlot "Profile_picker";
 CM_ SG_ 2147483672 ProfileIndex "Index_in_the_9_element_array_to_send_the_3_elements_to.";
 BA_DEF_ BO_ "GenMsgBackgroundColor" STRING ;
@@ -73,8 +73,12 @@ BA_DEF_ BO_ "matchingcriteria" INT 0 0;
 BA_DEF_ BO_ "filterlabeling" INT 0 0;
 BA_DEF_ BO_ "matchingcriteria" INT 0 0;
 BA_DEF_ BO_ "filterlabeling" INT 0 0;
+BA_DEF_ BO_ "matchingcriteria" INT 0 0;
+BA_DEF_ BO_ "filterlabeling" INT 0 0;
 BA_DEF_DEF_ "GenMsgBackgroundColor" "#ffffff";
 BA_DEF_DEF_ "GenMsgForegroundColor" "#000000";
+BA_DEF_DEF_ "matchingcriteria" 0;
+BA_DEF_DEF_ "filterlabeling" 1;
 BA_DEF_DEF_ "matchingcriteria" 0;
 BA_DEF_DEF_ "filterlabeling" 1;
 BA_ "GenMsgForegroundColor" BO_ 2147483680 "#000000";
