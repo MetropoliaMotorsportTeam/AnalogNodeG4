@@ -5,7 +5,7 @@ import struct
 
 CHANNEL = "can0"
 BAUD_RATE = 1000000  # need to manually set baudrate when running on linux
-ID = 0x20
+ID = 0x21
 linear = [
     -1000,
     -833,
@@ -55,8 +55,8 @@ parabolic = [
 
 custom = linear
 
-RESP_ACK = 200
-TIMEOUT_S = 3.0
+RESP_ACK = 0x23
+TIMEOUT_S = 2.0
 
 
 def run_test():

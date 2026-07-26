@@ -15,7 +15,8 @@ try:
         if rx is None:
             continue
 
-        print(f"RX: id=0x{rx.arbitration_id:X}, dlc={rx.dlc}, data={list(rx.data)}")
+        if rx.dlc == 8:
+            print(f"RX: id=0x{rx.arbitration_id:X}, dlc={rx.dlc}, data={list(rx.data)}")
 
 except KeyboardInterrupt:
     print("\nStopping CAN receiver.")
