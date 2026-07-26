@@ -15,7 +15,7 @@ static inline uint8_t calib_flash_needs_update(void)
 {
   for (int i = 0; i < SENSOR_NUM; i++)
   {
-    uint32_t flash_value = *(__IO uint32_t*)(FLASH_ADDRESS + i * 8);
+    uint32_t flash_value = *(__IO uint32_t*)(ADC_CALIB_FLASH_ADDR + i * 8);
     uint32_t ram_value = (uint32_t)pack_calib_values(&sensors[i]);
     if (flash_value != ram_value)
       return 1;
@@ -51,7 +51,7 @@ void ADC_Calib_Update()
   // Erase memory before writing
   //  Configure the flash erase parameters
   FlashErase.TypeErase = FLASH_TYPEERASE_PAGES;
-  FlashErase.Page = (FLASH_ADDRESS / FLASH_PAGE_SIZE); // Convert address to page number
+  FlashErase.Page = (ADC_CALIB_FLASH_ADDR / FLASH_PAGE_SIZE); // Convert address to page number
   FlashErase.NbPages = 1;
 
   __disable_irq();
@@ -66,8 +66,8 @@ void ADC_Calib_Update()
   for (int i = 0; i < SENSOR_NUM; i++)
   {
     uint64_t data_to_write = pack_calib_values(&sensors[i]);
-    if (HAL_FLASH_Program(FLASH_TYPEPROGRAM_DOUBLEWORD, FLASH_ADDRESS + i * 8, data_to_write) !=
-        HAL_OK)
+    if (HAL_FLASH_Program(FLASH_TYPEPROGRAM_DOUBLEWORD, ADC_CALIB_FLASH_ADDR + i * 8,
+                          data_to_write) != HAL_OK)
     {
       Error_Handler();
     }
@@ -92,7 +92,7 @@ void read_all_calib_values()
 
   for (int i = 0; i < SENSOR_NUM; i++)
   {
-    uint32_t value = *(__IO uint32_t*)(FLASH_ADDRESS + i * 8);
+    uint32_t value = *(__IO uint32_t*)(ADC_CALIB_FLASH_ADDR + i * 8);
 
     uint16_t low = value;
     uint16_t high = value >> 16;

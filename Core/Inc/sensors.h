@@ -5,6 +5,8 @@
 
 #define MAX_INPUT_SENSORS 12
 #define SENSOR_NUM 12
+#define ADC_CALIB_FLASH_ADDR 0x0801E800U
+#define ADC_CALIB_FLASH_PAGE ((ADC_CALIB_FLASH_ADDR - FLASH_BASE) / FLASH_PAGE_SIZE)
 
 typedef struct SensorType Sensor;
 typedef int16_t (*DataHandler)(uint8_t bytes, uint32_t raw, Sensor* sensor);
