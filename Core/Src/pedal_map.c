@@ -25,16 +25,16 @@ static inline uint16_t pedal_profile_get_point(const uint16_t* profile, uint8_t 
   if (point == 0U)
     return 0U;
   if (point >= (PEDAL_LUT_SIZE + 1U))
-    return PEDAL_MAX_VALUE;
+    return PEDAL_LUT_MAX_VALUE;
   return profile[point - 1U];
 }
 
 uint16_t pedal_map(uint16_t pedal)
 {
 
-  if (pedal >= PEDAL_MAX_VALUE)
+  if (pedal >= PEDAL_LUT_MAX_VALUE)
   {
-    return PEDAL_MAX_VALUE;
+    return PEDAL_LUT_MAX_VALUE;
   }
 
   uint16_t index = pedal / PEDAL_LUT_STEP;
@@ -46,9 +46,9 @@ uint16_t pedal_map(uint16_t pedal)
   uint32_t delta = (uint32_t)(y1 - y0);
   uint32_t y = (uint32_t)y0 + ((delta * remainder) / PEDAL_LUT_STEP);
 
-  if (y > PEDAL_MAX_VALUE)
+  if (y > PEDAL_LUT_MAX_VALUE)
   {
-    y = PEDAL_MAX_VALUE;
+    y = PEDAL_LUT_MAX_VALUE;
   }
 
   return (uint16_t)y;
@@ -92,14 +92,15 @@ static uint8_t validate_profile_values(uint16_t profile[PEDAL_LUT_SIZE])
 static uint8_t validate_pedal_values(uint16_t values[3], uint8_t slot, uint8_t index)
 {
   uint16_t prev = 0;
-  uint16_t next = PEDAL_MAX_VALUE;
+  uint16_t next = PEDAL_LUT_MAX_VALUE;
 
   if (index > 0)
     prev = pedal_profile_slots[slot][index - 1];
   if (index < PEDAL_LUT_SIZE - 1)
     next = pedal_profile_slots[slot][index + 3];
 
-  if (values[0] > PEDAL_MAX_VALUE || values[1] > PEDAL_MAX_VALUE || values[2] > PEDAL_MAX_VALUE)
+  if (values[0] > PEDAL_LUT_MAX_VALUE || values[1] > PEDAL_LUT_MAX_VALUE ||
+      values[2] > PEDAL_LUT_MAX_VALUE)
   {
     return 0;
   }
