@@ -165,6 +165,7 @@ void decode(CAN_Message msg)
     break;
   case CAN_CHANGE_CONFIG:
     process_config(msg.Bytes[0]);
+    break;
   case CAN_CHANGE_PEDAL_PROFILE:
     process_pedal_profile_change(msg);
     break;
