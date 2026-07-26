@@ -28,6 +28,21 @@ typedef enum pedal_profile
   PARABOLIC,
 } pedal_profile;
 
+typedef enum
+{
+  PEDAL_STATUS_OK = 0,
+
+  PEDAL_STATUS_NULL_PTR,
+  PEDAL_STATUS_INVALID_SLOT,
+  PEDAL_STATUS_INVALID_RAM_PROFILE,
+  PEDAL_STATUS_INVALID_FLASH_PROFILE,
+  PEDAL_STATUS_INVALID_DATA_CHUNK,
+
+  PEDAL_STATUS_FLASH_ERASE_FAILED,
+  PEDAL_STATUS_FLASH_WRITE_FAILED,
+
+} PedalMapStatus;
+
 extern const int16_t pedal_profile_linear[PEDAL_LUT_LENGTH];
 extern const int16_t pedal_profile_parabolic[PEDAL_LUT_LENGTH];
 extern const int16_t pedal_profile_soft[PEDAL_LUT_LENGTH];

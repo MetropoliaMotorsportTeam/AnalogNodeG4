@@ -14,6 +14,45 @@ const int16_t pedal_profile_parabolic[PEDAL_LUT_LENGTH] = {
     -1000, -694, -444, -250, -111, -28, 0,   0,   6,   24,  53,
     95,    148,  213,  290,  379,  479, 592, 716, 852, 1000};
 
+static void process_pedal_status(PedalMapStatus status)
+{
+  CAN_Message msg = {.Id = CAN_ERROR_MSG_ID, .DLC = 0, .Bytes = {0}};
+  switch (status)
+  {
+  case PEDAL_STATUS_OK:
+    msg.Bytes[0] = 200;
+    break;
+
+  case PEDAL_STATUS_NULL_PTR:
+    msg.Bytes[0] = 1;
+    break;
+
+  case PEDAL_STATUS_INVALID_SLOT:
+    msg.Bytes[0] = 2;
+    break;
+
+  case PEDAL_STATUS_INVALID_RAM_PROFILE:
+    msg.Bytes[0] = 3;
+    break;
+
+  case PEDAL_STATUS_INVALID_FLASH_PROFILE:
+    msg.Bytes[0] = 4;
+    break;
+
+  case PEDAL_STATUS_FLASH_ERASE_FAILED:
+    msg.Bytes[0] = 5;
+    break;
+
+  case PEDAL_STATUS_FLASH_WRITE_FAILED:
+    msg.Bytes[0] = 6;
+    break;
+
+  default:
+    break;
+  }
+  CanSendMsg(msg);
+}
+
 // test function
 int16_t pedal_map_get_percentage()
 {
@@ -103,23 +142,14 @@ uint8_t validate_pedal_profile(const int16_t pedal_profile[])
   return 1;
 }
 
-static uint8_t validate_pedal_values(const int16_t values[3])
+static inline uint8_t validate_pedal_values(const int16_t values[3])
 {
   if (values[0] > PEDAL_OUTPUT_MAX || values[1] > PEDAL_OUTPUT_MAX || values[2] > PEDAL_OUTPUT_MAX)
-  {
     return 0;
-  }
-
   if (values[0] < PEDAL_OUTPUT_MIN || values[1] < PEDAL_OUTPUT_MIN || values[2] < PEDAL_OUTPUT_MIN)
-  {
     return 0;
-  }
-
   if (values[0] > values[1] || values[1] > values[2])
-  {
     return 0;
-  }
-
   return 1;
 }
 
@@ -141,7 +171,7 @@ void process_pedal_profile_add(CAN_Message msg)
 
   if (!validate_pedal_values(values))
   {
-    // TODO: send CAN error
+    process_pedal_status(PEDAL_STATUS_INVALID_DATA_CHUNK);
     return;
   }
 
@@ -164,31 +194,6 @@ uint8_t add_pedal_profile(void* values, uint8_t slot, uint8_t size)
   return 1;
 }
 
-static void process_pedal_profile_status(PedalProfileStatus status)
-{
-  switch (status)
-  {
-  case PEDAL_PROFILE_STATUS_OK:
-    break;
-
-    // TODO: send error codes via CAN
-  case PEDAL_PROFILE_STATUS_NULL_PTR:
-    break;
-  case PEDAL_PROFILE_STATUS_INVALID_SLOT:
-    break;
-  case PEDAL_PROFILE_STATUS_INVALID_RAM_PROFILE:
-    break;
-  case PEDAL_PROFILE_STATUS_INVALID_FLASH_PROFILE:
-    break;
-  case PEDAL_PROFILE_STATUS_FLASH_ERASE_FAILED:
-    break;
-  case PEDAL_PROFILE_STATUS_FLASH_WRITE_FAILED:
-    break;
-  default:
-    break;
-  }
-}
-
 void process_pedal_profile_change(CAN_Message msg)
 {
   uint8_t type = msg.Bytes[0];
@@ -205,9 +210,8 @@ void process_pedal_profile_change(CAN_Message msg)
       int16_t* profile = pedal_profile_slots[slot];
       if (!validate_pedal_profile(profile))
       {
-        PedalProfileStatus status = restore_pedal_profile_from_flash(slot, profile);
-        process_pedal_profile_status(status);
-        // TODO: uh yeah idk
+        PedalMapStatus status = restore_pedal_profile_from_flash(slot, profile);
+        process_pedal_status(status);
       }
       curr_pedal_profile = profile;
     }
@@ -216,11 +220,12 @@ void process_pedal_profile_change(CAN_Message msg)
 
 void process_pedal_flash_save(CAN_Message msg)
 {
-  PedalProfileStatus status = save_all_pedal_profiles(pedal_profile_slots);
-  process_pedal_profile_status(status);
+  PedalMapStatus status = save_all_pedal_profiles(pedal_profile_slots);
+  process_pedal_status(status);
 }
 
 void init_pedal_map(void)
 {
+  // TODO: load current profile
   memcpy(pedal_profile_slots, get_saved_profile(0), PEDAL_LUT_TOT_SIZE);
 }

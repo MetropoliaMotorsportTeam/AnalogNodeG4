@@ -38,6 +38,27 @@ void CanSend(uint8_t* TxData)
     Error_Handler();
   }
 }
+
+uint8_t CanSendMsg(CAN_Message msg)
+{
+  TxHeader.Identifier = msg.Id;
+  TxHeader.DataLength = FDCAN_DLC_BYTES_8;
+  uint32_t curr_time = HAL_GetTick();
+
+  while (HAL_FDCAN_GetTxFifoFreeLevel(&hfdcan1) == 0)
+  {
+    if (HAL_GetTick() - curr_time >= 5000)
+      return 0;
+  };
+
+  if (HAL_FDCAN_AddMessageToTxFifoQ(&hfdcan1, &TxHeader, msg.Bytes) != HAL_OK)
+  {
+    return 0;
+    Error_Handler();
+  }
+  return 1;
+}
+
 void HAL_FDCAN_RxFifo0Callback(FDCAN_HandleTypeDef* hfdcan, uint32_t RxFifo0ITs)
 {
   if ((RxFifo0ITs & FDCAN_IT_RX_FIFO0_NEW_MESSAGE) != RESET)

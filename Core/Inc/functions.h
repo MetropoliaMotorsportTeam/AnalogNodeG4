@@ -13,6 +13,7 @@
 
 #define CAN_CALIB_ID 0x20
 #define CAN_CALIB_DONE_ID 32
+#define CAN_ERROR_MSG_ID 0x21
 
 #define CALIB_LOW_VALID (1 << 0)
 #define CALIB_HIGH_VALID (1 << 1)
@@ -41,6 +42,7 @@ typedef struct
 } CAN_Message;
 
 void CanSend(uint8_t* TxData);
+uint8_t CanSendMsg(CAN_Message msg);
 void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc);
 void print(uint16_t select);
 void decode(CAN_Message msg);
