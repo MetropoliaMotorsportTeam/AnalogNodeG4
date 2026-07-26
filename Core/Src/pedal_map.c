@@ -4,9 +4,8 @@
 #include "virtual_sensors.h"
 #include <string.h>
 
-const int16_t* curr_pedal_profile = pedal_profile_parabolic;
 static int16_t pedal_profile_slots[PEDAL_LUT_PROFILE_SLOTS][PEDAL_LUT_LENGTH];
-
+const int16_t* curr_pedal_profile = pedal_profile_slots[0];
 const int16_t pedal_profile_linear[PEDAL_LUT_LENGTH] = {-1000, -833, -667, -500, -333, -167, 0,
                                                         0,     77,   154,  231,  308,  385,  462,
                                                         538,   615,  692,  769,  846,  923,  1000};
@@ -16,7 +15,7 @@ const int16_t pedal_profile_parabolic[PEDAL_LUT_LENGTH] = {
 
 static void process_pedal_status(PedalMapStatus status)
 {
-  CAN_Message msg = {.Id = CAN_ERROR_MSG_ID, .DLC = 0, .Bytes = {0}};
+  CAN_Message msg = {.Id = CAN_RETURN_MSG_ID, .DLC = 8, .Bytes = {0}};
   switch (status)
   {
   case PEDAL_STATUS_OK:
@@ -30,21 +29,23 @@ static void process_pedal_status(PedalMapStatus status)
   case PEDAL_STATUS_INVALID_SLOT:
     msg.Bytes[0] = 2;
     break;
+  case PEDAL_STATUS_INVALID_INDEX:
+    msg.Bytes[0] = 3;
 
   case PEDAL_STATUS_INVALID_RAM_PROFILE:
-    msg.Bytes[0] = 3;
-    break;
-
-  case PEDAL_STATUS_INVALID_FLASH_PROFILE:
     msg.Bytes[0] = 4;
     break;
 
-  case PEDAL_STATUS_FLASH_ERASE_FAILED:
+  case PEDAL_STATUS_INVALID_FLASH_PROFILE:
     msg.Bytes[0] = 5;
     break;
 
-  case PEDAL_STATUS_FLASH_WRITE_FAILED:
+  case PEDAL_STATUS_FLASH_ERASE_FAILED:
     msg.Bytes[0] = 6;
+    break;
+
+  case PEDAL_STATUS_FLASH_WRITE_FAILED:
+    msg.Bytes[0] = 7;
     break;
 
   default:
@@ -155,14 +156,15 @@ static inline uint8_t validate_pedal_values(const int16_t values[3])
 
 void process_pedal_profile_add(CAN_Message msg)
 {
-
   uint8_t slot = msg.Bytes[0];
   uint8_t index = msg.Bytes[1];
   int16_t values[3];
 
-  // check for valid indexes
-  if (index != 0U && index != 3U && index != 6U)
-    return;
+  if ((index % 3U) != 0U)
+    process_pedal_status(PEDAL_STATUS_INVALID_INDEX);
+
+  if ((index + 3U) > PEDAL_LUT_LENGTH)
+    process_pedal_status(PEDAL_STATUS_INVALID_INDEX);
 
   if (slot >= PEDAL_LUT_PROFILE_SLOTS)
     return;
@@ -174,7 +176,7 @@ void process_pedal_profile_add(CAN_Message msg)
     process_pedal_status(PEDAL_STATUS_INVALID_DATA_CHUNK);
     return;
   }
-
+  process_pedal_status(PEDAL_STATUS_OK);
   memcpy(&pedal_profile_slots[slot][index], values, sizeof(values));
 }
 

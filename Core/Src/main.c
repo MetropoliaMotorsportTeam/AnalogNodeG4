@@ -22,7 +22,6 @@
 #include "dma.h"
 #include "fdcan.h"
 #include "gpio.h"
-#include "pedal_map.h"
 #include "tim.h"
 
 /* Private includes ----------------------------------------------------------*/
@@ -64,7 +63,8 @@ uint8_t AVE_POS = 0;
 uint16_t CAN_interval = 1;
 uint16_t init_can_id = 1;
 uint32_t millis;
-uint8_t CAN_enable = 1;
+uint8_t CAN_enable = 0;
+extern volatile uint8_t CANRxReady;
 
 FDCAN_TxHeaderTypeDef TxHeader;
 FDCAN_RxHeaderTypeDef RxHeader;
@@ -141,21 +141,23 @@ int main(void)
   {
     if (CAN_enable)
     {
-      CAN_Message msg = {.Id = 0x20, .DLC = 8, .Bytes = {0}};
-      CanSendMsg(msg);
-      HAL_Delay(100);
-      continue;
+      if (CANRxReady)
+      {
+        CAN_Message msg;
+        __disable_irq();
+        msg = RxMessage;
+        CANRxReady = 0U;
+        __enable_irq();
+        decode(msg);
+      }
       if (millis % CAN_interval == 0)
       {
-        /* const uint8_t testing[8] = {254};
-        CanSend(testing); */
-        continue;
         uint32_t raw = APPS_pedal->averages;
         uint16_t test_func = pedal_map_get_percentage();
         uint32_t data = APPS_pedal->data;
         uint16_t adc_low = APPS_pedal->low_adc;
         uint16_t adc_high = APPS_pedal->high_adc;
-        print(counter);
+        // print(counter);
         calibration();
         counter++;
         if (counter == SENSOR_NUM)

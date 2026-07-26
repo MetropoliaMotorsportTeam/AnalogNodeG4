@@ -32,7 +32,6 @@ calib_code = 3  -> both are valid
 */
 void CanSend(uint8_t* TxData)
 {
-	TxHeader.Identifier = 0x20;
   while (HAL_FDCAN_GetTxFifoFreeLevel(&hfdcan1) != 0 &&
          HAL_FDCAN_AddMessageToTxFifoQ(&hfdcan1, &TxHeader, TxData) != HAL_OK)
   {
@@ -76,7 +75,7 @@ void HAL_FDCAN_RxFifo0Callback(FDCAN_HandleTypeDef* hfdcan, uint32_t RxFifo0ITs)
       RxMessage.Id = RxHeader.Identifier;
       RxMessage.DLC = RxHeader.DataLength;
 
-      decode(RxMessage);
+      CANRxReady = 1;
     }
 
     if (HAL_FDCAN_ActivateNotification(hfdcan, FDCAN_IT_RX_FIFO0_NEW_MESSAGE, 0) != HAL_OK)
@@ -179,6 +178,7 @@ void calibration()
 
 void decode(CAN_Message msg)
 {
+  CANRxReady = 0;
   switch (msg.Id)
   {
   case CAN_CALIB_ID:
