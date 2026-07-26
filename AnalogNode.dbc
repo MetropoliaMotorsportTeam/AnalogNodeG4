@@ -43,7 +43,7 @@ BO_ 2147483671 ChangePedalProfile: 8 PedalMapping
    SG_ ProfileSlotPreset m0 : 1|1@1+ (1,0) [0|2] "" Vector__XXX
 
 BO_ 2147483672 AddPedalProfile: 8 PedalMapping
-   SG_ ProfileSlot : 0|1@1+ (1,0) [0|9] "" Vector__XXX
+   SG_ ProfileSlot : 0|1@1+ (1,0) [0|20] "" Vector__XXX
    SG_ ProfileIndex : 1|1@1+ (1,0) [0|8] "" Vector__XXX
    SG_ Data1 : 2|2@1- (1,0) [-32768|32767] "" Vector__XXX
    SG_ Data2 : 4|2@1- (1,0) [-32768|32767] "" AnalogNode
@@ -60,9 +60,11 @@ CM_ SG_ 2147483671 ProfileType "Mux_switch_for_preset_or_custom_profiles.";
 CM_ SG_ 2147483671 ProfileSlotCustom "Pick_between_10_custom_profile_slots.";
 CM_ SG_ 2147483671 ProfileSlotPreset "Pick_between_2_preset_profiles.";
 CM_ SG_ 2147483672 ProfileSlot "Profile_picker";
-CM_ SG_ 2147483672 ProfileIndex "Index_in_the_9_element_array_to_send_the_3_elements_to.";
+CM_ SG_ 2147483672 ProfileIndex "Index_in_the_21_element_array_to_send_the_3_elements_to.";
 BA_DEF_ BO_ "GenMsgBackgroundColor" STRING ;
 BA_DEF_ BO_ "GenMsgForegroundColor" STRING ;
+BA_DEF_ BO_ "matchingcriteria" INT 0 0;
+BA_DEF_ BO_ "filterlabeling" INT 0 0;
 BA_DEF_ BO_ "matchingcriteria" INT 0 0;
 BA_DEF_ BO_ "filterlabeling" INT 0 0;
 BA_DEF_ BO_ "matchingcriteria" INT 0 0;
