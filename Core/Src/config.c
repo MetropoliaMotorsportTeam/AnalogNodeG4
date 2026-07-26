@@ -1,5 +1,5 @@
 #include "config.h"
-#include "flash_conf.h"
+#include "flash_byte.h"
 #include "main.h"
 #include "pedal_map.h"
 #include "sensors.h"
