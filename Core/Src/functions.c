@@ -32,6 +32,7 @@ calib_code = 3  -> both are valid
 */
 void CanSend(uint8_t* TxData)
 {
+	TxHeader.Identifier = 0x20;
   while (HAL_FDCAN_GetTxFifoFreeLevel(&hfdcan1) != 0 &&
          HAL_FDCAN_AddMessageToTxFifoQ(&hfdcan1, &TxHeader, TxData) != HAL_OK)
   {

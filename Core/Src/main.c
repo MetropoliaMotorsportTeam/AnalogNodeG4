@@ -64,7 +64,7 @@ uint8_t AVE_POS = 0;
 uint16_t CAN_interval = 1;
 uint16_t init_can_id = 1;
 uint32_t millis;
-uint8_t CAN_enable = 0;
+uint8_t CAN_enable = 1;
 
 FDCAN_TxHeaderTypeDef TxHeader;
 FDCAN_RxHeaderTypeDef RxHeader;
@@ -141,13 +141,15 @@ int main(void)
   {
     if (CAN_enable)
     {
-      // CAN_Message msg = {.Id = 0x20, .DLC = 8, .Bytes = {0}};
-      // CanSendMsg(msg);
-      // HAL_Delay(100);
+      CAN_Message msg = {.Id = 0x20, .DLC = 8, .Bytes = {0}};
+      CanSendMsg(msg);
+      HAL_Delay(100);
+      continue;
       if (millis % CAN_interval == 0)
       {
-        const uint8_t testing[8] = {0};
-        CanSend(testing);
+        /* const uint8_t testing[8] = {254};
+        CanSend(testing); */
+        continue;
         uint32_t raw = APPS_pedal->averages;
         uint16_t test_func = pedal_map_get_percentage();
         uint32_t data = APPS_pedal->data;
