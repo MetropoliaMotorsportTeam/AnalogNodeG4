@@ -1,10 +1,12 @@
 #include "sensors.h"
 #include "config.h"
 #include "functions.h"
+#include "main.h"
 #include "stm32g4xx_hal_flash.h"
 #include "transfer_functions.h"
 
-Sensor* APPS_pedal = {0};
+Sensor* APPS1Pedal = {0};
+Sensor* APPS2Pedal = {0};
 
 static inline uint64_t pack_calib_values(Sensor* sensor)
 {

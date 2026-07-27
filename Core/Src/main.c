@@ -152,13 +152,11 @@ int main(void)
       }
       if (millis % CAN_interval == 0)
       {
-        uint32_t raw = APPS_pedal->averages;
-        uint16_t test_func = pedal_map_get_percentage();
-        uint32_t data = APPS_pedal->data;
-        uint16_t adc_low = APPS_pedal->low_adc;
-        uint16_t adc_high = APPS_pedal->high_adc;
-        // print(counter);
-        calibration();
+        // uint32_t raw = APPS2Pedal->averages;
+        // uint32_t high = APPS2Pedal->high_adc;
+        // uint32_t low = APPS2Pedal->low_adc;
+        // uint32_t output = APPS2Pedal->data;
+        print(counter);
         counter++;
         if (counter == SENSOR_NUM)
         {

@@ -16,7 +16,7 @@ void Config_Setup(void)
 {
   init_sensors();
   load_config();
-  // init_pedal_map();
+  init_pedal_map();
   read_all_calib_values();
 }
 
@@ -46,7 +46,7 @@ void load_config()
   /* uint8_t config = get_saved_conf();
   uint8_t conf = (valid_config(config) ? config : DEFAULT_CONF);
   apply_config(conf); */
-  config_2();
+  config_1();
 }
 
 void process_config(uint8_t config)
@@ -85,9 +85,12 @@ static void config_1(void)
 
 static void config_2(void)
 {
-  Sensor APPS1 = {TF_APPS1, 2, 20, 0, V5_in0};
+  Sensor APPS2 = {TF_APPS2, 2, 100, 0, V5_in1};
+  Sensor APPS1 = {TF_APPS1, 1, 100, 0, V24_in1};
   sensors[APPS1.pin] = APPS1;
-  APPS_pedal = &sensors[APPS1.pin];
+  sensors[APPS2.pin] = APPS2;
+  APPS1Pedal = &sensors[APPS1.pin];
+  APPS2Pedal = &sensors[APPS2.pin];
   CAN_interval = 100;
 }
 

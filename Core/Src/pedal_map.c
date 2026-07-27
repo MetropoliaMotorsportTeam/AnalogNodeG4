@@ -5,7 +5,7 @@
 #include <string.h>
 
 static int16_t pedal_profile_slots[PEDAL_LUT_PROFILE_SLOTS][PEDAL_LUT_LENGTH];
-const int16_t* curr_pedal_profile = pedal_profile_slots[0];
+const int16_t* curr_pedal_profile = pedal_profile_linear;
 const int16_t pedal_profile_linear[PEDAL_LUT_LENGTH] = {-1000, -833, -667, -500, -333, -167, 0,
                                                         0,     77,   154,  231,  308,  385,  462,
                                                         538,   615,  692,  769,  846,  923,  1000};
@@ -61,7 +61,7 @@ int16_t pedal_map_get_percentage()
   pedalreq.update_func(&pedalreq);
   return pedal_map(pedalreq.output.values[0]);
 #else
-  return pedal_map(APPS_pedal->transfer_function(1, APPS_pedal->averages, APPS_pedal));
+  // return pedal_map(APPS_pedal->transfer_function(1, APPS_pedal->averages, APPS_pedal));
 #endif
   return 0;
 }
@@ -225,9 +225,19 @@ void process_pedal_flash_save(CAN_Message msg)
   PedalMapStatus status = save_all_pedal_profiles(pedal_profile_slots);
   process_pedal_status(status);
 }
-
 void init_pedal_map(void)
 {
-  // TODO: load current profile
-  memcpy(pedal_profile_slots, get_saved_profile(0), PEDAL_LUT_TOT_SIZE);
+  const int16_t* saved_profiles = get_saved_profile(0);
+
+  if (saved_profiles != NULL)
+  {
+    memcpy(pedal_profile_slots, saved_profiles, PEDAL_LUT_TOT_SIZE);
+  }
+
+  if (!validate_pedal_profile(pedal_profile_slots[0]))
+  {
+    memcpy(pedal_profile_slots[0], pedal_profile_linear, PEDAL_LUT_SIZE_BYTES);
+  }
+
+  curr_pedal_profile = pedal_profile_slots[0];
 }

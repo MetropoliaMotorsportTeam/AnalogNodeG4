@@ -94,8 +94,8 @@ void print(uint16_t select)
 
     sensors[select].data =
         sensors[select].transfer_function(1, sensors[select].averages, &sensors[select]);
-    TxMessage.Bytes[0] = sensors[select].data;
-    TxMessage.Bytes[1] = sensors[select].data >> 8;
+    TxMessage.Bytes[0] = (uint16_t)sensors[select].data & 0xFF;
+    TxMessage.Bytes[1] = (uint16_t)sensors[select].data >> 8 & 0xFF;
     TxHeader.Identifier = sensors[select].CAN_ID;
 
     CanSend(TxMessage.Bytes);
@@ -107,8 +107,8 @@ void sent_calib_done()
   if (calib_select == -1)
     return;
 
-  TxHeader.Identifier = CAN_CALIB_DONE_ID;
-  TxMessage.Bytes[0] = sensor_for_calib;
+  TxHeader.Identifier = CAN_RETURN_MSG_ID;
+  TxMessage.Bytes[1] = sensor_for_calib;
   CanSend(TxMessage.Bytes);
 
   sensors[sensor_for_calib].calib_code = sensors[sensor_for_calib].calib_code | (1 << calib_select);
@@ -184,6 +184,7 @@ void decode(CAN_Message msg)
   case CAN_CALIB_ID:
     sensor_for_calib = msg.Bytes[0];
     calib_select = msg.Bytes[1];
+    calibration();
     break;
   case CAN_CHANGE_CONFIG:
     process_config(msg.Bytes[0]);

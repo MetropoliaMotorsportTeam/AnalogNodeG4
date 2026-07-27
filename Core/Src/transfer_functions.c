@@ -113,8 +113,8 @@ int16_t TF_APPS2(uint8_t bytes, uint32_t raw, Sensor* sensor)
 {
   const uint16_t max_pos = 1000;
 
-  uint16_t min_raw = 690;
-  uint16_t max_raw = 2830;
+  uint16_t min_raw = 821;
+  uint16_t max_raw = 2560;
 
   get_calib_values(sensor, &min_raw, &max_raw);
 
@@ -128,7 +128,7 @@ int16_t TF_APPS2(uint8_t bytes, uint32_t raw, Sensor* sensor)
     apps = 1000 - apps;
   }
 
-  sensor->data = apps;
+  sensor->data = pedal_map(apps);
   return apps;
 }
 
