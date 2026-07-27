@@ -13,7 +13,7 @@
 
 #define CAN_CALIB_ID 0x20
 // #define CAN_CALIB_DONE_ID 32
-#define CAN_RETURN_MSG_ID 0x23
+#define CAN_RETURN_MSG_ID 0x24U
 
 #define CALIB_LOW_VALID (1 << 0)
 #define CALIB_HIGH_VALID (1 << 1)
