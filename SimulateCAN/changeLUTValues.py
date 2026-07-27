@@ -6,7 +6,7 @@ import struct
 CHANNEL = "can0"
 BAUD_RATE = 1000000  # need to manually set baudrate when running on linux
 ID1 = 0x21
-ID2 = 0x24
+ID2 = 0x23
 linear = [
     -1000,
     -833,
