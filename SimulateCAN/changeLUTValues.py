@@ -104,8 +104,8 @@ def run_test():
             break
         idx += 3
     print("Shutting down bus.")
-    bus.shutdown()
 
+    bus.shutdown()
 
 if __name__ == "__main__":
     run_test()
