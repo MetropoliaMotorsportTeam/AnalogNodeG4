@@ -7,6 +7,7 @@
 
 #include "functions.h"
 #include "config.h"
+#include "flash_pedal_lut.h"
 #include "main.h"
 #include "pedal_map.h"
 #include "stm32g4xx.h"
