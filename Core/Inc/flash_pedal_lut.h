@@ -5,6 +5,8 @@
 #include "stm32g4xx_hal.h"
 #include <stdint.h>
 
+#define CAN_PEDAL_SAVE_FLASH 0x24U
+
 #define PEDAL_FLASH_ADDR 0x0801F800U
 #define PEDAL_FLASH_PAGE ((PEDAL_FLASH_ADDR - FLASH_BASE) / FLASH_PAGE_SIZE)
 

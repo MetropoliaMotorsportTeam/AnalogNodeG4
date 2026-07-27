@@ -20,7 +20,6 @@
 
 #define CAN_ADD_PEDAL_PROFILE 0x21U
 #define CAN_CHANGE_PEDAL_PROFILE 0x22U
-#define CAN_PEDAL_SAVE_FLASH 0x24U
 
 typedef enum pedal_profile
 {
