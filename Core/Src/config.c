@@ -60,7 +60,7 @@ void process_config(uint8_t config)
 
 static void config_1(void)
 {
-  Sensor BTN1 = {TF_BTN, 2, 100, 0, V5_in0};
+  Sensor BTN1 = {TF_BTN, 12, 100, 0, V5_in0};
   Sensor BTN2 = {TF_BTN, 13, 100, 0, V5_in5};
   Sensor BTN3 = {TF_BTN, 14, 100, 0, V5_in4};
   Sensor APPS2 = {TF_APPS2, 2, 100, 0, V5_in1};
@@ -80,7 +80,7 @@ static void config_1(void)
   sensors[F_ROLL.pin] = F_ROLL;
   sensors[F_HEAVE.pin] = F_HEAVE;
 
-  CAN_interval = 100;
+  CAN_interval = 20;
 }
 
 static void config_2(void)
