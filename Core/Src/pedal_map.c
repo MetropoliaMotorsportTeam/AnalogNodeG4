@@ -54,18 +54,6 @@ static void process_pedal_status(PedalMapStatus status)
   CanSendMsg(msg);
 }
 
-// test function
-int16_t pedal_map_get_percentage()
-{
-#ifdef VIRTUAL_SENSOR
-  pedalreq.update_func(&pedalreq);
-  return pedal_map(pedalreq.output.values[0]);
-#else
-  // return pedal_map(APPS_pedal->transfer_function(1, APPS_pedal->averages, APPS_pedal));
-#endif
-  return 0;
-}
-
 int16_t pedal_map(uint16_t pedal)
 {
   if (!curr_pedal_profile)
