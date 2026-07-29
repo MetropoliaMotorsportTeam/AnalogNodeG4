@@ -1,5 +1,5 @@
 #include "config.h"
-#include "flash_byte.h"
+#include "flash_doubleword.h"
 #include "main.h"
 #include "pedal_map.h"
 #include "sensors.h"
@@ -70,6 +70,10 @@ static void config_1(void)
   Sensor F_ROLL = {TF_5V, Rolls1_ID, 100, 0, V5_in6};
   Sensor F_HEAVE = {TF_5V, HeavesFront_ID, 100, 0, V5_in3};
 
+  APPS1Pedal = &sensors[APPS1.pin];
+  APPS2Pedal = &sensors[APPS2.pin];
+  BPPSPedal = &sensors[BPPS.pin];
+
   sensors[APPS1.pin] = APPS1;
   sensors[APPS2.pin] = APPS2;
   sensors[BPPS.pin] = BPPS;
@@ -85,8 +89,8 @@ static void config_1(void)
 
 static void config_2(void)
 {
-  Sensor APPS2 = {TF_APPS2, 2, 100, 0, V5_in1};
-  Sensor APPS1 = {TF_APPS1, 1, 100, 0, V24_in1};
+  Sensor APPS2 = {TF_APPS2, 2, 100, 0, V5_in0};
+  Sensor APPS1 = {TF_APPS1, 1, 100, 0, V3_in0};
   sensors[APPS1.pin] = APPS1;
   sensors[APPS2.pin] = APPS2;
   APPS1Pedal = &sensors[APPS1.pin];

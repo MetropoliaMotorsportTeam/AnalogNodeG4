@@ -1,9 +1,10 @@
-#include "flash_byte.h"
+#include "flash_doubleword.h"
 #include "config.h"
 #include "flash.h"
 #include "main.h"
 #include "stm32g4xx_it.h"
 
+// TODO: rework this file to act more like a separate module
 static uint32_t get_empty_conf_addr();
 
 HAL_StatusTypeDef save_config(uint8_t config)
