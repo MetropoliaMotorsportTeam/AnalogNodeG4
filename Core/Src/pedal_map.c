@@ -15,7 +15,7 @@ const int16_t pedal_profile_parabolic[PEDAL_LUT_LENGTH] = {
 
 static void process_pedal_status(PedalMapStatus status)
 {
-  CAN_Message msg = {.Id = CAN_RETURN_MSG_ID, .DLC = 8, .Bytes = {0}};
+  CAN_Message msg = {.Id = CAN_RETURN_MSG_ID, .DLC = 2, .Bytes = {0}};
   switch (status)
   {
   case PEDAL_STATUS_OK:
@@ -210,6 +210,12 @@ void process_pedal_profile_change(CAN_Message msg)
 
 void process_pedal_flash_save(CAN_Message msg)
 {
+  // TODO: change this to save current profile or all profiles
+  /*
+     Since we have to flash doubleword (8 bytes), we might as well take advantage of the extra bytes
+    byte 1: profile used in pedal custom profiles (leave as 0xFF for no usage)
+    byte 2: profile used in preconfigured profiles (leave as 0xFF for no usage)
+  */
   PedalMapStatus status = save_all_pedal_profiles(pedal_profile_slots);
   process_pedal_status(status);
 }
@@ -222,10 +228,11 @@ void init_pedal_map(void)
     memcpy(pedal_profile_slots, saved_profiles, PEDAL_LUT_TOT_SIZE);
   }
 
+  // TODO: get current pedal
   if (!validate_pedal_profile(pedal_profile_slots[0]))
   {
     memcpy(pedal_profile_slots[0], pedal_profile_linear, PEDAL_LUT_SIZE_BYTES);
   }
 
-  curr_pedal_profile = pedal_profile_slots[0];
+  // curr_pedal_profile = pedal_profile_slots[0];
 }

@@ -33,6 +33,7 @@ calib_code = 3  -> both are valid
 */
 void CanSend(uint8_t* TxData)
 {
+  TxHeader.DataLength = FDCAN_DLC_BYTES_2;
   while (HAL_FDCAN_GetTxFifoFreeLevel(&hfdcan1) != 0 &&
          HAL_FDCAN_AddMessageToTxFifoQ(&hfdcan1, &TxHeader, TxData) != HAL_OK)
   {
@@ -43,7 +44,7 @@ void CanSend(uint8_t* TxData)
 uint8_t CanSendMsg(CAN_Message msg)
 {
   TxHeader.Identifier = msg.Id;
-  TxHeader.DataLength = FDCAN_DLC_BYTES_8;
+  TxHeader.DataLength = msg.DLC;
   uint32_t curr_time = HAL_GetTick();
 
   while (HAL_FDCAN_GetTxFifoFreeLevel(&hfdcan1) == 0)
