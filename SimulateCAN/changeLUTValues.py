@@ -4,6 +4,7 @@ import struct
 
 
 CHANNEL = "can0"
+STATUS_OK = 200
 BAUD_RATE = 1000000  # need to manually set baudrate when running on linux
 ID1 = 0x21
 ID2 = 0x23
@@ -56,7 +57,7 @@ parabolic = [
 
 custom = linear
 
-RESP_ACK = 0x23
+RESP_ACK = 0x24
 TIMEOUT_S = 2.0
 SLOT = 0
 
@@ -105,7 +106,8 @@ def run_test():
         shutdown_bus(bus)
         return
 
-    wait_for_res(bus)
+    if wait_for_res(bus):
+        print("Successfully saved profile to flash.")
     shutdown_bus(bus)
 
 
@@ -125,7 +127,7 @@ def wait_for_res(bus):
 
         print(f"RX: id=0x{rx.arbitration_id:X}, dlc={rx.dlc}, data={list(rx.data)}")
 
-        if rx.arbitration_id == RESP_ACK:
+        if rx.arbitration_id == RESP_ACK and rx.data[0] == STATUS_OK:
             print("SUCCESS: Received ACK.")
             success = True
             break
