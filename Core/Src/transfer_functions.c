@@ -11,6 +11,7 @@
 #include "pedal_map.h"
 #include "sensors.h"
 #include <math.h>
+#define V5_LINE_PIN V5_in1
 
 static inline void get_calib_values(Sensor* sensor, uint16_t* low, uint16_t* high)
 {

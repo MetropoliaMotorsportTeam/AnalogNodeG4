@@ -49,6 +49,5 @@ enum Pins
 #define BTN1_ID 0x0C
 #define BTN2_ID 0x0D
 #define BTN3_ID 0x0E
-#define V5_LINE_PIN V5_in1
 
 #endif /* INC_CONFIG_H_ */
