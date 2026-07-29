@@ -5,8 +5,10 @@
 #include "stm32g4xx_hal_flash.h"
 #include "transfer_functions.h"
 
+// global variables for live expression
 Sensor* APPS1Pedal = {0};
 Sensor* APPS2Pedal = {0};
+Sensor* BPPSPedal = {0};
 
 static inline uint64_t pack_calib_values(Sensor* sensor)
 {

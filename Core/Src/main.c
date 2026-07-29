@@ -152,10 +152,6 @@ int main(void)
       }
       if (millis % CAN_interval == 0)
       {
-        // uint32_t raw = APPS2Pedal->averages;
-        // uint32_t high = APPS2Pedal->high_adc;
-        // uint32_t low = APPS2Pedal->low_adc;
-        // uint32_t output = APPS2Pedal->data;
         print(counter);
         counter++;
         if (counter == SENSOR_NUM)
@@ -164,7 +160,6 @@ int main(void)
           counter = 0;
         }
       }
-      // TxHeader.Identifier = 17;
     }
     /* USER CODE END WHILE */
 

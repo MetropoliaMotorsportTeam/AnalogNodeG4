@@ -12,8 +12,6 @@
 #include "sensors.h"
 #include <math.h>
 
-static int16_t bpps_global = 0;
-
 static inline void get_calib_values(Sensor* sensor, uint16_t* low, uint16_t* high)
 {
   if ((sensor->calib_code & CALIB_LOW_VALID) && sensor->low_adc != CALIB_DEFAULT)
@@ -65,10 +63,10 @@ int16_t TF_24V(uint8_t bytes, uint32_t raw, Sensor* sensor)
 
 int16_t TF_BPPS(uint8_t bytes, uint32_t raw, Sensor* sensor)
 {
-  const uint16_t max_pos = 100;
+  const uint16_t max_pos = 1000;
 
-  uint16_t min_raw = 2615;
-  uint16_t max_raw = 2925;
+  uint16_t min_raw = 0;
+  uint16_t max_raw = 3950;
 
   get_calib_values(sensor, &min_raw, &max_raw);
 
@@ -78,12 +76,10 @@ int16_t TF_BPPS(uint8_t bytes, uint32_t raw, Sensor* sensor)
 
   if (min_raw > max_raw)
   {
-    bpps = 100 - bpps;
+    bpps = max_pos - bpps;
   }
 
-  bpps_global = bpps;
-  sensor->data = bpps;
-  return bpps;
+  return pedal_map(bpps);
 }
 
 int16_t TF_APPS1(uint8_t bytes, uint32_t raw, Sensor* sensor)
@@ -105,8 +101,7 @@ int16_t TF_APPS1(uint8_t bytes, uint32_t raw, Sensor* sensor)
     apps = 1000 - apps;
   }
 
-  sensor->data = pedal_map(apps);
-  return apps;
+  return pedal_map(apps);
 }
 
 int16_t TF_APPS2(uint8_t bytes, uint32_t raw, Sensor* sensor)
@@ -128,8 +123,7 @@ int16_t TF_APPS2(uint8_t bytes, uint32_t raw, Sensor* sensor)
     apps = 1000 - apps;
   }
 
-  sensor->data = pedal_map(apps);
-  return apps;
+  return pedal_map(apps);
 }
 
 int16_t TF_BTN(uint8_t bytes, uint32_t raw, Sensor* sensor)

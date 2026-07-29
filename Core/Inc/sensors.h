@@ -31,5 +31,6 @@ void init_sensors(void);
 extern Sensor sensors[SENSOR_NUM];
 extern Sensor* APPS1Pedal;
 extern Sensor* APPS2Pedal;
+extern Sensor* BPPSPedal;
 
 #endif
