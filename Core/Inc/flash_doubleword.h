@@ -11,7 +11,7 @@
 #include <stdint.h>
 
 #define FLASH_PAGE_SLOTS (FLASH_PAGE_SIZE / sizeof(uint64_t))
-
+#define INVALID_FLASH_ADDR 0x00000000UL
 static inline uint64_t flash_read_u64(uint32_t addr)
 {
   return *(volatile uint64_t*)addr;

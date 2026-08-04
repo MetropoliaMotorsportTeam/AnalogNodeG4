@@ -19,7 +19,7 @@ FlashStatus save_dword(uint64_t dword, uint32_t base_addr)
     return FLASH_OK;
 
   uint32_t addr = get_empty_dword_addr(base_addr);
-  if (addr == 0)
+  if (addr == INVALID_FLASH_ADDR)
   {
     FlashStatus status = flash_erase_page(addr, 1);
     if (status != FLASH_OK)
@@ -40,7 +40,7 @@ uint32_t get_empty_dword_addr(uint32_t base_addr)
     }
     base_addr += sizeof(uint64_t);
   }
-  return 0;
+  return INVALID_FLASH_ADDR;
 }
 volatile uint64_t get_saved_dword(uint32_t base_addr)
 {
