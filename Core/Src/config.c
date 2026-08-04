@@ -41,19 +41,26 @@ void apply_config(uint8_t config)
   }
 }
 
+static inline uint8_t valid_config(uint8_t dword)
+{
+  return dword >= 1 && dword <= NUM_CONF;
+}
+
 void load_config()
 {
-  /* uint8_t config = get_saved_conf();
+  uint8_t config = get_saved_dword(CONFIG_FLASH_ADDR);
   uint8_t conf = (valid_config(config) ? config : DEFAULT_CONF);
-  apply_config(conf); */
-  config_1();
+  apply_config(conf);
 }
 
 void process_config(uint8_t config)
 {
   uint8_t conf = (valid_config(config) ? config : DEFAULT_CONF);
-  if (save_config(conf) != HAL_OK)
-    Error_Handler();
+  if (save_dword(conf, CONFIG_FLASH_ADDR) != HAL_OK)
+  {
+    // flash failing
+    return;
+  }
 
   apply_config(conf);
 }
@@ -120,7 +127,7 @@ static void config_3(void)
 static void config_4(void)
 {
   Sensor W_TEMP = {TF_WATER_TEMP, 2, 100, 0, V5_in0};
-  Sensor V5_LINE = {TF_5V, 10, 100, 0, V5_LINE_PIN};
+  Sensor V5_LINE = {TF_5V, 10, 100, 0, V5_in1};
 
   sensors[W_TEMP.pin] = W_TEMP;
   sensors[V5_LINE.pin] = V5_LINE;

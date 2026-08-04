@@ -29,7 +29,7 @@
       "-o",
       "build/main.o"
     ],
-    "directory": "/home/teacup/AnalogNodeG4",
+    "directory": "/home/teacup/Motorsport/AnalogNodeG4",
     "output": "build/main.o"
   },
   {
@@ -62,7 +62,7 @@
       "-o",
       "build/stm32g4xx_it.o"
     ],
-    "directory": "/home/teacup/AnalogNodeG4",
+    "directory": "/home/teacup/Motorsport/AnalogNodeG4",
     "output": "build/stm32g4xx_it.o"
   },
   {
@@ -95,7 +95,7 @@
       "-o",
       "build/stm32g4xx_hal_msp.o"
     ],
-    "directory": "/home/teacup/AnalogNodeG4",
+    "directory": "/home/teacup/Motorsport/AnalogNodeG4",
     "output": "build/stm32g4xx_hal_msp.o"
   },
   {
@@ -128,7 +128,7 @@
       "-o",
       "build/stm32g4xx_hal_adc.o"
     ],
-    "directory": "/home/teacup/AnalogNodeG4",
+    "directory": "/home/teacup/Motorsport/AnalogNodeG4",
     "output": "build/stm32g4xx_hal_adc.o"
   },
   {
@@ -161,7 +161,7 @@
       "-o",
       "build/stm32g4xx_hal_adc_ex.o"
     ],
-    "directory": "/home/teacup/AnalogNodeG4",
+    "directory": "/home/teacup/Motorsport/AnalogNodeG4",
     "output": "build/stm32g4xx_hal_adc_ex.o"
   },
   {
@@ -194,7 +194,7 @@
       "-o",
       "build/stm32g4xx_ll_adc.o"
     ],
-    "directory": "/home/teacup/AnalogNodeG4",
+    "directory": "/home/teacup/Motorsport/AnalogNodeG4",
     "output": "build/stm32g4xx_ll_adc.o"
   },
   {
@@ -227,7 +227,7 @@
       "-o",
       "build/stm32g4xx_hal.o"
     ],
-    "directory": "/home/teacup/AnalogNodeG4",
+    "directory": "/home/teacup/Motorsport/AnalogNodeG4",
     "output": "build/stm32g4xx_hal.o"
   },
   {
@@ -260,7 +260,7 @@
       "-o",
       "build/stm32g4xx_hal_rcc.o"
     ],
-    "directory": "/home/teacup/AnalogNodeG4",
+    "directory": "/home/teacup/Motorsport/AnalogNodeG4",
     "output": "build/stm32g4xx_hal_rcc.o"
   },
   {
@@ -293,7 +293,7 @@
       "-o",
       "build/stm32g4xx_hal_rcc_ex.o"
     ],
-    "directory": "/home/teacup/AnalogNodeG4",
+    "directory": "/home/teacup/Motorsport/AnalogNodeG4",
     "output": "build/stm32g4xx_hal_rcc_ex.o"
   },
   {
@@ -326,7 +326,7 @@
       "-o",
       "build/stm32g4xx_hal_flash.o"
     ],
-    "directory": "/home/teacup/AnalogNodeG4",
+    "directory": "/home/teacup/Motorsport/AnalogNodeG4",
     "output": "build/stm32g4xx_hal_flash.o"
   },
   {
@@ -359,7 +359,7 @@
       "-o",
       "build/stm32g4xx_hal_flash_ex.o"
     ],
-    "directory": "/home/teacup/AnalogNodeG4",
+    "directory": "/home/teacup/Motorsport/AnalogNodeG4",
     "output": "build/stm32g4xx_hal_flash_ex.o"
   },
   {
@@ -392,7 +392,7 @@
       "-o",
       "build/stm32g4xx_hal_flash_ramfunc.o"
     ],
-    "directory": "/home/teacup/AnalogNodeG4",
+    "directory": "/home/teacup/Motorsport/AnalogNodeG4",
     "output": "build/stm32g4xx_hal_flash_ramfunc.o"
   },
   {
@@ -425,7 +425,7 @@
       "-o",
       "build/stm32g4xx_hal_gpio.o"
     ],
-    "directory": "/home/teacup/AnalogNodeG4",
+    "directory": "/home/teacup/Motorsport/AnalogNodeG4",
     "output": "build/stm32g4xx_hal_gpio.o"
   },
   {
@@ -458,7 +458,7 @@
       "-o",
       "build/stm32g4xx_hal_exti.o"
     ],
-    "directory": "/home/teacup/AnalogNodeG4",
+    "directory": "/home/teacup/Motorsport/AnalogNodeG4",
     "output": "build/stm32g4xx_hal_exti.o"
   },
   {
@@ -491,7 +491,7 @@
       "-o",
       "build/stm32g4xx_hal_dma.o"
     ],
-    "directory": "/home/teacup/AnalogNodeG4",
+    "directory": "/home/teacup/Motorsport/AnalogNodeG4",
     "output": "build/stm32g4xx_hal_dma.o"
   },
   {
@@ -524,7 +524,7 @@
       "-o",
       "build/stm32g4xx_hal_dma_ex.o"
     ],
-    "directory": "/home/teacup/AnalogNodeG4",
+    "directory": "/home/teacup/Motorsport/AnalogNodeG4",
     "output": "build/stm32g4xx_hal_dma_ex.o"
   },
   {
@@ -557,7 +557,7 @@
       "-o",
       "build/stm32g4xx_hal_pwr.o"
     ],
-    "directory": "/home/teacup/AnalogNodeG4",
+    "directory": "/home/teacup/Motorsport/AnalogNodeG4",
     "output": "build/stm32g4xx_hal_pwr.o"
   },
   {
@@ -590,7 +590,7 @@
       "-o",
       "build/stm32g4xx_hal_pwr_ex.o"
     ],
-    "directory": "/home/teacup/AnalogNodeG4",
+    "directory": "/home/teacup/Motorsport/AnalogNodeG4",
     "output": "build/stm32g4xx_hal_pwr_ex.o"
   },
   {
@@ -623,7 +623,7 @@
       "-o",
       "build/stm32g4xx_hal_cortex.o"
     ],
-    "directory": "/home/teacup/AnalogNodeG4",
+    "directory": "/home/teacup/Motorsport/AnalogNodeG4",
     "output": "build/stm32g4xx_hal_cortex.o"
   },
   {
@@ -656,7 +656,7 @@
       "-o",
       "build/stm32g4xx_hal_fdcan.o"
     ],
-    "directory": "/home/teacup/AnalogNodeG4",
+    "directory": "/home/teacup/Motorsport/AnalogNodeG4",
     "output": "build/stm32g4xx_hal_fdcan.o"
   },
   {
@@ -689,7 +689,7 @@
       "-o",
       "build/stm32g4xx_hal_tim.o"
     ],
-    "directory": "/home/teacup/AnalogNodeG4",
+    "directory": "/home/teacup/Motorsport/AnalogNodeG4",
     "output": "build/stm32g4xx_hal_tim.o"
   },
   {
@@ -722,7 +722,7 @@
       "-o",
       "build/stm32g4xx_hal_tim_ex.o"
     ],
-    "directory": "/home/teacup/AnalogNodeG4",
+    "directory": "/home/teacup/Motorsport/AnalogNodeG4",
     "output": "build/stm32g4xx_hal_tim_ex.o"
   },
   {
@@ -755,7 +755,7 @@
       "-o",
       "build/system_stm32g4xx.o"
     ],
-    "directory": "/home/teacup/AnalogNodeG4",
+    "directory": "/home/teacup/Motorsport/AnalogNodeG4",
     "output": "build/system_stm32g4xx.o"
   },
   {
@@ -788,7 +788,7 @@
       "-o",
       "build/sysmem.o"
     ],
-    "directory": "/home/teacup/AnalogNodeG4",
+    "directory": "/home/teacup/Motorsport/AnalogNodeG4",
     "output": "build/sysmem.o"
   },
   {
@@ -821,7 +821,7 @@
       "-o",
       "build/syscalls.o"
     ],
-    "directory": "/home/teacup/AnalogNodeG4",
+    "directory": "/home/teacup/Motorsport/AnalogNodeG4",
     "output": "build/syscalls.o"
   },
   {
@@ -855,8 +855,7 @@
       "-o",
       "build/startup_stm32g431xx.o"
     ],
-    "directory": "/home/teacup/AnalogNodeG4",
+    "directory": "/home/teacup/Motorsport/AnalogNodeG4",
     "output": "build/startup_stm32g431xx.o"
   }
 ]
-

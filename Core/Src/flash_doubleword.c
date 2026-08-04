@@ -4,68 +4,59 @@
 #include "main.h"
 #include "stm32g4xx_it.h"
 
-// TODO: rework this file to act more like a separate module
-static uint32_t get_empty_conf_addr();
-
-HAL_StatusTypeDef save_config(uint8_t config)
+/*
+   Writes 8 bytes to the whole page before erasing the page
+   Saves on costly flash erases
+*/
+HAL_StatusTypeDef save_dword(uint64_t dword, uint32_t base_addr)
 {
-  if (!valid_config(config))
-    config = DEFAULT_CONF;
+  if (base_addr % FLASH_PAGE_SIZE != 0)
+    // base_addr is not the beginning of a page
+    return HAL_ERROR;
 
-  if (get_saved_conf() == config)
+  // if same data, don't write
+  if (get_saved_dword(base_addr) == dword)
     return HAL_OK;
 
-  uint32_t addr = get_empty_conf_addr();
-  if (addr == 0)
-  {
-    // flash full
-    if (flash_erase_page(CONFIG_FLASH_ADDR, 1) != HAL_OK)
-      return HAL_ERROR;
+  uint32_t addr = get_empty_dword_addr(base_addr);
+  if (flash_erase_page(addr, 1) != HAL_OK)
+    return HAL_ERROR;
 
-    addr = CONFIG_FLASH_ADDR;
-  }
-  return flash_store(addr, &config, 1);
+  return flash_store(addr, &dword, 1);
 }
 
-static uint32_t get_empty_conf_addr()
+uint32_t get_empty_dword_addr(uint32_t base_addr)
 {
-  uint32_t addr = CONFIG_FLASH_ADDR;
-
-  for (uint32_t i = 0; i < CONFIG_NUM_SLOTS; i++)
+  uint32_t addr = base_addr;
+  for (uint32_t i = 0; i < FLASH_PAGE_SLOTS; i++)
   {
-    volatile uint64_t* mem_ptr = (volatile uint64_t*)addr;
+    volatile uint64_t* mem_ptr = (volatile uint64_t*)base_addr;
     if (*mem_ptr == FLASH_EMPTY_U64)
     {
       return addr;
     }
-    addr += CONFIG_SLOT_SIZE;
+    addr += sizeof(uint64_t);
   }
-  return 0;
+  return base_addr;
 }
-volatile uint8_t get_saved_conf(void)
+volatile uint64_t get_saved_dword(uint32_t base_addr)
 {
-  uint32_t addr = CONFIG_FLASH_ADDR;
-  uint8_t last_valid_conf = DEFAULT_CONF;
+  uint64_t last_valid_dword = FLASH_EMPTY_U64;
 
-  for (uint32_t i = 0; i < CONFIG_NUM_SLOTS; i++)
+  for (uint32_t i = 0; i < FLASH_PAGE_SLOTS; i++)
   {
-    volatile uint64_t* memptr = (volatile uint64_t*)addr;
-    uint64_t record = *memptr;
+    volatile uint64_t* memptr = (volatile uint64_t*)base_addr;
+    uint64_t data = *memptr;
 
-    if (record == FLASH_EMPTY_U64)
+    if (data == FLASH_EMPTY_U64)
     {
-      return last_valid_conf;
+      return last_valid_dword;
     }
 
-    uint8_t conf = config_from_record(record);
+    last_valid_dword = data;
 
-    if (valid_config(conf))
-    {
-      last_valid_conf = conf;
-    }
-
-    addr += CONFIG_SLOT_SIZE;
+    base_addr += sizeof(uint64_t);
   }
 
-  return last_valid_conf;
+  return last_valid_dword;
 }

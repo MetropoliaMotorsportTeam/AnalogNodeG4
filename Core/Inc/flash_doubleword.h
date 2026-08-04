@@ -1,44 +1,29 @@
 #ifndef FLASH_CONFIG_H
 #define FLASH_CONFIG_H
 /*
-  - Flash write file to store which configuration should be used
+  - Flash write file to store which dworduration should be used
   - Uses the last Page of FLash memory to store
   - NOTE: Do not overwrite the last page
 
 */
-#include "config.h"
 #include "stm32g4xx_hal.h"
 #include <stdint.h>
 
-#define CONFIG_FLASH_ADDR 0x0801F000U
-#define CONFIG_FLASH_PAGE ((CONFIG_FLASH_ADDR - FLASH_BASE) / FLASH_PAGE_SIZE)
-#define CONFIG_SLOT_SIZE 8
-#define CONFIG_NUM_SLOTS (FLASH_PAGE_SIZE) / (CONFIG_SLOT_SIZE)
-#define FLASH_EMPTY_U64 0xFFFFFFFFFFFFFFFFULL
+#define FLASH_PAGE_SLOTS (FLASH_PAGE_SIZE / sizeof(uint64_t))
 
 static inline uint64_t flash_read_u64(uint32_t addr)
 {
   return *(volatile uint64_t*)addr;
 }
 
-static inline uint8_t valid_config(uint8_t config)
-{
-  return config >= 1 && config <= NUM_CONF;
-}
-
 // converts 8bit into 64bit with empty flash
-static inline uint64_t make_config_record(uint8_t config)
+static inline uint64_t fill_64(uint8_t dword)
 {
-  return 0xFFFFFFFFFFFFFF00ULL | (uint64_t)config;
+  return 0xFFFFFFFFFFFFFF00ULL | (uint64_t)dword;
 }
 
-// converts 64bit into 8bit config
-static inline uint8_t config_from_record(uint64_t record)
-{
-  return (uint8_t)(record & 0xFFU);
-}
-
-HAL_StatusTypeDef save_config(uint8_t config);
-volatile uint8_t get_saved_conf();
+HAL_StatusTypeDef save_dword(uint64_t dword, uint32_t base_addr);
+volatile uint64_t get_saved_dword(uint32_t base_addr);
+uint32_t get_empty_dword_addr(uint32_t base_addr);
 
 #endif
