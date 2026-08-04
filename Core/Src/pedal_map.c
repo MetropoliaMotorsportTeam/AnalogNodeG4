@@ -29,8 +29,10 @@ static void process_pedal_status(PedalMapStatus status)
   case PEDAL_STATUS_INVALID_SLOT:
     msg.Bytes[0] = 2;
     break;
+
   case PEDAL_STATUS_INVALID_INDEX:
     msg.Bytes[0] = 3;
+    break;
 
   case PEDAL_STATUS_INVALID_RAM_PROFILE:
     msg.Bytes[0] = 4;
@@ -46,6 +48,10 @@ static void process_pedal_status(PedalMapStatus status)
 
   case PEDAL_STATUS_FLASH_WRITE_FAILED:
     msg.Bytes[0] = 7;
+    break;
+
+  case PEDAL_STATUS_INVALID_DATA_CHUNK:
+    msg.Bytes[0] = 8;
     break;
 
   default:
@@ -68,7 +74,7 @@ int16_t pedal_map(uint16_t pedal)
 
   if (pedal >= PEDAL_REGEN_END && pedal <= PEDAL_TORQUE_START)
   {
-    // deadzone
+    // manually checking if pedal is in deadzone range
     return 0;
   }
 
@@ -149,10 +155,16 @@ void process_pedal_profile_add(CAN_Message msg)
   int16_t values[3];
 
   if ((index % 3U) != 0U)
+  {
     process_pedal_status(PEDAL_STATUS_INVALID_INDEX);
+    return;
+  }
 
   if ((index + 3U) > PEDAL_LUT_LENGTH)
+  {
     process_pedal_status(PEDAL_STATUS_INVALID_INDEX);
+    return;
+  }
 
   if (slot >= PEDAL_LUT_PROFILE_SLOTS)
     return;
@@ -171,7 +183,7 @@ void process_pedal_profile_add(CAN_Message msg)
 // for testing
 uint8_t add_pedal_profile(void* values, uint8_t slot, uint8_t size)
 {
-  if (size != PEDAL_LUT_SIZE_BYTES)
+  if (size > PEDAL_LUT_SIZE_BYTES)
     return 0;
 
   if (!values)
@@ -180,7 +192,7 @@ uint8_t add_pedal_profile(void* values, uint8_t slot, uint8_t size)
   if (slot >= PEDAL_LUT_PROFILE_SLOTS)
     return 0;
 
-  memcpy(pedal_profile_slots[slot], values, PEDAL_LUT_LENGTH);
+  memcpy(pedal_profile_slots[slot], values, size);
   return 1;
 }
 
@@ -189,50 +201,79 @@ void process_pedal_profile_change(CAN_Message msg)
   uint8_t type = msg.Bytes[0];
   uint8_t slot = msg.Bytes[1];
 
-  if (type == 0U)
+  if (type == 0)
   {
     change_preset_pedal_profile(slot);
   }
-  else if (type == 1U)
+  else if (type == 1)
   {
-    if (slot < PEDAL_LUT_PROFILE_SLOTS)
+    if (slot >= PEDAL_LUT_PROFILE_SLOTS)
     {
-      int16_t* profile = pedal_profile_slots[slot];
-      if (!validate_pedal_profile(profile))
-      {
-        PedalMapStatus status = restore_pedal_profile_from_flash(slot, profile);
-        process_pedal_status(status);
-      }
-      curr_pedal_profile = profile;
+      process_pedal_status(PEDAL_STATUS_INVALID_SLOT);
+      return;
     }
+
+    int16_t* profile = pedal_profile_slots[slot];
+
+    if (!validate_pedal_profile(profile))
+    {
+      process_pedal_status(PEDAL_STATUS_INVALID_RAM_PROFILE);
+      return;
+    }
+    curr_pedal_profile = profile;
   }
+  process_pedal_status(PEDAL_STATUS_OK);
 }
 
 void process_pedal_flash_save(CAN_Message msg)
 {
-  // TODO: change this to save current profile or all profiles
-  /*
-     Since we have to flash doubleword (8 bytes), we might as well take advantage of the extra bytes
-    byte 1: profile used in pedal custom profiles (leave as 0xFF for no usage)
-    byte 2: profile used in preconfigured profiles (leave as 0xFF for no usage)
-  */
-  PedalMapStatus status = save_all_pedal_profiles(pedal_profile_slots);
-  process_pedal_status(status);
+  uint8_t stype = msg.Bytes[0];
+  uint8_t slot = msg.Bytes[1];
+
+  if (stype == 0)
+  {
+    PedalMapStatus status = save_all_pedal_profiles(pedal_profile_slots);
+    process_pedal_status(status);
+    return;
+  }
+  else if (stype == 1)
+  {
+    if (slot >= PEDAL_LUT_PROFILE_SLOTS)
+    {
+      process_pedal_status(PEDAL_STATUS_INVALID_SLOT);
+      return;
+    }
+    PedalMapStatus status = save_current_pedal_profile(slot);
+    process_pedal_status(status);
+  }
 }
+
+int16_t* get_ram_pedal_profile(uint8_t profile)
+{
+  if (profile >= PEDAL_LUT_PROFILE_SLOTS)
+    return NULL;
+  return pedal_profile_slots[profile];
+}
+
 void init_pedal_map(void)
 {
-  const int16_t* saved_profiles = get_saved_profile(0);
+  const int16_t* saved_profiles = get_all_saved_pedal_profiles();
 
   if (saved_profiles != NULL)
   {
     memcpy(pedal_profile_slots, saved_profiles, PEDAL_LUT_TOT_SIZE);
   }
 
-  // TODO: get current pedal
-  if (!validate_pedal_profile(pedal_profile_slots[0]))
+  for (uint8_t slot = 0; slot < PEDAL_LUT_PROFILE_SLOTS; slot++)
   {
-    memcpy(pedal_profile_slots[0], pedal_profile_linear, PEDAL_LUT_SIZE_BYTES);
+    if (!validate_pedal_profile(pedal_profile_slots[slot]))
+    {
+      memcpy(pedal_profile_slots[slot], pedal_profile_linear, PEDAL_LUT_SIZE_BYTES);
+    }
   }
+  uint8_t slot = get_current_pedal_profile();
+  if (slot >= PEDAL_LUT_PROFILE_SLOTS)
+    return;
 
-  // curr_pedal_profile = pedal_profile_slots[0];
+  curr_pedal_profile = pedal_profile_slots[slot];
 }
