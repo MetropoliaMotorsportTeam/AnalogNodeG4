@@ -273,7 +273,9 @@ void init_pedal_map(void)
   }
   uint8_t slot = get_current_pedal_profile();
   if (slot >= PEDAL_LUT_PROFILE_SLOTS)
+  {
     return;
+  }
 
   curr_pedal_profile = pedal_profile_slots[slot];
 }

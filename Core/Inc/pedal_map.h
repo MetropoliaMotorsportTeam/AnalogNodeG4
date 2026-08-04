@@ -59,5 +59,6 @@ void process_pedal_profile_add(CAN_Message msg);
 void process_pedal_profile_change(CAN_Message msg);
 void process_pedal_flash_save(CAN_Message msg);
 uint8_t validate_pedal_profile(const int16_t pedal_profile[]);
+int16_t* get_ram_pedal_profile(uint8_t profile);
 
 #endif
