@@ -8,36 +8,39 @@
    Writes 8 bytes to the whole page before erasing the page
    Saves on costly flash erases
 */
-HAL_StatusTypeDef save_dword(uint64_t dword, uint32_t base_addr)
+FlashStatus save_dword(uint64_t dword, uint32_t base_addr)
 {
   if (base_addr % FLASH_PAGE_SIZE != 0)
     // base_addr is not the beginning of a page
-    return HAL_ERROR;
+    return FLASH_MISC_ERROR;
 
   // if same data, don't write
   if (get_saved_dword(base_addr) == dword)
-    return HAL_OK;
+    return FLASH_OK;
 
   uint32_t addr = get_empty_dword_addr(base_addr);
-  if (flash_erase_page(addr, 1) != HAL_OK)
-    return HAL_ERROR;
+  if (addr == 0)
+  {
+    FlashStatus status = flash_erase_page(addr, 1);
+    if (status != FLASH_OK)
+      return status;
+  }
 
   return flash_store(addr, &dword, 1);
 }
 
 uint32_t get_empty_dword_addr(uint32_t base_addr)
 {
-  uint32_t addr = base_addr;
   for (uint32_t i = 0; i < FLASH_PAGE_SLOTS; i++)
   {
     volatile uint64_t* mem_ptr = (volatile uint64_t*)base_addr;
     if (*mem_ptr == FLASH_EMPTY_U64)
     {
-      return addr;
+      return base_addr;
     }
-    addr += sizeof(uint64_t);
+    base_addr += sizeof(uint64_t);
   }
-  return base_addr;
+  return 0;
 }
 volatile uint64_t get_saved_dword(uint32_t base_addr)
 {

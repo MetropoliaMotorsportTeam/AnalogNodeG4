@@ -6,6 +6,7 @@
   - NOTE: Do not overwrite the last page
 
 */
+#include "flash.h"
 #include "stm32g4xx_hal.h"
 #include <stdint.h>
 
@@ -22,7 +23,7 @@ static inline uint64_t fill_64(uint8_t dword)
   return 0xFFFFFFFFFFFFFF00ULL | (uint64_t)dword;
 }
 
-HAL_StatusTypeDef save_dword(uint64_t dword, uint32_t base_addr);
+FlashStatus save_dword(uint64_t dword, uint32_t base_addr);
 volatile uint64_t get_saved_dword(uint32_t base_addr);
 uint32_t get_empty_dword_addr(uint32_t base_addr);
 

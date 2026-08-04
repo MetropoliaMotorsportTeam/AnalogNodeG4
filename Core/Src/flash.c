@@ -3,17 +3,17 @@
 
 static uint8_t validate_flash_region(uint32_t addr, uint32_t size);
 
-HAL_StatusTypeDef flash_erase_page(uint32_t mem_addr, uint8_t num_pages)
+FlashStatus flash_erase_page(uint32_t mem_addr, uint8_t num_pages)
 {
 
   if (num_pages == 0U)
   {
-    return HAL_ERROR;
+    return FLASH_MISC_ERROR;
   }
 
   if (mem_addr < FLASH_BASE)
   {
-    return HAL_ERROR;
+    return FLASH_MISC_ERROR;
   }
 
   FLASH_EraseInitTypeDef flash_erase = {0};
@@ -33,29 +33,35 @@ HAL_StatusTypeDef flash_erase_page(uint32_t mem_addr, uint8_t num_pages)
 
   HAL_FLASH_Lock();
   __enable_irq();
-  return status;
+  if (status != HAL_OK)
+  {
+    return FLASH_ERASE_ERROR;
+  }
+
+  return FLASH_OK;
 }
 
-HAL_StatusTypeDef flash_store(uint32_t addr, const void* data, uint32_t size)
+FlashStatus flash_store(uint32_t addr, const void* data, uint32_t size)
 {
   if ((addr % 8U) != 0U)
-    return HAL_ERROR;
+    return FLASH_MISC_ERROR;
 
   if (data == NULL)
-    return HAL_ERROR;
+    return FLASH_MISC_ERROR;
 
   if (size == 0)
-    return HAL_ERROR;
+    return FLASH_MISC_ERROR;
 
   uint32_t aligned_size = ALIGN_TO(size, 8);
   const uint8_t* bytes = (const uint8_t*)data;
 
   // only allow writing of half the flash for safety
   if (aligned_size > FLASH_PAGE_SIZE * FLASH_PAGE_NB / 2)
-    return HAL_ERROR;
+    return FLASH_MISC_ERROR;
 
   if (!validate_flash_region(addr, aligned_size))
-    return HAL_ERROR;
+    // did not call flash erase before calling write
+    return FLASH_ERASE_ERROR;
 
   __disable_irq();
   HAL_FLASH_Unlock();
@@ -85,7 +91,11 @@ HAL_StatusTypeDef flash_store(uint32_t addr, const void* data, uint32_t size)
   HAL_FLASH_Lock();
   __enable_irq();
 
-  return status;
+  if (status != HAL_OK)
+  {
+    return FLASH_WRITE_ERROR;
+  }
+  return FLASH_OK;
 }
 
 static uint8_t validate_flash_region(uint32_t addr, uint32_t size)
