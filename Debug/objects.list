@@ -3,7 +3,7 @@
 "./Core/Src/dma.o"
 "./Core/Src/fdcan.o"
 "./Core/Src/flash.o"
-"./Core/Src/flash_byte.o"
+"./Core/Src/flash_doubleword.o"
 "./Core/Src/flash_pedal_lut.o"
 "./Core/Src/functions.o"
 "./Core/Src/gpio.o"

@@ -131,8 +131,6 @@ uint8_t validate_pedal_profile(const int16_t pedal_profile[])
   {
     if (pedal_profile[i] < pedal_profile[i - 1])
       return 0;
-
-    // check for deadzone
   }
   return 1;
 }
