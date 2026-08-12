@@ -1,0 +1,3 @@
+../Core/Src/flash_doubleword.c:32:10:get_empty_dword_addr	3
+../Core/Src/flash_doubleword.c:45:19:get_saved_dword	3
+../Core/Src/flash_doubleword.c:11:13:save_dword	5

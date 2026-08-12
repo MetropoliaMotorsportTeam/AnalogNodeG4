@@ -1,0 +1,6 @@
+../Core/Src/flash_pedal_lut.c:8:9:get_current_pedal_profile	1
+../Core/Src/flash_pedal_lut.c:18:16:save_current_pedal_profile	3
+../Core/Src/flash_pedal_lut.c:87:16:get_saved_pedal_profile	2
+../Core/Src/flash_pedal_lut.c:67:16:restore_pedal_profile_from_flash	6
+../Core/Src/flash_pedal_lut.c:36:1:save_all_pedal_profiles	6
+../Core/Src/flash_pedal_lut.c:95:16:get_all_saved_pedal_profiles	1

@@ -3,12 +3,6 @@
 #include "functions.h"
 #include "main.h"
 
-extern CAN_Message RxMessage;
-extern CAN_Message TxMessage;
-
-extern FDCAN_TxHeaderTypeDef TxHeader;
-extern FDCAN_RxHeaderTypeDef RxHeader;
-
 void System_Jump(volatile uint32_t addr)
 {
   /*
