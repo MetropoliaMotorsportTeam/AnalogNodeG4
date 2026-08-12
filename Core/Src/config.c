@@ -56,7 +56,7 @@ void load_config()
 void process_config(uint8_t config)
 {
   uint8_t conf = (valid_config(config) ? config : DEFAULT_CONF);
-  if (save_dword(conf, CONFIG_FLASH_ADDR) != HAL_OK)
+  if (save_dword(conf, CONFIG_FLASH_ADDR) != FLASH_OK)
   {
     // flash failing
     return;

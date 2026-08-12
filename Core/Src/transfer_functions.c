@@ -64,7 +64,7 @@ int16_t TF_24V(uint8_t bytes, uint32_t raw, Sensor* sensor)
 
 int16_t TF_BPPS(uint8_t bytes, uint32_t raw, Sensor* sensor)
 {
-  const uint16_t max_pos = 1000;
+  const uint16_t max_pos = 100;
 
   uint16_t min_raw = 0;
   uint16_t max_raw = 3950;
@@ -80,7 +80,7 @@ int16_t TF_BPPS(uint8_t bytes, uint32_t raw, Sensor* sensor)
     bpps = max_pos - bpps;
   }
 
-  return pedal_map(bpps);
+  return bpps;
 }
 
 int16_t TF_APPS1(uint8_t bytes, uint32_t raw, Sensor* sensor)

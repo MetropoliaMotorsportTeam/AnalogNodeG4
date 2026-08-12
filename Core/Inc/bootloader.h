@@ -7,10 +7,16 @@
 #include "stm32g4xx_hal_fdcan.h"
 #include "stm32g4xx_hal_rcc.h"
 
+#define KiB(n) ((uint64_t)n << 10)
+#define MiB(n) ((uint64_t)n << 20)
+#define GiB(n) ((uint64_t)n << 30)
+
 #define BOOT_ADDR FLASH_BASE
 #define BOOT_SIZE KiB(32)
 #define APP_SIZE KiB(96)
 #define APP_ADDR (FLASH_BASE + BOOT_SIZE)
+
+#define CAN_JUMP_BOOT (2)
 
 #define MCU_IRQS 102u // no. of NVIC IRQ inputs
 #define TIMEOUT 1000

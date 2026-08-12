@@ -6,6 +6,7 @@
  */
 
 #include "functions.h"
+#include "bootloader.h"
 #include "config.h"
 #include "flash_pedal_lut.h"
 #include "main.h"
@@ -73,10 +74,8 @@ void HAL_FDCAN_RxFifo0Callback(FDCAN_HandleTypeDef* hfdcan, uint32_t RxFifo0ITs)
     }
     else
     {
-
       RxMessage.Id = RxHeader.Identifier;
       RxMessage.DLC = RxHeader.DataLength;
-
       CANRxReady = 1;
     }
 
@@ -199,6 +198,9 @@ void decode(CAN_Message msg)
     break;
   case CAN_PEDAL_SAVE_FLASH:
     process_pedal_flash_save(msg);
+    break;
+  case CAN_JUMP_BOOT:
+    System_Jump(BOOT_ADDR);
     break;
 
   default:
